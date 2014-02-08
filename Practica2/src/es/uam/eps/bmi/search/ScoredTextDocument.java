@@ -1,39 +1,61 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package es.uam.eps.bmi.search;
 
 /**
- *
- * @author e185318
+ * Guarda la puntuación de un documento generalmente en consecuencia de una
+ * consulta anterior.
+ * @author Ari Handler - Adrián Lorenzo
  */
 public class ScoredTextDocument implements Comparable{
 
-    private TextDocument document;
+    private final String documentId;
     private double score;
 
-    public ScoredTextDocument(TextDocument document, double score) {
-        this.document = document;
+    /**
+     * Construye la puntuación de un documento
+     * @param documentId Identificador del documento
+     * @param score Puntuación de este documento
+     */
+    public ScoredTextDocument(String documentId, double score) {
+        this.documentId = documentId;
         this.score = score;
     }
 
     /**
-     * Get the value of score
+     * Devuelve la puntuación del documento
      *
-     * @return the value of score
+     * @return La puntuación en formato de doble precisión
      */
     public double getScore() {
         return score;
     }
     
+    /**
+     * Devuelve el identificador del documento
+     * @return Cadena de caracteres del identificador
+     */
     public String getDocumentId() {
-        return document.getId();
+        return documentId;
     }
     
+    /**
+     * Compara las puntuaciones de dos documentos según el orden lexicográfico
+     * de sus identificadores
+     * @param o Documento puntuado con el que comparar.
+     * @return 0 si si son iguales, un valor negativo si el argumento pasado
+     * es mayor lexicográficamente que el objeto invocante y un valor positivo
+     * si este último es mayor que el argumento.
+     * @see String
+     */
     @Override
     public int compareTo(Object o) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (o == null) {
+            return 1;
+        }
+        if (getClass() != o.getClass()) {
+            return 1;
+        }
+        final ScoredTextDocument other = (ScoredTextDocument) o;
+        return this.documentId.compareTo(other.getDocumentId());
     }
     
 }
