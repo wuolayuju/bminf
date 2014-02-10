@@ -13,6 +13,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,6 +28,7 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
+import org.apache.lucene.index.TermDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
@@ -95,7 +97,18 @@ public class LuceneIndex implements Index{
 
     @Override
     public List<String> getDocumentIds() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            List<String> docIds = new ArrayList<>();
+            TermDocs td = indexReader.termDocs();
+            while(td.next()) {
+                int docId = td.doc();
+                docIds.add(Integer.toString(docId));
+            }
+            return docIds;
+        } catch (IOException ex) {
+            Logger.getLogger(LuceneIndex.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 
     @Override
@@ -222,9 +235,13 @@ public class LuceneIndex implements Index{
                     break;
             }
         }
-        index.build(docsPath,indexPath,p);
+      //  index.build(docsPath,indexPath,p);
         
+        index.load(indexPath);
         
+        List<String> docIds = index.getDocumentIds();
+        
+        System.out.println();
     
     }
     
