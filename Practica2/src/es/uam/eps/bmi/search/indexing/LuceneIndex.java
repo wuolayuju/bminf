@@ -97,23 +97,30 @@ public class LuceneIndex implements Index{
 
     @Override
     public List<String> getDocumentIds() {
-        try {
-            List<String> docIds = new ArrayList<>();
-            TermDocs td = indexReader.termDocs();
-            while(td.next()) {
-                int docId = td.doc();
-                docIds.add(Integer.toString(docId));
+        List<String> docIds = new ArrayList<>();
+        int maxDocs = indexReader.maxDoc();
+        for (int id=0; id < maxDocs ; id++){
+            if (indexReader.isDeleted(id)) {
+                continue;
             }
-            return docIds;
-        } catch (IOException ex) {
-            Logger.getLogger(LuceneIndex.class.getName()).log(Level.SEVERE, null, ex);
+            docIds.add(Integer.toString(id));
         }
-        return null;
+        return docIds;
     }
 
     @Override
     public TextDocument getDocument(String documentId) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        int id = Integer.parseInt(documentId);
+        try {
+            if (indexReader.isDeleted(id)) {
+                return null;
+            }
+            String path = indexReader.document(id).get("path");
+            return new TextDocument(documentId, path);
+        } catch (IOException ex) {
+            Logger.getLogger(LuceneIndex.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 
     @Override
@@ -240,6 +247,10 @@ public class LuceneIndex implements Index{
         index.load(indexPath);
         
         List<String> docIds = index.getDocumentIds();
+        
+        TextDocument td = index.getDocument(docIds.get(4));
+        
+        System.out.println("DocID = "+td.getId()+" Path = "+td.getName());
         
         System.out.println();
     
