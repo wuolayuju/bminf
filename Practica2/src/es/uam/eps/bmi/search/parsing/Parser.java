@@ -6,8 +6,6 @@
 
 package es.uam.eps.bmi.search.parsing;
 
-import java.io.*;
-import java.net.URL;
 import org.jsoup.Jsoup;
 
 /**
@@ -17,14 +15,8 @@ import org.jsoup.Jsoup;
 public class Parser implements TextParser{
 
     @Override
-    public String parse(String text) throws IOException {
-        String aux = "", line;
-        BufferedReader in = new BufferedReader(new InputStreamReader(new URL(text).openConnection().getInputStream()));
-        do {
-            line = in.readLine();
-            aux += line;
-        } while (line != null);
-        return Jsoup.parse(aux).text();
+    public String parse(String text){
+        return Jsoup.parse(text).text();
     }
     
 }

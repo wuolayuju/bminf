@@ -14,12 +14,16 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.NumericField;
+import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.FieldInfo;
+import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
@@ -37,8 +41,8 @@ public class LuceneIndex implements Index{
     private Analyzer analyzer;
     private IndexWriterConfig iwc;
     private IndexWriter writer;
+    private IndexReader indexReader;
     
-   
     @Override
     public void build(String inputCollectionPath, String outputIndexPath, TextParser textParser) {
         // Apertura de la carpeta de documentos
@@ -63,11 +67,11 @@ public class LuceneIndex implements Index{
         try {
             Directory dir = FSDirectory.open(new File(outputIndexPath));
             
-            analyzer = new StandardAnalyzer(Version.LUCENE_32);
-            iwc = new IndexWriterConfig(Version.LUCENE_32, analyzer);
+            analyzer = new StandardAnalyzer(Version.LUCENE_36);
+            iwc = new IndexWriterConfig(Version.LUCENE_36, analyzer);
             writer = new IndexWriter(dir, iwc);
             
-            indexDocs(writer, docDir);
+            indexDocs(writer, docDir, textParser);
             writer.close();
             
         } catch (IOException ex) {
@@ -80,7 +84,13 @@ public class LuceneIndex implements Index{
 
     @Override
     public void load(String indexPath) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            indexReader = IndexReader.open(FSDirectory.open(new File(indexPath)));
+        } catch (CorruptIndexException ex) {
+            Logger.getLogger(LuceneIndex.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(LuceneIndex.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     @Override
@@ -108,7 +118,7 @@ public class LuceneIndex implements Index{
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
-    private void indexDocs(IndexWriter writer, File file) throws IOException{
+    private void indexDocs(IndexWriter writer, File file, TextParser parser) throws IOException{
      // do not try to index files that cannot be read
     if (file.canRead()) {
       if (file.isDirectory()) {
@@ -116,7 +126,7 @@ public class LuceneIndex implements Index{
         // an IO error could occur
         if (files != null) {
           for (int i = 0; i < files.length; i++) {
-            indexDocs(writer, new File(file, files[i]));
+            indexDocs(writer, new File(file, files[i]), parser);
           }
         }
       } else {
@@ -158,7 +168,16 @@ public class LuceneIndex implements Index{
           // so that the text of the file is tokenized and indexed, but not stored.
           // Note that FileReader expects the file to be in UTF-8 encoding.
           // If that's not the case searching for special characters will fail.
-          doc.add(new Field("contents", new BufferedReader(new InputStreamReader(fis, "UTF-8"))));
+          BufferedReader read = new BufferedReader(new InputStreamReader(fis, "UTF-8"));
+           String text = "", line;
+            
+            do {
+                line = read.readLine();
+                text += line;
+            } while (line != null);
+            
+            
+          doc.add(new Field("contents",parser.parse(text), Field.Store.YES, Field.Index.ANALYZED));
 
           if (writer.getConfig().getOpenMode() == IndexWriterConfig.OpenMode.CREATE) {
             // New index, so we just add the document (no old document can be there):
