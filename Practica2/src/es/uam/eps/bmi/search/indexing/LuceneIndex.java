@@ -29,6 +29,8 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.index.TermDocs;
+import org.apache.lucene.index.TermEnum;
+import org.apache.lucene.index.TermPositions;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
@@ -98,6 +100,8 @@ public class LuceneIndex implements Index{
     @Override
     public List<String> getDocumentIds() {
         List<String> docIds = new ArrayList<>();
+        // El índice asigna identificadores desde 0 hasta un número determinado
+        // por maxDoc
         int maxDocs = indexReader.maxDoc();
         for (int id=0; id < maxDocs ; id++){
             if (indexReader.isDeleted(id)) {
@@ -112,6 +116,7 @@ public class LuceneIndex implements Index{
     public TextDocument getDocument(String documentId) {
         int id = Integer.parseInt(documentId);
         try {
+            // No nos interesan los inexistentes
             if (indexReader.isDeleted(id)) {
                 return null;
             }
@@ -125,12 +130,45 @@ public class LuceneIndex implements Index{
 
     @Override
     public List<String> getTerms() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        List<String> terms = new ArrayList<>();
+        try {
+            // Iterar sobre un enumerador de términos
+            TermEnum te = indexReader.terms();
+            while(te.next()) {
+                // Solo nos quedaremos con los términos
+                if (!"contents".equals(te.term().field()))
+                    continue;
+                Term term = te.term();
+                terms.add(term.text());
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(LuceneIndex.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return terms;
     }
 
     @Override
     public List<Posting> getTermPostings(String term) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        List<Posting> listPosts = new ArrayList<>();
+        try {
+            TermPositions posEnum = indexReader.termPositions(new Term("contents", term));
+            while (posEnum.next()) {
+                // Identificador de cada documento
+                String docId = String.valueOf(posEnum.doc());
+                // Numero de apariciones dentro del documento
+                int freq = posEnum.freq();
+                // Lista con las posiciones dentro del documento
+                List<Long> positions = new ArrayList<>();
+                for (int i = 0; i < freq ; i++) {
+                    positions.add(new Long(posEnum.nextPosition()));
+                }
+                listPosts.add(new Posting(docId, freq, positions));
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(LuceneIndex.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return listPosts;
     }
 
     @Override
@@ -242,7 +280,7 @@ public class LuceneIndex implements Index{
                     break;
             }
         }
-      //  index.build(docsPath,indexPath,p);
+        //index.build(docsPath,indexPath,p);
         
         index.load(indexPath);
         
@@ -251,6 +289,12 @@ public class LuceneIndex implements Index{
         TextDocument td = index.getDocument(docIds.get(4));
         
         System.out.println("DocID = "+td.getId()+" Path = "+td.getName());
+        
+        List<String> terms = index.getTerms();
+//        for (int i=0; i < terms.size() ; i++) {
+//            System.out.println(terms.get(i));
+//        }
+        List<Posting> postings = index.getTermPostings("obama");
         
         System.out.println();
     

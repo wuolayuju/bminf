@@ -31,7 +31,7 @@ public class LuceneSearcher implements Searcher{
     @Override
     public void build(Index index) {
       
-        searcher = new IndexSearcher(((LuceneIndex)index).getIndexReader());
+        //searcher = new IndexSearcher(((LuceneIndex)index).getIndexReader());
     }
 
     @Override
@@ -40,8 +40,10 @@ public class LuceneSearcher implements Searcher{
         /* ayayay tu bajaste desde el cielooo*/
         /*que kohonen hacemos con el campo fieeeld*/
         Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_36);
-        QueryParser parser = new QueryParser(Version.LUCENE_36, field, analyzer);
-        Query query = parser.parse(query);
+        //QueryParser parser = new QueryParser(Version.LUCENE_36, field, analyzer);
+        //Query query = parser.parse(query);
+        
+        return null;
     }
     
     public static void  main(String[] args) throws Exception {
