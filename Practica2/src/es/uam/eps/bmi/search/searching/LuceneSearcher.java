@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.lucene.analysis.Analyzer;
@@ -61,9 +62,10 @@ public class LuceneSearcher implements Searcher{
          
             for(ScoreDoc d : hits)
             {
-                System.out.println("ID "+d.doc+ " SCORE "+d.score);
+                listScored.add(new ScoredTextDocument(d.doc,d.score));
             }
-            return null;
+            return listScored;
+            
         } catch (ParseException | IOException ex) {
             Logger.getLogger(LuceneSearcher.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -110,7 +112,14 @@ public class LuceneSearcher implements Searcher{
               break;
             }
             
-            searcher.search(line);
+            ListIterator<ScoredTextDocument> itr =searcher.search(line).listIterator();
+            
+            while(itr.hasNext())
+            {
+                ScoredTextDocument doc = itr.next();
+                System.out.println("DocId: "+doc.getDocumentId()+ " Score: "+
+                        doc.getScore());
+            }
         }
     
     }
