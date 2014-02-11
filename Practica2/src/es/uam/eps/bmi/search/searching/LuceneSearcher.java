@@ -8,12 +8,15 @@ import es.uam.eps.bmi.search.ScoredTextDocument;
 import es.uam.eps.bmi.search.indexing.Index;
 import es.uam.eps.bmi.search.indexing.LuceneIndex;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import static java.lang.System.in;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
@@ -27,23 +30,33 @@ public class LuceneSearcher implements Searcher{
 
     
     IndexSearcher searcher;
+    int MAX_RES = 5;
     
     @Override
-    public void build(Index index) {
-      
-        //searcher = new IndexSearcher(((LuceneIndex)index).getIndexReader());
+    public void build(Index index)
+    {  
+        searcher = new IndexSearcher(((LuceneIndex)index).getIndexReader());
     }
 
     @Override
     public List<ScoredTextDocument> search(String query) {
+        List<ScoredTextDocument> listScored = new ArrayList<>();
+        try {
+            /* ayayay tu bajaste desde el cielooo*/
+            /*que kohonen hacemos con el campo fieeeld*/
+            Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_36);
+            QueryParser queryParser = new QueryParser(Version.LUCENE_36, "contents", analyzer);
+            //Query query = parser.parse(query);
+            
+            Query q = queryParser.parse(query);
+            searcher.search(q, MAX_RES);
+            
+            return null;
+        } catch (ParseException | IOException ex) {
+            Logger.getLogger(LuceneSearcher.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
-        /* ayayay tu bajaste desde el cielooo*/
-        /*que kohonen hacemos con el campo fieeeld*/
-        Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_36);
-        //QueryParser parser = new QueryParser(Version.LUCENE_36, field, analyzer);
-        //Query query = parser.parse(query);
-        
-        return null;
+        return listScored;
     }
     
     public static void  main(String[] args) throws Exception {

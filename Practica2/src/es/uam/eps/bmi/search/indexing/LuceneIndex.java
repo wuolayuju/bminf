@@ -28,8 +28,8 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.index.TermDocs;
 import org.apache.lucene.index.TermEnum;
+import org.apache.lucene.index.TermFreqVector;
 import org.apache.lucene.index.TermPositions;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
@@ -97,6 +97,16 @@ public class LuceneIndex implements Index{
         }
     }
 
+    /**
+     * Devuelve el <a href="https://lucene.apache.org/core/3_6_2/api/all/org/apache/lucene/index/IndexReader.html">IndexReader</a> 
+     * de este índice para realizar búsquedas.
+     * @return Lector del índice
+     * @see <a href="https://lucene.apache.org/core/3_6_2/api/all/org/apache/lucene/index/IndexReader.html">IndexReader</a>
+     */
+    public IndexReader getIndexReader() {
+        return indexReader;
+    }
+    
     @Override
     public List<String> getDocumentIds() {
         List<String> docIds = new ArrayList<>();
@@ -173,7 +183,22 @@ public class LuceneIndex implements Index{
 
     @Override
     public List<Posting> getDocumentPostings(String documentId) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        List<Posting> listPosts = new ArrayList<>();
+        try {
+            TermFreqVector freqVector = indexReader.
+                    getTermFreqVector(
+                            Integer.parseInt(documentId),
+                            "contents");
+            
+            for (int i = 0; i < freqVector.size() ; i++) {
+                
+                //Posting post = new Posting(documentId, freqVector.)
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(LuceneIndex.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return listPosts;
     }
     
     private void indexDocs(IndexWriter writer, File file, TextParser parser) throws IOException{
