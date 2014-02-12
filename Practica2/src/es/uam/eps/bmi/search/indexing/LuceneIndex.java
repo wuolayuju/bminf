@@ -5,7 +5,8 @@
 package es.uam.eps.bmi.search.indexing;
 
 import es.uam.eps.bmi.search.TextDocument;
-import es.uam.eps.bmi.search.parsing.Parser;
+import es.uam.eps.bmi.search.parsing.HTMLSimpleParser;
+import es.uam.eps.bmi.search.parsing.HTMLSimpleParser;
 import es.uam.eps.bmi.search.parsing.TextParser;
 import java.io.BufferedReader;
 import java.io.File;
@@ -290,7 +291,7 @@ public class LuceneIndex implements Index{
                      + "in INDEX_PATH that can be searched with SearchFiles";
         String indexPath = "index";
         LuceneIndex index = new LuceneIndex();
-        Parser p = new Parser();
+        HTMLSimpleParser p = new HTMLSimpleParser();
         String docsPath = null;
         boolean create = true;
         for(int i=0;i<args.length;i++) {
@@ -324,5 +325,6 @@ public class LuceneIndex implements Index{
         System.out.println();
     
     }
+
     
 }

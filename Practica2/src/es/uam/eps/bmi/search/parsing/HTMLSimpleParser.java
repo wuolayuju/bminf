@@ -12,7 +12,7 @@ import org.jsoup.Jsoup;
  *
  * @author pinwi
  */
-public class Parser implements TextParser{
+public class HTMLSimpleParser implements TextParser{
 
     @Override
     public String parse(String text){

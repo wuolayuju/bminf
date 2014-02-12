@@ -99,13 +99,16 @@ public class LuceneSearcher implements Searcher{
         searcher.build(indexer);
         
         while (true) {
-            System.out.println("Enter query: ");
+            System.out.println("\n(q)uit or enter a query:");
+            
             BufferedReader in = new BufferedReader(new InputStreamReader(System.in, "UTF-8"));
             String line = in.readLine();
 
-            if (line == null || line.length() == -1) {
+            if (line == null || line.length() <=0)
               break;
-            }
+            
+            if(line.charAt(0)=='q')
+                break;
 
             line = line.trim();
             if (line.length() == 0) {
