@@ -7,7 +7,7 @@ package es.uam.eps.bmi.search;
  */
 public class ScoredTextDocument implements Comparable{
 
-    private final Integer documentId;
+    private final String documentId;
     private double score;
 
     /**
@@ -15,7 +15,7 @@ public class ScoredTextDocument implements Comparable{
      * @param documentId Identificador del documento
      * @param score Puntuación de este documento
      */
-    public ScoredTextDocument(int documentId, double score) {
+    public ScoredTextDocument(String documentId, double score) {
         this.documentId = documentId;
         this.score = score;
     }
@@ -33,7 +33,7 @@ public class ScoredTextDocument implements Comparable{
      * Devuelve el identificador del documento
      * @return Cadena de caracteres del identificador
      */
-    public int getDocumentId() {
+    public String getDocumentId() {
         return documentId;
     }
     

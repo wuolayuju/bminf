@@ -62,7 +62,7 @@ public class LuceneSearcher implements Searcher{
          
             for(ScoreDoc d : hits)
             {
-                listScored.add(new ScoredTextDocument(d.doc,d.score));
+                listScored.add(new ScoredTextDocument(String.valueOf(d.doc),d.score));
             }
             return listScored;
             
