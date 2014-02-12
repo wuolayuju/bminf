@@ -76,6 +76,7 @@ public class LuceneIndex implements Index{
             
             analyzer = new StandardAnalyzer(Version.LUCENE_36);
             iwc = new IndexWriterConfig(Version.LUCENE_36, analyzer);
+            iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
             writer = new IndexWriter(dir, iwc);
             
             indexDocs(writer, docDir, textParser);
@@ -220,60 +221,55 @@ public class LuceneIndex implements Index{
             ZipEntry entry;
             while ((entry = zis.getNextEntry())!=null)
             {
-                try {
+                String filePath = file.getPath()+"\\"+entry.getName();
 
-                    String filePath = file.getPath()+"\\"+entry.getName();
-                    
-                    // make a new, empty document
-                    Document doc = new Document();
+                // make a new, empty document
+                Document doc = new Document();
 
-                    // Add the path of the file as a field named "path".  Use a
-                    // field that is indexed (i.e. searchable), but don't tokenize 
-                    // the field into separate words and don't index term frequency
-                    // or positional information:
-                    Field pathField = new Field("path", filePath, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS);
-                    pathField.setIndexOptions(FieldInfo.IndexOptions.DOCS_ONLY);
-                    doc.add(pathField);
+                // Add the path of the file as a field named "path".  Use a
+                // field that is indexed (i.e. searchable), but don't tokenize 
+                // the field into separate words and don't index term frequency
+                // or positional information:
+                Field pathField = new Field("path", filePath, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS);
+                pathField.setIndexOptions(FieldInfo.IndexOptions.DOCS_ONLY);
+                doc.add(pathField);
 
-                    // Add the last modified date of the file a field named "modified".
-                    // Use a NumericField that is indexed (i.e. efficiently filterable with
-                    // NumericRangeFilter).  This indexes to milli-second resolution, which
-                    // is often too fine.  You could instead create a number based on
-                    // year/month/day/hour/minutes/seconds, down the resolution you require.
-                    // For example the long value 2011021714 would mean
-                    // February 17, 2011, 2-3 PM.
-                    NumericField modifiedField = new NumericField("modified");
-                    modifiedField.setLongValue(file.lastModified());
-                    doc.add(modifiedField);
+                // Add the last modified date of the file a field named "modified".
+                // Use a NumericField that is indexed (i.e. efficiently filterable with
+                // NumericRangeFilter).  This indexes to milli-second resolution, which
+                // is often too fine.  You could instead create a number based on
+                // year/month/day/hour/minutes/seconds, down the resolution you require.
+                // For example the long value 2011021714 would mean
+                // February 17, 2011, 2-3 PM.
+                NumericField modifiedField = new NumericField("modified");
+                modifiedField.setLongValue(file.lastModified());
+                doc.add(modifiedField);
 
-                    // Add the contents of the file to a field named "contents".  Specify a Reader,
-                    // so that the text of the file is tokenized and indexed, but not stored.
-                    // Note that FileReader expects the file to be in UTF-8 encoding.
-                    // If that's not the case searching for special characters will fail.
-                    int len = 0;
-                    byte[] buffer = new byte[2048];
-                    String text = "";
-                    while ((len = zis.read(buffer, 0, len)) > 0) {
-                        text += Arrays.toString(buffer);
-                    }
-                    doc.add(new Field("contents",parser.parse(text), Field.Store.YES, Field.Index.ANALYZED));
+                // Add the contents of the file to a field named "contents".  Specify a Reader,
+                // so that the text of the file is tokenized and indexed, but not stored.
+                // Note that FileReader expects the file to be in UTF-8 encoding.
+                // If that's not the case searching for special characters will fail.
+                int len = 0;
+                byte[] buffer = new byte[2048];
+                String text = "";
+                while ((len = zis.read(buffer)) > 0) {
+                    text += Arrays.toString(buffer);
+                }
+                doc.add(new Field("contents",parser.parse(text), Field.Store.YES, Field.Index.ANALYZED));
 
-                    if (writer.getConfig().getOpenMode() == IndexWriterConfig.OpenMode.CREATE) {
-                      // New index, so we just add the document (no old document can be there):
-                      System.out.println("adding " + filePath);
-                      writer.addDocument(doc);
-                    } else {
-                      // Existing index (an old copy of this document may have been indexed) so 
-                      // we use updateDocument instead to replace the old one matching the exact 
-                      // path, if present:
-                      System.out.println("updating " + filePath);
-                      writer.updateDocument(new Term("path", filePath), doc);
-                    }
-
-                } finally {
-                  zis.close();
+                if (writer.getConfig().getOpenMode() == IndexWriterConfig.OpenMode.CREATE) {
+                  // New index, so we just add the document (no old document can be there):
+                  System.out.println("adding " + filePath);
+                  writer.addDocument(doc);
+                } else {
+                  // Existing index (an old copy of this document may have been indexed) so 
+                  // we use updateDocument instead to replace the old one matching the exact 
+                  // path, if present:
+                  System.out.println("updating " + filePath);
+                  writer.updateDocument(new Term("path", filePath), doc);
                 }
             }
+            zis.close();
         }
     }      
     
