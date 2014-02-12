@@ -37,8 +37,8 @@ import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 
 /**
- *
- * @author e185318
+ * Clase que implementa la interfaz Index
+ * @author Ari Handler - Adrián Lorenzo
  */
 public class LuceneIndex implements Index{
     
@@ -282,7 +282,13 @@ public class LuceneIndex implements Index{
     }
   }       
     
-    
+    /**
+     * 
+     * La aplicación recibe dos argumentos de entrada: la ruta de la carpeta que contiene la colección de
+     * documentos con los que crear el índice, y la ruta de la carpeta en la que almacenar el índice creado
+     * 
+     * @param args 
+     */
     public static void  main(String[] args) {
         
         String usage = "java org.apache.lucene.demo.IndexFiles"

@@ -26,8 +26,8 @@ import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.util.Version;
 
 /**
- *
- * @author e185318
+ * Clase que implementa la interfaz Searcher
+ * @author Ari Handler - Adrián Lorenzo
  */
 public class LuceneSearcher implements Searcher{
 
@@ -72,7 +72,14 @@ public class LuceneSearcher implements Searcher{
         
         return listScored;
     }
-    
+    /**
+     * La aplicación recibe como argumento de entrada la ruta de la carpeta que contenga
+     * un índice Lucene, y de forma iterativa pide al usuario consultas a ejecutar por el buscador
+     * sobre el índice, mostrando por pantalla el top 5 documentos
+     * 
+     * @param args
+     * @throws Exception 
+     */
     public static void  main(String[] args) throws Exception {
         
         String usage =
