@@ -253,7 +253,8 @@ public class LuceneIndex implements Index{
                 byte[] buffer = new byte[2048];
                 String text = "";
                 while ((len = zis.read(buffer)) > 0) {
-                    text += Arrays.toString(buffer);
+                    String chunk = new String(buffer, 0, len);
+                    text += chunk;
                 }
                 doc.add(new Field("contents",parser.parse(text), Field.Store.YES, Field.Index.ANALYZED));
 
