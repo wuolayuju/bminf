@@ -32,8 +32,8 @@ import org.apache.lucene.util.Version;
 public class LuceneSearcher implements Searcher{
 
     
-    IndexSearcher searcher;
-    int MAX_RES = 5;
+    private IndexSearcher searcher;
+    private int MAX_RES = 5;
     
     @Override
     public void build(Index index)
@@ -71,6 +71,14 @@ public class LuceneSearcher implements Searcher{
         }
         
         return listScored;
+    }
+
+    /**
+     * Define la cantidad de resultados devueltos al realizar una búsqueda
+     * @param n Nuevo límite de resultados
+     */
+    public void setTopResults(int n) {
+        this.MAX_RES = n;
     }
     
     public static void  main(String[] args) throws Exception {
@@ -112,6 +120,7 @@ public class LuceneSearcher implements Searcher{
               break;
             }
             
+            searcher.setTopResults(3);
             ListIterator<ScoredTextDocument> itr =searcher.search(line).listIterator();
             
             while(itr.hasNext())
