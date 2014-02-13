@@ -280,10 +280,10 @@ public class LuceneIndex implements Index{
      */
     public static void  main(String[] args) {
         
-        String usage = "java org.apache.lucene.demo.IndexFiles"
+        String usage = "java es.uam.eps.bmi.indexing.LuceneIndex"
                      + " [-index INDEX_PATH] [-docs DOCS_PATH]\n\n"
                      + "This indexes the documents in DOCS_PATH, creating a Lucene index"
-                     + "in INDEX_PATH that can be searched with SearchFiles";
+                     + "in INDEX_PATH that can be searched with LuceneSearcher";
         String indexPath = "index";
         LuceneIndex index = new LuceneIndex();
         HTMLSimpleParser p = new HTMLSimpleParser();

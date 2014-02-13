@@ -9,13 +9,25 @@ package es.uam.eps.bmi.search.searching;
 import es.uam.eps.bmi.search.ScoredTextDocument;
 import es.uam.eps.bmi.search.indexing.LuceneIndex;
 import es.uam.eps.bmi.search.indexing.Posting;
+import es.uam.eps.bmi.search.parsing.HTMLSimpleParser;
 import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeMap;
+import java.util.TreeSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -23,75 +35,95 @@ import java.util.ListIterator;
  */
 public class TestIndex {
     
+    class ValueComparator implements Comparator<List<Integer>> {
+
+        Map<String, List<Integer>> base;
+        public ValueComparator(Map<String, List<Integer>> base) {
+            this.base = base;
+        }
+
+        @Override
+        public int compare(List<Integer> o1, List<Integer> o2) {
+            return o1.get(0).compareTo(o2.get(0));
+        }
+    }
+    
     public static void  main(String[] args) {
     
-        String usage = "java org.apache.lucene.demo.IndexFiles"
-             + " [-index INDEX_PATH] [-output OUTPUTFILE]\n\n";
-        String indexPath ="index";
-        String outputFile ="output";
+        String usage = "java es.uam.eps.bmi.search.TestIndex"
+                     + " [-index INDEX_PATH] [-docs DOCS_PATH] [-output OUTPUT_PATH]\n\n"
+                     + "This indexes the documents in DOCS_PATH, creating a Lucene index"
+                     + "in INDEX_PATH, bringing it then into RAM and, finally, "
+                + "writing statistics of indexing in a file in OUTPUT_PATH.";
+        
+        String indexPath = "index";
+        String docsPath = "docs";
+        String outputFile = "output";
+        
         for(int i=0;i<args.length;i++) {
             if(args[i].compareTo("-index")==0) {
-                    indexPath = args[i+1];
-                    i++;
+                indexPath = args[i+1];
+                i++;
+            }
+            if(args[i].compareTo("-docs")==0) {
+                docsPath = args[i+1];
+                i++;
             }
             if(args[i].compareTo("-output")==0) {
                 outputFile = args[i+1];
-                    i++;
+                i++;
             }
         }
+        
+        // Creación y carga en RAM del índice
         LuceneIndex index = new LuceneIndex();
+        //index.build(docsPath, indexPath, new HTMLSimpleParser());
         index.load(indexPath);
         
+        
         List<String> terms = index.getTerms();
-        
-        ListIterator<String> itrTerm = terms.listIterator();
-        
+        ListIterator<String> itrTerms = terms.listIterator();
         Writer writer = null;
         
-        //while(itrTerm.hasNext())
-        //{
-            String term = "obama";//itrTerm.next();
-            List<Posting> postings = index.getTermPostings(term);
-            ListIterator<Posting> itrPost = postings.listIterator();
-            int freqTotal =0;
-            while(itrPost.hasNext())
-            {
-                Posting post = itrPost.next();
-                freqTotal +=post.getTermFrequency();
-            }
-            
-            try {
-                writer = new BufferedWriter(new OutputStreamWriter(
-                      new FileOutputStream(outputFile), "utf-8"));
-                writer.write("Term: "+term+" Ndoc: "+postings.size()+
-                    " FreqTot: " + freqTotal+"\n");
-            } catch (IOException ex) {
-              // report
-            } finally {
-               try {writer.close();} catch (Exception ex) {}
-            }
-            //System.out.println("Term: "+term+" Ndoc: "+postings.size()+
-                    //" FreqTot: " + freqTotal);
-            
-            
-
-        //}
+        Map<String, List<Integer>> mapTermFreqDocs = new TreeMap<>();
         
-        /*
-            Map<String, Integer> tm;
-            tm = new TreeMap<String,Integer>(new Comparator<String>(){
-                @Override
-                public int compare(String o1, String o2) {
-                    // implement logic here
-                    // sample implementation below
-                    return o1.compareTo(o2);
-                }
-            });
-            tm.put("ojete", 1);
-            tm.put("asd", 2);
+        while(itrTerms.hasNext()) 
+        {
+            String term = itrTerms.next();
             
-            System.out.println(tm.toString());
-        */
+            List<Posting> postings = index.getTermPostings(term);
+            
+            // Sumamos todas las frecuencias de los postings del término
+            int totalFreq = 0;
+            for (Posting post : postings) {
+                totalFreq += post.getTermFrequency();
+            }
+            
+            // Numero de documentos en los que aparece el término
+            int totalDocsTerm = postings.size();
+            
+            // Inserción en el árbol de estadísticas
+            List<Integer> values = new ArrayList<>();
+            values.add(totalFreq); values.add(totalDocsTerm);
+            mapTermFreqDocs.put(term, values);
+        }
+        
+        // Escritura en fichero de las estadísticas
+        try {
+            writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile), "utf-8"));
+        } catch (UnsupportedEncodingException | FileNotFoundException ex) {
+            Logger.getLogger(TestIndex.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        itrTerms = terms.listIterator();
+        while (itrTerms.hasNext()) {
+            String term = itrTerms.next();
+            List<Integer> freqDocs = mapTermFreqDocs.get(term);
+            try {
+                writer.write(term+" "+freqDocs.get(0)+" "+freqDocs.get(1)+"\n");
+            } catch (IOException ex) {
+                Logger.getLogger(TestIndex.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
     
 }
