@@ -5,7 +5,8 @@
 package es.uam.eps.bmi.search.indexing;
 
 import es.uam.eps.bmi.search.TextDocument;
-import es.uam.eps.bmi.search.parsing.Parser;
+import es.uam.eps.bmi.search.parsing.HTMLSimpleParser;
+import es.uam.eps.bmi.search.parsing.HTMLSimpleParser;
 import es.uam.eps.bmi.search.parsing.TextParser;
 import java.io.BufferedReader;
 import java.io.File;
@@ -39,8 +40,8 @@ import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 
 /**
- *
- * @author e185318
+ * Clase que implementa la interfaz Index
+ * @author Ari Handler - Adrián Lorenzo
  */
 public class LuceneIndex implements Index{
     
@@ -274,7 +275,13 @@ public class LuceneIndex implements Index{
         }
     }      
     
-    
+    /**
+     * 
+     * La aplicación recibe dos argumentos de entrada: la ruta de la carpeta que contiene la colección de
+     * documentos con los que crear el índice, y la ruta de la carpeta en la que almacenar el índice creado
+     * 
+     * @param args 
+     */
     public static void  main(String[] args) {
         
         String usage = "java org.apache.lucene.demo.IndexFiles"
@@ -283,7 +290,7 @@ public class LuceneIndex implements Index{
                      + "in INDEX_PATH that can be searched with SearchFiles";
         String indexPath = "index";
         LuceneIndex index = new LuceneIndex();
-        Parser p = new Parser();
+        HTMLSimpleParser p = new HTMLSimpleParser();
         String docsPath = null;
         boolean create = true;
         for(int i=0;i<args.length;i++) {
@@ -317,5 +324,6 @@ public class LuceneIndex implements Index{
         System.out.println();
     
     }
+
     
 }

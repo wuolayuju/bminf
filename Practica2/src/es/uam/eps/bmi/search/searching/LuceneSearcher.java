@@ -26,8 +26,8 @@ import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.util.Version;
 
 /**
- *
- * @author e185318
+ * Clase que implementa la interfaz Searcher
+ * @author Ari Handler - Adrián Lorenzo
  */
 public class LuceneSearcher implements Searcher{
 
@@ -62,7 +62,7 @@ public class LuceneSearcher implements Searcher{
          
             for(ScoreDoc d : hits)
             {
-                listScored.add(new ScoredTextDocument(d.doc,d.score));
+                listScored.add(new ScoredTextDocument(String.valueOf(d.doc),d.score));
             }
             return listScored;
             
@@ -80,7 +80,14 @@ public class LuceneSearcher implements Searcher{
     public void setTopResults(int n) {
         this.MAX_RES = n;
     }
-    
+    /**
+     * La aplicación recibe como argumento de entrada la ruta de la carpeta que contenga
+     * un índice Lucene, y de forma iterativa pide al usuario consultas a ejecutar por el buscador
+     * sobre el índice, mostrando por pantalla el top 5 documentos
+     * 
+     * @param args
+     * @throws Exception 
+     */
     public static void  main(String[] args) throws Exception {
         
         String usage =
@@ -107,13 +114,16 @@ public class LuceneSearcher implements Searcher{
         searcher.build(indexer);
         
         while (true) {
-            System.out.println("Enter query: ");
+            System.out.println("\n(q)uit or enter a query:");
+            
             BufferedReader in = new BufferedReader(new InputStreamReader(System.in, "UTF-8"));
             String line = in.readLine();
 
-            if (line == null || line.length() == -1) {
+            if (line == null || line.length() <=0)
               break;
-            }
+            
+            if(line.charAt(0)=='q')
+                break;
 
             line = line.trim();
             if (line.length() == 0) {

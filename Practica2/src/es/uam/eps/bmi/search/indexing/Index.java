@@ -26,7 +26,7 @@ public interface Index {
      * @param outputIndexPath Ruta al directorio donde se almacenará el índice.
      * @param textParser Parser que se utilizará para leer los documentos.
      */
-    public void build(String inputCollectionPath, String outputIndexPath, TextParser textParser);
+    public void build(String inputCollectionPath, String outputIndex, TextParser textParser);
     
     /**
      * Carga en memoria un lector del índice almacenado en la ruta pasada
