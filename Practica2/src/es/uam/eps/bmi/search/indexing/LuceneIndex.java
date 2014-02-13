@@ -1,21 +1,13 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package es.uam.eps.bmi.search.indexing;
 
 import es.uam.eps.bmi.search.TextDocument;
 import es.uam.eps.bmi.search.parsing.HTMLSimpleParser;
-import es.uam.eps.bmi.search.parsing.HTMLSimpleParser;
 import es.uam.eps.bmi.search.parsing.TextParser;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -40,7 +32,11 @@ import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 
 /**
- * Clase que implementa la interfaz Index
+ * Clase que implementa la interfaz {@link Index} con las funciones de indexación
+ * de la API de Lucene.
+ * 
+ * @see <a href="https://lucene.apache.org/core/3_6_2/api/all">Lucene 3.6.2 API</a>
+ * 
  * @author Ari Handler - Adrián Lorenzo
  */
 public class LuceneIndex implements Index{

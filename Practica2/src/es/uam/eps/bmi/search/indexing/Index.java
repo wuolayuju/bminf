@@ -12,6 +12,7 @@ import java.util.List;
  * Interfaz que contiene los métodos básicos de un indexador sobre Lucene;
  * construir el índice en disco, cargarlo a RAM, obtener la ruta de un documento,
  * los postings de un determinado término, etc...
+ * 
  * @author Ari Handler - Adrián Lorenzo
  */
 public interface Index {
@@ -26,7 +27,7 @@ public interface Index {
      * @param outputIndexPath Ruta al directorio donde se almacenará el índice.
      * @param textParser Parser que se utilizará para leer los documentos.
      */
-    public void build(String inputCollectionPath, String outputIndex, TextParser textParser);
+    public void build(String inputCollectionPath, String outputIndexPath, TextParser textParser);
     
     /**
      * Carga en memoria un lector del índice almacenado en la ruta pasada

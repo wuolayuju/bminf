@@ -15,11 +15,10 @@ import org.jsoup.Jsoup;
 public class HTMLSimpleParser implements TextParser{
 
     /**
+     * Procesa un texto mediante el método estático parse de Jsoup.
      * 
-     * Procesa un texto mediante el método estático parse de Jsoup
-     * 
-     * @param text
-     * @return texto procesado
+     * @param text Texto para procesar.
+     * @return El texto pasado por Jsoup.
      */
     @Override
     public String parse(String text){

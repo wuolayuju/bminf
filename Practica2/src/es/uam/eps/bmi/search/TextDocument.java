@@ -4,6 +4,7 @@ import java.util.Objects;
 
 /**
  * Clase que representa la estructura básica de un documento de texto.
+ * 
  * @author Ari Handler - Adrián Lorenzo
  */
 public class TextDocument {
