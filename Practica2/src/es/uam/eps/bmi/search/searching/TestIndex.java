@@ -36,22 +36,27 @@ import java.util.logging.Logger;
  */
 public class TestIndex {
     
-    static <K,V extends Comparable<? super V>> SortedSet<Map.Entry<K,V>> entriesSortedByValues(Map<K,V> map) {
-            SortedSet<Map.Entry<K,V>> sortedEntries = new TreeSet<Map.Entry<K,V>>(
-                new Comparator<Map.Entry<K,V>>() {
-                    @Override public int compare(Map.Entry<K,V> e1, Map.Entry<K,V> e2) {
-                        List<Integer> l1 = (List<Integer>) e1.getValue();
-                        List<Integer> l2 = (List<Integer>) e2.getValue();
-                        int res = l1.get(0).compareTo(l2.get(0));
-                        return res != 0 ? res : 1; // Special fix to preserve items with equal values
-                    }
-                }
-            );
-            sortedEntries.addAll(map.entrySet());
-            return sortedEntries;
-    }
 
     public static void  main(String[] args) {
+        
+        class OrderedEntry implements Comparable{
+            public final String term;
+            public final int frequency;
+            public final int numDocs;
+
+            public OrderedEntry(String term, int frequency, int numDocs) {
+                this.term = term;
+                this.frequency = frequency;
+                this.numDocs = numDocs;
+            }
+
+            @Override
+            public int compareTo(Object o) {
+                OrderedEntry oe2 = (OrderedEntry) o;
+                return this.frequency - oe2.frequency;
+            }
+
+        }
     
         String usage = "java es.uam.eps.bmi.search.TestIndex"
                      + " [-index INDEX_PATH] [-docs DOCS_PATH] [-output OUTPUT_PATH]\n\n"
@@ -80,7 +85,7 @@ public class TestIndex {
         
         // Creación y carga en RAM del índice
         LuceneIndex index = new LuceneIndex();
-        //index.build(docsPath, indexPath, new HTMLSimpleParser());
+        index.build(docsPath, indexPath, new HTMLSimpleParser());
         index.load(indexPath);
         
         
@@ -89,6 +94,8 @@ public class TestIndex {
         Writer writer = null;
         
         Map<String, List<Integer>> mapTermFreqDocs = new TreeMap<>();
+        
+        List<OrderedEntry> listStats = new ArrayList<>();
         
         while(itrTerms.hasNext()) 
         {
@@ -105,10 +112,14 @@ public class TestIndex {
             // Numero de documentos en los que aparece el término
             int totalDocsTerm = postings.size();
             
+            // Inserción en la lista de estadísticas
+            OrderedEntry entry = new OrderedEntry(term, totalFreq, totalDocsTerm);
+            listStats.add(entry);
+            
             // Inserción en el árbol de estadísticas
-            List<Integer> values = new ArrayList<>();
-            values.add(totalFreq); values.add(totalDocsTerm);
-            mapTermFreqDocs.put(term, values);
+            //List<Integer> values = new ArrayList<>();
+            //values.add(totalFreq); values.add(totalDocsTerm);
+            //mapTermFreqDocs.put(term, values);
         }
         
         // Escritura en fichero de las estadísticas
@@ -118,19 +129,16 @@ public class TestIndex {
             Logger.getLogger(TestIndex.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        for (Entry<String, List<Integer>> entry = entriesSortedByValues(mapTermFreqDocs)) {
-            
-        }
-        
-        itrTerms = terms.listIterator();
-        while (itrTerms.hasNext()) {
-            String term = itrTerms.next();
-            List<Integer> freqDocs = mapTermFreqDocs.get(term);
+        for (OrderedEntry e : listStats) {
             try {
-                writer.write(term+" "+freqDocs.get(0)+" "+freqDocs.get(1)+"\n");
+                writer.write(e.term+" "+e.frequency+" "+e.numDocs+"\n");
             } catch (IOException ex) {
                 Logger.getLogger(TestIndex.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+    }
+
+    private static Entry<String, List<Integer>> entriesSortedByValues(Map<String, List<Integer>> mapTermFreqDocs) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

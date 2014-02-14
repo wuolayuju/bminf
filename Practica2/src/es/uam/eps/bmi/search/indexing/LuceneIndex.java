@@ -218,7 +218,7 @@ public class LuceneIndex implements Index{
             ZipEntry entry;
             while ((entry = zis.getNextEntry())!=null)
             {
-                String filePath = file.getPath()+"\\"+entry.getName();
+                String filePath = file.getPath()+"/"+entry.getName();
 
                 // make a new, empty document
                 Document doc = new Document();
