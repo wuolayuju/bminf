@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -35,19 +36,21 @@ import java.util.logging.Logger;
  */
 public class TestIndex {
     
-    class ValueComparator implements Comparator<List<Integer>> {
-
-        Map<String, List<Integer>> base;
-        public ValueComparator(Map<String, List<Integer>> base) {
-            this.base = base;
-        }
-
-        @Override
-        public int compare(List<Integer> o1, List<Integer> o2) {
-            return o1.get(0).compareTo(o2.get(0));
-        }
+    static <K,V extends Comparable<? super V>> SortedSet<Map.Entry<K,V>> entriesSortedByValues(Map<K,V> map) {
+            SortedSet<Map.Entry<K,V>> sortedEntries = new TreeSet<Map.Entry<K,V>>(
+                new Comparator<Map.Entry<K,V>>() {
+                    @Override public int compare(Map.Entry<K,V> e1, Map.Entry<K,V> e2) {
+                        List<Integer> l1 = (List<Integer>) e1.getValue();
+                        List<Integer> l2 = (List<Integer>) e2.getValue();
+                        int res = l1.get(0).compareTo(l2.get(0));
+                        return res != 0 ? res : 1; // Special fix to preserve items with equal values
+                    }
+                }
+            );
+            sortedEntries.addAll(map.entrySet());
+            return sortedEntries;
     }
-    
+
     public static void  main(String[] args) {
     
         String usage = "java es.uam.eps.bmi.search.TestIndex"
@@ -114,6 +117,11 @@ public class TestIndex {
         } catch (UnsupportedEncodingException | FileNotFoundException ex) {
             Logger.getLogger(TestIndex.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        for (Entry<String, List<Integer>> entry = entriesSortedByValues(mapTermFreqDocs)) {
+            
+        }
+        
         itrTerms = terms.listIterator();
         while (itrTerms.hasNext()) {
             String term = itrTerms.next();
@@ -125,5 +133,4 @@ public class TestIndex {
             }
         }
     }
-    
 }
