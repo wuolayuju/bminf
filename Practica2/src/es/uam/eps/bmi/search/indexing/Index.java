@@ -69,6 +69,4 @@ public interface Index {
      * @see Posting
      */
     public List<Posting> getTermPostings (String term);
-    
-    public List<Posting> getDocumentPostings (String documentId);
 }

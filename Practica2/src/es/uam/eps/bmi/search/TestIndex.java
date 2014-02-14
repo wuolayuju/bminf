@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package es.uam.eps.bmi.search.searching;
+package es.uam.eps.bmi.search;
 
 import es.uam.eps.bmi.search.ScoredTextDocument;
 import es.uam.eps.bmi.search.indexing.LuceneIndex;
@@ -37,7 +37,7 @@ import java.util.logging.Logger;
 public class TestIndex {
     
 
-    public static void  main(String[] args) {
+    public static void  main(String[] args) throws IOException {
         
         class OrderedEntry implements Comparable{
             public final String term;
@@ -53,7 +53,7 @@ public class TestIndex {
             @Override
             public int compareTo(Object o) {
                 OrderedEntry oe2 = (OrderedEntry) o;
-                return this.frequency - oe2.frequency;
+                return oe2.frequency - this.frequency;
             }
 
         }
@@ -85,7 +85,7 @@ public class TestIndex {
         
         // Creación y carga en RAM del índice
         LuceneIndex index = new LuceneIndex();
-        index.build(docsPath, indexPath, new HTMLSimpleParser());
+       // index.build(docsPath, indexPath, new HTMLSimpleParser());
         index.load(indexPath);
         
         
@@ -93,9 +93,7 @@ public class TestIndex {
         ListIterator<String> itrTerms = terms.listIterator();
         Writer writer = null;
         
-        Map<String, List<Integer>> mapTermFreqDocs = new TreeMap<>();
-        
-        List<OrderedEntry> listStats = new ArrayList<>();
+        TreeSet<OrderedEntry> treeStats = new TreeSet<>();
         
         while(itrTerms.hasNext()) 
         {
@@ -114,7 +112,7 @@ public class TestIndex {
             
             // Inserción en la lista de estadísticas
             OrderedEntry entry = new OrderedEntry(term, totalFreq, totalDocsTerm);
-            listStats.add(entry);
+            treeStats.add(entry);
             
             // Inserción en el árbol de estadísticas
             //List<Integer> values = new ArrayList<>();
@@ -129,13 +127,15 @@ public class TestIndex {
             Logger.getLogger(TestIndex.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        for (OrderedEntry e : listStats) {
+        for (OrderedEntry e : treeStats) {
             try {
                 writer.write(e.term+" "+e.frequency+" "+e.numDocs+"\n");
             } catch (IOException ex) {
                 Logger.getLogger(TestIndex.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+        
+        writer.close();
     }
 
     private static Entry<String, List<Integer>> entriesSortedByValues(Map<String, List<Integer>> mapTermFreqDocs) {

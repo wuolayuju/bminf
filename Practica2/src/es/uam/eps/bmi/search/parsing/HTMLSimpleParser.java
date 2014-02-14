@@ -7,6 +7,9 @@
 package es.uam.eps.bmi.search.parsing;
 
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.safety.Cleaner;
+import org.jsoup.safety.Whitelist;
 
 /**
  * Clase que representa la estructura básica de un documento de texto.
@@ -22,7 +25,9 @@ public class HTMLSimpleParser implements TextParser{
      */
     @Override
     public String parse(String text){
-        return Jsoup.parse(text).text();
+        Document doc = Jsoup.parse(text);
+        Cleaner cl = new Cleaner(Whitelist.none());
+        return cl.clean(doc).text();
     }
     
 }

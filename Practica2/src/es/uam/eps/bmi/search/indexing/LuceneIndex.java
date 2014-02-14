@@ -181,26 +181,6 @@ public class LuceneIndex implements Index{
         
         return listPosts;
     }
-
-    @Override
-    public List<Posting> getDocumentPostings(String documentId) {
-        List<Posting> listPosts = new ArrayList<>();
-        try {
-            TermFreqVector freqVector = indexReader.
-                    getTermFreqVector(
-                            Integer.parseInt(documentId),
-                            "contents");
-            
-            for (int i = 0; i < freqVector.size() ; i++) {
-                
-                //Posting post = new Posting(documentId, freqVector.)
-            }
-        } catch (IOException ex) {
-            Logger.getLogger(LuceneIndex.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        return listPosts;
-    }
     
     private void indexDocs(IndexWriter writer, File file, TextParser parser) throws IOException{
         // do not try to index files that cannot be read
@@ -253,6 +233,12 @@ public class LuceneIndex implements Index{
                     String chunk = new String(buffer, 0, len);
                     text += chunk;
                 }
+                
+                if (text.indexOf("<body") >= 0)
+                    text = text.substring(text.indexOf("<body"));
+                
+                //String text2 = parser.parse(text);
+                
                 doc.add(new Field("contents",parser.parse(text), Field.Store.YES, Field.Index.ANALYZED));
 
                 if (writer.getConfig().getOpenMode() == IndexWriterConfig.OpenMode.CREATE) {
