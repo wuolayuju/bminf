@@ -2,6 +2,7 @@ package es.uam.eps.bmi.search;
 
 import es.uam.eps.bmi.search.indexing.LuceneIndex;
 import es.uam.eps.bmi.search.indexing.Posting;
+import es.uam.eps.bmi.search.parsing.HTMLSimpleParser;
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -74,7 +75,7 @@ public class TestIndex {
         
         // Creación y carga en RAM del índice
         LuceneIndex index = new LuceneIndex();
-       // index.build(docsPath, indexPath, new HTMLSimpleParser());
+        index.build(docsPath, indexPath, new HTMLSimpleParser());
         index.load(indexPath);
         
         
