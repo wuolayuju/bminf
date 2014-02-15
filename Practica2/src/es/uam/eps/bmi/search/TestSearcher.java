@@ -1,7 +1,4 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package es.uam.eps.bmi.search;
 
 import es.uam.eps.bmi.search.indexing.LuceneIndex;
@@ -25,8 +22,9 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.util.Version;
 
 /**
- *
- * @author e185318
+ * Realiza un test de consultas sobre el motor de búsqueda
+ * imprimiendo el top5 y el top10 de cada una de las consultas
+ * @author Ari Handler - Adrián Lorenzo
  */
 public class TestSearcher {
     private static String field;

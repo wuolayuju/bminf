@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package es.uam.eps.bmi.search.indexing;
 
 import es.uam.eps.bmi.search.TextDocument;
@@ -19,10 +15,7 @@ public interface Index {
     
     /**
      * Construye en disco un índice dado un directorio de documentos que indexar.
-     * Si ocurre algún error (i.e. la ruta a los documentos no existe), se mostrará
-     * por el canal de errores la causa de dicho error. El modo de creación del 
-     * índice es siempre de creación, por lo que si existe un índice previo en 
-     * la ruta ouputIndexPath, se sobreescribirá dicho índice.
+     * 
      * @param inputCollectionPath Ruta a la colección de documentos a indexar.
      * @param outputIndexPath Ruta al directorio donde se almacenará el índice.
      * @param textParser Parser que se utilizará para leer los documentos.

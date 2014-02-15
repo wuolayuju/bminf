@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package es.uam.eps.bmi.search.searching;
 
 import es.uam.eps.bmi.search.ScoredTextDocument;
@@ -35,6 +31,7 @@ public class LuceneSearcher implements Searcher{
     private IndexSearcher searcher;
     private int MAX_RES = 5;
     
+
     @Override
     public void build(Index index)
     {  
@@ -45,11 +42,10 @@ public class LuceneSearcher implements Searcher{
     public List<ScoredTextDocument> search(String query) {
         List<ScoredTextDocument> listScored = new ArrayList<>();
         try {
-            /* ayayay tu bajaste desde el cielooo*/
-            /*que kohonen hacemos con el campo fieeeld*/
+            
             Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_36);
             QueryParser queryParser = new QueryParser(Version.LUCENE_36, "contents", analyzer);
-            //Query query = parser.parse(query);
+            
             
             Query q = queryParser.parse(query);
             System.out.println("Searching for: " + q.toString("contents"));

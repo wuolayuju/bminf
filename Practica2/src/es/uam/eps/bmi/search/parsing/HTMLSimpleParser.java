@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package es.uam.eps.bmi.search.parsing;
 
 import org.jsoup.Jsoup;
@@ -12,7 +6,7 @@ import org.jsoup.safety.Cleaner;
 import org.jsoup.safety.Whitelist;
 
 /**
- * Clase que representa la estructura básica de un documento de texto.
+ * Parser que limpia un texto de tags HTML 
  * @author Ari Handler - Adrián Lorenzo
  */
 public class HTMLSimpleParser implements TextParser{
