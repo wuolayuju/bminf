@@ -103,11 +103,6 @@ public class TestIndex {
             // Inserción en la lista de estadísticas
             OrderedEntry entry = new OrderedEntry(term, totalFreq, totalDocsTerm);
             treeStats.add(entry);
-            
-            // Inserción en el árbol de estadísticas
-            //List<Integer> values = new ArrayList<>();
-            //values.add(totalFreq); values.add(totalDocsTerm);
-            //mapTermFreqDocs.put(term, values);
         }
         
         // Escritura en fichero de las estadísticas

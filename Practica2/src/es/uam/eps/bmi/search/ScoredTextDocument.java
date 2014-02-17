@@ -8,7 +8,7 @@ package es.uam.eps.bmi.search;
 public class ScoredTextDocument implements Comparable{
 
     private final String documentId;
-    private double score;
+    private final double score;
 
     /**
      * Construye la puntuación de un documento

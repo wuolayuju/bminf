@@ -14,8 +14,8 @@ public class TextDocument {
 
     /**
      * Crea un nuevo documento dado un identificador y la ruta al mismo.
-     * @param id Número de identifiación del documento
-     * @param name Ruta completa del archivo
+     * @param id Número de identifiación del documento.
+     * @param name Ruta completa del archivo.
      */
     public TextDocument(String id, String name) {
         this.id = id;
@@ -29,6 +29,11 @@ public class TextDocument {
         return hash;
     }
 
+    /**
+     * Determina si un documento es igual a otro, comparando sus identificadores.
+     * @param obj Documento con el que comparar.
+     * @return True si coinciden sus respectivos identificadores, false en caso contrario.
+     */
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
@@ -42,17 +47,17 @@ public class TextDocument {
     }
     
     /**
-     * Devuelve la ruta completa del archivo
-     * @return Cadena de caracteres a la ruta
+     * Devuelve la ruta completa del archivo.
+     * @return Cadena de caracteres a la ruta.
      */
     public String getName() {
         return name;
     }
 
     /**
-     * Devuelve el identificador del archivo
+     * Devuelve el identificador del archivo.
      *
-     * @return Cadena de caracteres del identificador
+     * @return Cadena de caracteres del identificador.
      */
     public String getId() {
         return id;

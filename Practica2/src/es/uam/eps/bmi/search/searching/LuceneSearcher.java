@@ -22,8 +22,10 @@ import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.util.Version;
 
 /**
- * Clase que implementa la interfaz Searcher
+ * Clase que implementa la interfaz Searcher mediante el uso de los métodos
+ * provistos por la API de <a href="https://lucene.apache.org/core/3_6_2/api/all">Lucene 3.6.2</a>.
  * @author Ari Handler - Adrián Lorenzo
+ * @see <a href="https://lucene.apache.org/core/3_6_2/api/all">Lucene 3.6.2 API</a>
  */
 public class LuceneSearcher implements Searcher{
 
@@ -70,8 +72,8 @@ public class LuceneSearcher implements Searcher{
     }
 
     /**
-     * Define la cantidad de resultados devueltos al realizar una búsqueda
-     * @param n Nuevo límite de resultados
+     * Define la cantidad de resultados devueltos al realizar una búsqueda.
+     * @param n Nuevo límite de resultados.
      */
     public void setTopResults(int n) {
         this.MAX_RES = n;
