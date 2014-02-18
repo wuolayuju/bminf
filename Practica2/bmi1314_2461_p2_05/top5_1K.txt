@@ -1,0 +1,13 @@
+1	clueweb09-en0010-79-2218	clueweb09-enwp01-59-16163	clueweb09-enwp00-39-9864	clueweb09-enwp00-81-12487	clueweb09-enwp00-04-9625
+Precision: 0.4
+2	clueweb09-en0006-85-33176	clueweb09-en0005-00-22740	clueweb09-en0004-03-39951	clueweb09-en0008-73-34552	clueweb09-en0000-99-14575
+Precision: 0.0
+3	clueweb09-en0002-44-10207	clueweb09-en0008-14-3912	clueweb09-en0002-90-13719	clueweb09-en0010-68-5220	clueweb09-en0002-44-10184
+Precision: 0.4
+4	clueweb09-en0010-46-16451	clueweb09-en0008-76-36759	clueweb09-en0001-14-26411	clueweb09-en0000-22-28298	clueweb09-en0005-22-25429
+Precision: 0.0
+5	clueweb09-en0007-60-34059	clueweb09-en0004-19-8697	clueweb09-en0003-77-29412	clueweb09-en0000-37-6357	clueweb09-enwp02-27-3432
+Precision: 0.0
+
+
+Precision total: 0.16
