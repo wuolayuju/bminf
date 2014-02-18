@@ -84,6 +84,8 @@ public class TestSearcher {
 
                     if(line == null)
                             break;
+                    
+                    line = line.substring(line.indexOf(":")+1);
 
                     QueryParser parser = new QueryParser(Version.LUCENE_31, "contents", 
                             new StandardAnalyzer(Version.LUCENE_31));
@@ -103,8 +105,9 @@ public class TestSearcher {
                     {
                         ScoredTextDocument doc = itr.next();
                         writerTop.write("\t"+index.getDocument(doc.getDocumentId()).getName()+ " Score: "+
-                                doc.getScore()+"\n");
+                                doc.getScore()+"\t");
                     }
+                    writerTop.write("\n");
                     indexQuery++;
                     
                 }
