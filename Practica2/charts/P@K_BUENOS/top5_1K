@@ -1,5 +1,13 @@
-1	C:\Users\UAM\Downloads\clueweb-1K\clueweb-1K\docs.zip/clueweb09-en0010-79-2218.html Score: 0.7383664846420288		C:\Users\UAM\Downloads\clueweb-1K\clueweb-1K\docs.zip/clueweb09-enwp01-59-16163.html Score: 0.6601191759109497		C:\Users\UAM\Downloads\clueweb-1K\clueweb-1K\docs.zip/clueweb09-enwp00-39-9864.html Score: 0.6594248414039612		C:\Users\UAM\Downloads\clueweb-1K\clueweb-1K\docs.zip/clueweb09-enwp00-81-12487.html Score: 0.6594248414039612		C:\Users\UAM\Downloads\clueweb-1K\clueweb-1K\docs.zip/clueweb09-enwp00-04-9625.html Score: 0.6594248414039612	
-2	C:\Users\UAM\Downloads\clueweb-1K\clueweb-1K\docs.zip/clueweb09-en0006-85-33176.html Score: 1.1765767335891724		C:\Users\UAM\Downloads\clueweb-1K\clueweb-1K\docs.zip/clueweb09-en0005-00-22740.html Score: 1.0256651639938354		C:\Users\UAM\Downloads\clueweb-1K\clueweb-1K\docs.zip/clueweb09-en0004-03-39951.html Score: 1.0050175189971924		C:\Users\UAM\Downloads\clueweb-1K\clueweb-1K\docs.zip/clueweb09-en0008-73-34552.html Score: 0.918115496635437		C:\Users\UAM\Downloads\clueweb-1K\clueweb-1K\docs.zip/clueweb09-en0000-99-14575.html Score: 0.909503698348999	
-3	C:\Users\UAM\Downloads\clueweb-1K\clueweb-1K\docs.zip/clueweb09-en0002-44-10207.html Score: 0.8557798862457275		C:\Users\UAM\Downloads\clueweb-1K\clueweb-1K\docs.zip/clueweb09-en0008-14-3912.html Score: 0.7868342995643616		C:\Users\UAM\Downloads\clueweb-1K\clueweb-1K\docs.zip/clueweb09-en0002-90-13719.html Score: 0.7187033295631409		C:\Users\UAM\Downloads\clueweb-1K\clueweb-1K\docs.zip/clueweb09-en0010-68-5220.html Score: 0.7040807604789734		C:\Users\UAM\Downloads\clueweb-1K\clueweb-1K\docs.zip/clueweb09-en0002-44-10184.html Score: 0.6749242544174194	
-4	C:\Users\UAM\Downloads\clueweb-1K\clueweb-1K\docs.zip/clueweb09-en0010-46-16451.html Score: 1.3099113702774048		C:\Users\UAM\Downloads\clueweb-1K\clueweb-1K\docs.zip/clueweb09-en0008-76-36759.html Score: 1.286307454109192		C:\Users\UAM\Downloads\clueweb-1K\clueweb-1K\docs.zip/clueweb09-en0001-14-26411.html Score: 1.1433730125427246		C:\Users\UAM\Downloads\clueweb-1K\clueweb-1K\docs.zip/clueweb09-en0000-22-28298.html Score: 1.1428031921386719		C:\Users\UAM\Downloads\clueweb-1K\clueweb-1K\docs.zip/clueweb09-en0005-22-25429.html Score: 0.952431321144104	
-5	C:\Users\UAM\Downloads\clueweb-1K\clueweb-1K\docs.zip/clueweb09-en0007-60-34059.html Score: 0.9205839037895203		C:\Users\UAM\Downloads\clueweb-1K\clueweb-1K\docs.zip/clueweb09-en0004-19-8697.html Score: 0.9141156673431396		C:\Users\UAM\Downloads\clueweb-1K\clueweb-1K\docs.zip/clueweb09-en0003-77-29412.html Score: 0.8452692627906799		C:\Users\UAM\Downloads\clueweb-1K\clueweb-1K\docs.zip/clueweb09-en0000-37-6357.html Score: 0.8323764801025391		C:\Users\UAM\Downloads\clueweb-1K\clueweb-1K\docs.zip/clueweb09-enwp02-27-3432.html Score: 0.7695639729499817	
+1	clueweb09-en0010-79-2218	clueweb09-enwp01-59-16163	clueweb09-enwp00-39-9864	clueweb09-enwp00-81-12487	clueweb09-enwp00-04-9625
+Precision: 0.4
+2	clueweb09-en0006-85-33176	clueweb09-en0005-00-22740	clueweb09-en0004-03-39951	clueweb09-en0008-73-34552	clueweb09-en0000-99-14575
+Precision: 0.0
+3	clueweb09-en0002-44-10207	clueweb09-en0008-14-3912	clueweb09-en0002-90-13719	clueweb09-en0010-68-5220	clueweb09-en0002-44-10184
+Precision: 0.4
+4	clueweb09-en0010-46-16451	clueweb09-en0008-76-36759	clueweb09-en0001-14-26411	clueweb09-en0000-22-28298	clueweb09-en0005-22-25429
+Precision: 0.0
+5	clueweb09-en0007-60-34059	clueweb09-en0004-19-8697	clueweb09-en0003-77-29412	clueweb09-en0000-37-6357	clueweb09-enwp02-27-3432
+Precision: 0.0
+
+
+Precision total: 0.16

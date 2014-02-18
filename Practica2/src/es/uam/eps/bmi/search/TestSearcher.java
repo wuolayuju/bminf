@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.ListIterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -39,6 +41,7 @@ public class TestSearcher {
        String indexPath = "index";
        String outputFile = "output";
        String queriesFile = "queries";
+       String relevanceFile = "relevance";
 
        for(int i=0;i<args.length;i++) {
            if(args[i].compareTo("-index")==0) {
@@ -53,6 +56,10 @@ public class TestSearcher {
                queriesFile = args[i+1];
                i++;
            }
+           if(args[i].compareTo("-relevance")==0) {
+             relevanceFile = args[i+1];
+               i++;
+           }
        }
        LuceneIndex index = new LuceneIndex();
        LuceneSearcher searcher = new LuceneSearcher();
@@ -60,6 +67,7 @@ public class TestSearcher {
        index.load(indexPath);
        BufferedWriter writerTop;
        BufferedWriter writerTop10;
+       BufferedReader readerRelevance;
        searcher.build(index);
        for(int i=0;i<2;i++)
        {
@@ -75,9 +83,13 @@ public class TestSearcher {
                     searcher.setTopResults(10);
                 }
 
+                readerRelevance = new BufferedReader(
+                     new InputStreamReader(new FileInputStream(relevanceFile), "UTF-8"));
+                
                 BufferedReader in = new BufferedReader(
                      new InputStreamReader(new FileInputStream(queriesFile), "UTF-8"));
                 int indexQuery = 1;
+                double totalPatk = 0;
                 while (true) {
 
                     String line = in.readLine();
@@ -92,25 +104,36 @@ public class TestSearcher {
 
                     Query query = parser.parse(line);
 
-
-
-
-                    ListIterator<ScoredTextDocument> itr =searcher.search(line).listIterator();
+                    List<ScoredTextDocument> listResults = searcher.search(line);
+                    ListIterator<ScoredTextDocument> itr = listResults.listIterator();
                     
-
+                    String lineRelevString = readerRelevance.readLine();
+                    List<String> relev = Arrays.asList(lineRelevString.split("\t"));
+                    
                     // Escritura en fichero de las estadísticas
 
+                    double n_conj = 0;
                     writerTop.write(""+indexQuery);
                     while(itr.hasNext())
                     {
                         ScoredTextDocument doc = itr.next();
-                        writerTop.write("\t"+index.getDocument(doc.getDocumentId()).getName()+ " Score: "+
-                                doc.getScore()+"\t");
+                        String fullDocPath = index.getDocument(doc.getDocumentId()).getName();
+                        String docPath = fullDocPath.substring(fullDocPath.indexOf("zip")+4).replace(".html", "");
+                        writerTop.write("\t"+docPath);
+                        if (relev.contains(docPath)) {
+                            n_conj++;
+                        }
                     }
-                    writerTop.write("\n");
+                    
+                    double patk = n_conj / (i==0 ? 5 : 10);
+                    totalPatk += patk;
+                    writerTop.write("\nPrecision: "+patk+"\n");
                     indexQuery++;
                     
                 }
+                
+                totalPatk /= indexQuery-1;
+                writerTop.write("\n\nPrecision total: "+totalPatk+"\n");
                 writerTop.close();
             }catch(UnsupportedEncodingException | FileNotFoundException ex) {
                 Logger.getLogger(TestIndex.class.getName()).log(Level.SEVERE, null, ex);
