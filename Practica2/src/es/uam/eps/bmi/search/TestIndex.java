@@ -19,8 +19,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Realiza un test de creación de un índice a través 
- * del directorio de documentos 
+ * Realiza un test de creación de un índice a través de un directorio de documentos 
+ * comprimidos en formato ZIP.
  * introducido como parámetro
  * @author Ari Handler - Adrián Lorenzo
  */
@@ -81,7 +81,7 @@ public class TestIndex {
         
         List<String> terms = index.getTerms();
         ListIterator<String> itrTerms = terms.listIterator();
-        Writer writer = null;
+        Writer writer;
         
         TreeSet<OrderedEntry> treeStats = new TreeSet<>();
         
@@ -106,12 +106,8 @@ public class TestIndex {
         }
         
         // Escritura en fichero de las estadísticas
-        try {
-            writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile), "utf-8"));
-        } catch (UnsupportedEncodingException | FileNotFoundException ex) {
-            Logger.getLogger(TestIndex.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
+        writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile), "utf-8"));
+
         for (OrderedEntry e : treeStats) {
             try {
                 writer.write(e.term+" "+e.frequency+" "+e.numDocs+"\n");
@@ -121,9 +117,5 @@ public class TestIndex {
         }
         
         writer.close();
-    }
-
-    private static Entry<String, List<Integer>> entriesSortedByValues(Map<String, List<Integer>> mapTermFreqDocs) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
