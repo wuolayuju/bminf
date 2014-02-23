@@ -8,7 +8,15 @@ package es.uam.eps.bmi.search.indexing;
 
 import es.uam.eps.bmi.search.TextDocument;
 import es.uam.eps.bmi.search.parsing.TextParser;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 /**
  *
@@ -16,9 +24,49 @@ import java.util.List;
  */
 public class BasicIndex implements Index{
 
+    private List<String> terms;
+    private static int CUR_DOC_ID = 0;
+    
     @Override
     public void build(String inputCollectionPath, String outputIndexPath, TextParser textParser) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            // Apertura de la carpeta de documentos
+            if (inputCollectionPath == null){
+                System.err.println("No documents directory provided");
+                return;
+            }
+            
+            final File docDir = new File(inputCollectionPath);
+            if (!docDir.exists() || !docDir.canRead()) {
+                System.err.println("Document directory '" +docDir.getAbsolutePath()+ "' does not exist or is not readable, please check the path");
+                return;
+            }
+            
+            // Creación de la carpeta de indexación
+            if (outputIndexPath == null) {
+                System.err.println("No index path provided");
+                return;
+            }
+            
+            System.out.println("Indexing to directory '" + outputIndexPath + "'...");
+            
+            // Se abre el stream de lectura del fichero comprimido
+            ZipInputStream zis = new ZipInputStream(new FileInputStream(docDir));
+            
+            ZipEntry entry;
+            while ((entry = zis.getNextEntry())!=null)
+            {
+                String filePath = docDir.getPath()+"/"+entry.getName();
+                
+                // make a new, empty document
+                TextDocument doc = new TextDocument(Integer.toString(CUR_DOC_ID++), filePath);
+                
+            }
+            zis.close();
+            
+        } catch (IOException ex) {
+            Logger.getLogger(BasicIndex.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     @Override
