@@ -1,10 +1,7 @@
 bminf
 =====
-Para Ejercicio 3:
+FastUtil: JAR para acceso a grandes estructuras en Java.
+http://fastutil.di.unimi.it/
 
-for (String term: index.getTerms()){
-    for (Posting post: index.getTermPostings(term){
-        freqTerm += post.getTermFrequency();
-    }
-    numDocsTerm = index.getTermPostings().size();
-}
+AutoJar: Minimizador de librerias JAR.
+http://autojar.sourceforge.net/en_d/index.html
