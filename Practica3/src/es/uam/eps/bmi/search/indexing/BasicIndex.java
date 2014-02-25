@@ -24,7 +24,6 @@ import java.util.zip.ZipInputStream;
  */
 public class BasicIndex implements Index{
 
-    private List<String> terms;
     private static int CUR_DOC_ID = 0;
     
     @Override
@@ -64,6 +63,11 @@ public class BasicIndex implements Index{
                 // Lectura del contenido del documento
                 String contents = parseEntry(zis, textParser);
 
+                String[] clean_contents = contents.split("[^0-9][.,]|[.,][^0-9]|\\s+|(?![.,])\\p{Punct}");
+                
+                String[] tokenized_contents = contents.split(" ");
+                
+                System.out.println();
             }
             zis.close();
             
