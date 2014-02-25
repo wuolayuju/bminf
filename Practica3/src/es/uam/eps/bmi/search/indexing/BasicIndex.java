@@ -7,10 +7,10 @@
 package es.uam.eps.bmi.search.indexing;
 
 import es.uam.eps.bmi.search.TextDocument;
+import es.uam.eps.bmi.search.parsing.HTMLSimpleParser;
 import es.uam.eps.bmi.search.parsing.TextParser;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
@@ -61,6 +61,9 @@ public class BasicIndex implements Index{
                 // make a new, empty document
                 TextDocument doc = new TextDocument(Integer.toString(CUR_DOC_ID++), filePath);
                 
+                // Lectura del contenido del documento
+                String contents = parseEntry(zis, textParser);
+
             }
             zis.close();
             
@@ -92,6 +95,21 @@ public class BasicIndex implements Index{
     @Override
     public List<Posting> getTermPostings(String term) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    private String parseEntry(ZipInputStream zis, TextParser parser) throws IOException {
+        int len;
+        byte[] buffer = new byte[4096];
+        String text = "";
+        while ((len = zis.read(buffer)) > 0) {
+            String chunk = new String(buffer, 0, len);
+            text += chunk;
+        }
+
+        if (text.indexOf("<body") >= 0)
+            text = text.substring(text.indexOf("<body"));
+
+        return parser.parse(text);
     }
     
 }
