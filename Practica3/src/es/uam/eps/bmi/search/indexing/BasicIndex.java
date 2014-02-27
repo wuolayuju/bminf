@@ -65,6 +65,7 @@ public class BasicIndex implements Index{
             ZipEntry entry;
             while ((entry = zis.getNextEntry())!=null)
             {   
+                System.out.println("Indexing document "+entry.getName());
                 // make a new, empty document
                 TextDocument doc = new TextDocument(Integer.toString(CUR_DOC_ID++), entry.getName());
                 documents.add(doc);
@@ -82,6 +83,10 @@ public class BasicIndex implements Index{
             // Escritura del indice en disco con FASTUTIL
             indexToDisk(outputIndexPath);
             
+            // Eliminar las referencias en RAM
+            indexMap = null;
+            documents = null;
+            
         } catch (IOException ex) {
             Logger.getLogger(BasicIndex.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -89,22 +94,37 @@ public class BasicIndex implements Index{
 
     @Override
     public void load(String indexPath) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            this.indexMap = 
+                    (HashMap<String, List<Posting>>) BinIO.loadObject(
+                            new File(indexPath+File.separator+"index.st"));
+            this.documents = 
+                    (List<TextDocument>) BinIO.loadObject(
+                            new File(indexPath+File.separator+"docs.st"));
+        } catch (ClassNotFoundException | IOException ex) {
+            Logger.getLogger(BasicIndex.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     @Override
     public List<String> getDocumentIds() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        ArrayList<String> docIds = new ArrayList<>();
+        Iterator<TextDocument> itr = documents.listIterator();
+        while(itr.hasNext()) {
+            docIds.add(itr.next().getId());
+        }
+        
+        return docIds.isEmpty() ? null : docIds;
     }
 
     @Override
     public TextDocument getDocument(String documentId) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return documents.get(documents.indexOf(documentId));
     }
 
     @Override
     public List<String> getTerms() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new ArrayList<>(indexMap.keySet());
     }
 
     @Override
@@ -184,7 +204,8 @@ public class BasicIndex implements Index{
     }
     
     private void indexToDisk(String indexPath) throws IOException {
-        BinIO.storeObject(this.indexMap, new File(indexPath+File.pathSeparator+"index.st"));
-        BinIO.storeObject(this.documents, new File(indexPath+File.pathSeparator+"docs.st"));
+        
+        BinIO.storeObject(this.indexMap, new File(indexPath+File.separator+"index.st"));
+        BinIO.storeObject(this.documents, new File(indexPath+File.separator+"docs.st"));
     }
 }

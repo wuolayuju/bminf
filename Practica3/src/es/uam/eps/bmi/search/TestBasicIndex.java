@@ -41,6 +41,8 @@ public class TestBasicIndex {
         
         index.build(docsPath, indexPath, new HTMLSimpleParser());
         
+        index.load(indexPath);
+        
         List<Posting> termPostings = index.getTermPostings("family");
         
         System.out.println();
