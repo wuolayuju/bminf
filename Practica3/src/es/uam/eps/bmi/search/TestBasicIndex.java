@@ -7,8 +7,10 @@
 package es.uam.eps.bmi.search;
 
 import es.uam.eps.bmi.search.indexing.BasicIndex;
+import es.uam.eps.bmi.search.indexing.Posting;
 import es.uam.eps.bmi.search.parsing.HTMLSimpleParser;
 import java.io.IOException;
+import java.util.List;
 
 /**
  *
@@ -38,5 +40,9 @@ public class TestBasicIndex {
         BasicIndex index = new BasicIndex();
         
         index.build(docsPath, indexPath, new HTMLSimpleParser());
+        
+        List<Posting> termPostings = index.getTermPostings("family");
+        
+        System.out.println();
      }
 }

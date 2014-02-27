@@ -1,5 +1,6 @@
 package es.uam.eps.bmi.search.indexing;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -17,10 +18,10 @@ import java.util.List;
  *             
  * @author Ari Handler - Adrián Lorenzo
  */
-public class Posting {
+public class Posting implements Serializable{
     
     private final String documentId;
-    private final int termFrequency;
+    private int termFrequency;
     private final List<Long> termPositions;
 
     public Posting(String documentId, int termFrequency, List<Long> termPositions) {
@@ -55,6 +56,16 @@ public class Posting {
      */
     public String getDocumentId() {
         return documentId;
+    }
+    
+    /**
+     * Añade una nueva posición del término, incrementando en 1 la frecuencia
+     * del término
+     * @param newPosition Siguiente aparición del término en el documento.
+     */
+    public void incrFrequency(long newPosition) {
+        termPositions.add(newPosition);
+        termFrequency++;
     }
 
 }
