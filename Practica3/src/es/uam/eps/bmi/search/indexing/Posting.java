@@ -20,7 +20,7 @@ import java.util.List;
 public class Posting {
     
     private final String documentId;
-    private final int termFrequency;
+    private int termFrequency;
     private final List<Long> termPositions;
 
     public Posting(String documentId, int termFrequency, List<Long> termPositions) {
@@ -55,6 +55,16 @@ public class Posting {
      */
     public String getDocumentId() {
         return documentId;
+    }
+    
+    /**
+     * Añade una nueva posición del término, incrementando en 1 la frecuencia
+     * del término
+     * @param newPosition Siguiente aparición del término en el documento.
+     */
+    public void incrFrequency(long newPosition) {
+        termPositions.add(newPosition);
+        termFrequency++;
     }
 
 }
