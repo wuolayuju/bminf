@@ -1,5 +1,6 @@
 package es.uam.eps.bmi.search.indexing;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -17,7 +18,7 @@ import java.util.List;
  *             
  * @author Ari Handler - Adrián Lorenzo
  */
-public class Posting {
+public class Posting implements Serializable{
     
     private final String documentId;
     private int termFrequency;

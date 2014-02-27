@@ -19,6 +19,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import it.unimi.dsi.fastutil.io.BinIO;
 
 /**
  *
@@ -77,6 +78,9 @@ public class BasicIndex implements Index{
                 indexDoc(doc, contents);
             }
             zis.close();
+            
+            // Escritura del indice en disco con FASTUTIL
+            indexToDisk(outputIndexPath);
             
         } catch (IOException ex) {
             Logger.getLogger(BasicIndex.class.getName()).log(Level.SEVERE, null, ex);
@@ -177,5 +181,10 @@ public class BasicIndex implements Index{
             // al HashMap
             indexMap.put(term, oldPostings);
         }
+    }
+    
+    private void indexToDisk(String indexPath) throws IOException {
+        BinIO.storeObject(this.indexMap, new File(indexPath+File.pathSeparator+"index.st"));
+        BinIO.storeObject(this.documents, new File(indexPath+File.pathSeparator+"docs.st"));
     }
 }

@@ -1,5 +1,6 @@
 package es.uam.eps.bmi.search;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
@@ -7,7 +8,7 @@ import java.util.Objects;
  * 
  * @author Ari Handler - Adrián Lorenzo
  */
-public class TextDocument {
+public class TextDocument implements Serializable{
     
     private final String id;
     private final String name;
