@@ -58,27 +58,24 @@ public class BasicIndex implements Index{
             indexMap = new HashMap<>();
             // Creacion de la lista de documentos indexados
             documents = new ArrayList<>();
-            
-            // Se abre el stream de lectura del fichero comprimido
-            ZipInputStream zis = new ZipInputStream(new FileInputStream(docDir));
-            
-            ZipEntry entry;
-            while ((entry = zis.getNextEntry())!=null)
-            {   
-                System.out.println("Indexing document "+entry.getName());
-                // make a new, empty document
-                TextDocument doc = new TextDocument(Integer.toString(CUR_DOC_ID++), entry.getName());
-                documents.add(doc);
-                
-                // Lectura del contenido del documento.
-                // Se eliminan los simbolos de puntuación y cualquier otro
-                // término no alfanumérico.
-                String[] contents = parseEntryToArray(zis, textParser);
-                
-                // Indexación de los contenidos del documento
-                indexDoc(doc, contents);
+            try (ZipInputStream zis = new ZipInputStream(new FileInputStream(docDir))) {
+                ZipEntry entry;
+                while ((entry = zis.getNextEntry())!=null)
+                {
+                    System.out.println("Indexing document "+entry.getName()+" ...");
+                    // make a new, empty document
+                    TextDocument doc = new TextDocument(Integer.toString(CUR_DOC_ID++), entry.getName());
+                    documents.add(doc);
+                    
+                    // Lectura del contenido del documento.
+                    // Se eliminan los simbolos de puntuación y cualquier otro
+                    // término no alfanumérico.
+                    String[] contents = parseEntryToArray(zis, textParser);
+                    
+                    // Indexación de los contenidos del documento
+                    indexDoc(doc, contents);
+                }
             }
-            zis.close();
             
             // Escritura del indice en disco con FASTUTIL
             indexToDisk(outputIndexPath);
@@ -119,7 +116,7 @@ public class BasicIndex implements Index{
 
     @Override
     public TextDocument getDocument(String documentId) {
-        return documents.get(documents.indexOf(documentId));
+        return documents.get(documents.indexOf(new TextDocument(documentId, null)));
     }
 
     @Override
@@ -144,11 +141,7 @@ public class BasicIndex implements Index{
             text += chunk;
         }
 
-        if (text.indexOf("<HEAD") >= 0)
-            text = text.substring(text.indexOf("<HEAD"));
-
         text = parser.parse(text);
-        text = text.replaceAll("[^a-zA-Z0-9\\s]", "").toLowerCase();
         
         return text.split(" ");
     }

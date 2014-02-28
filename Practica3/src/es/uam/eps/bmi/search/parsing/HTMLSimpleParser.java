@@ -26,9 +26,15 @@ public class HTMLSimpleParser implements TextParser{
      */
     @Override
     public String parse(String text){
+        text = text.toLowerCase();
+        if (text.indexOf("<head") >= 0)
+            text = text.substring(text.indexOf("<head"));
         Document doc = Jsoup.parse(text);
         Cleaner cl = new Cleaner(Whitelist.none());
-        return cl.clean(doc).text();
+        text = cl.clean(doc).text();
+        text = text.replaceAll("[^a-zA-Z0-9\\s]", " ");
+        text = text.replaceAll("\\s+\\s", " ");
+        return text;
     }
     
 }

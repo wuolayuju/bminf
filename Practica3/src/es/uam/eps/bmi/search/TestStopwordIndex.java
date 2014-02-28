@@ -6,9 +6,9 @@
 
 package es.uam.eps.bmi.search;
 
-import es.uam.eps.bmi.search.indexing.BasicIndex;
+import es.uam.eps.bmi.search.indexing.StopwordIndex;
 import es.uam.eps.bmi.search.indexing.Posting;
-import es.uam.eps.bmi.search.parsing.HTMLSimpleParser;
+import es.uam.eps.bmi.search.parsing.HTMLStopwordsParser;
 import java.io.IOException;
 import java.util.List;
 
@@ -16,15 +16,16 @@ import java.util.List;
  *
  * @author ari.handler
  */
-public class TestBasicIndex {
+public class TestStopwordIndex {
      public static void  main(String[] args) throws IOException {
         String usage = "java es.uam.eps.bmi.search.TestIndex"
-                 + " [-index INDEX_PATH] [-docs DOCS_PATH] \n\n"
+                 + " [-index INDEX_PATH] [-docs DOCS_PATH] [-stopwords STOP_PATH]\n\n"
                  + "This indexes the documents in DOCS_PATH, creating a Lucene index"
                  + "in INDEX_PATH, bringing it then into RAM.";
         
         String indexPath = "index";
         String docsPath = "docs";
+        String stopPath = "stopwords";
         
         for(int i=0;i<args.length;i++) {
             if(args[i].compareTo("-index")==0) {
@@ -35,11 +36,15 @@ public class TestBasicIndex {
                 docsPath = args[i+1];
                 i++;
             }
+            if(args[i].compareTo("-stopwords")==0) {
+                stopPath = args[i+1];
+                i++;
+            }
         }
         
-        BasicIndex index = new BasicIndex();
+        StopwordIndex index = new StopwordIndex();
         
-        index.build(docsPath, indexPath, new HTMLSimpleParser());
+        //index.build(docsPath, indexPath, new HTMLStopwordsParser(stopPath));
         
         index.load(indexPath);
         
@@ -47,7 +52,7 @@ public class TestBasicIndex {
         
         List<Posting> termPostings = index.getTermPostings(terms.get(terms.indexOf("family")));
         
-        Posting post1 = termPostings.get(0);
+        Posting post1 = termPostings.get(1);
         
         TextDocument doc = index.getDocument(post1.getDocumentId());
         
