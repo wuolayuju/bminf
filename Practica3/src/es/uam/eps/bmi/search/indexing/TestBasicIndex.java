@@ -4,11 +4,12 @@
  * and open the template in the editor.
  */
 
-package es.uam.eps.bmi.search;
+package es.uam.eps.bmi.search.indexing;
 
+import es.uam.eps.bmi.search.TextDocument;
+import es.uam.eps.bmi.search.indexing.BasicIndex;
 import es.uam.eps.bmi.search.indexing.Posting;
-import es.uam.eps.bmi.search.indexing.StemIndex;
-import es.uam.eps.bmi.search.parsing.HTMLStemParser;
+import es.uam.eps.bmi.search.parsing.HTMLSimpleParser;
 import java.io.IOException;
 import java.util.List;
 
@@ -16,16 +17,15 @@ import java.util.List;
  *
  * @author ari.handler
  */
-public class TestStemIndex {
+public class TestBasicIndex {
      public static void  main(String[] args) throws IOException {
         String usage = "java es.uam.eps.bmi.search.TestIndex"
-                 + " [-index INDEX_PATH] [-docs DOCS_PATH] [-stemmer STEMMER]\n\n"
+                 + " [-index INDEX_PATH] [-docs DOCS_PATH] \n\n"
                  + "This indexes the documents in DOCS_PATH, creating a Lucene index"
                  + "in INDEX_PATH, bringing it then into RAM.";
         
         String indexPath = "index";
         String docsPath = "docs";
-        String stemmer = HTMLStemParser.ENGLISH_STEMMER;
         
         for(int i=0;i<args.length;i++) {
             if(args[i].compareTo("-index")==0) {
@@ -36,15 +36,11 @@ public class TestStemIndex {
                 docsPath = args[i+1];
                 i++;
             }
-            if(args[i].compareTo("-stemmer")==0) {
-                stemmer = args[i+1];
-                i++;
-            }
         }
         
-        StemIndex index = new StemIndex();
+        BasicIndex index = new BasicIndex();
         
-        index.build(docsPath, indexPath, new HTMLStemParser(stemmer));
+        index.build(docsPath, indexPath, new HTMLSimpleParser());
         
         index.load(indexPath);
         
@@ -52,7 +48,7 @@ public class TestStemIndex {
         
         List<Posting> termPostings = index.getTermPostings(terms.get(terms.indexOf("family")));
         
-        Posting post1 = termPostings.get(1);
+        Posting post1 = termPostings.get(0);
         
         TextDocument doc = index.getDocument(post1.getDocumentId());
         

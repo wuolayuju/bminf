@@ -4,11 +4,10 @@
  * and open the template in the editor.
  */
 
-package es.uam.eps.bmi.search;
+package es.uam.eps.bmi.search.indexing;
 
-import es.uam.eps.bmi.search.indexing.StopwordIndex;
-import es.uam.eps.bmi.search.indexing.Posting;
-import es.uam.eps.bmi.search.parsing.HTMLStopwordsParser;
+import es.uam.eps.bmi.search.TextDocument;
+import es.uam.eps.bmi.search.parsing.HTMLStemParser;
 import java.io.IOException;
 import java.util.List;
 
@@ -16,16 +15,16 @@ import java.util.List;
  *
  * @author ari.handler
  */
-public class TestStopwordIndex {
+public class TestStemIndex {
      public static void  main(String[] args) throws IOException {
         String usage = "java es.uam.eps.bmi.search.TestIndex"
-                 + " [-index INDEX_PATH] [-docs DOCS_PATH] [-stopwords STOP_PATH]\n\n"
+                 + " [-index INDEX_PATH] [-docs DOCS_PATH] [-stemmer STEMMER]\n\n"
                  + "This indexes the documents in DOCS_PATH, creating a Lucene index"
                  + "in INDEX_PATH, bringing it then into RAM.";
         
         String indexPath = "index";
         String docsPath = "docs";
-        String stopPath = "stopwords";
+        String stemmer = HTMLStemParser.ENGLISH_STEMMER;
         
         for(int i=0;i<args.length;i++) {
             if(args[i].compareTo("-index")==0) {
@@ -36,15 +35,15 @@ public class TestStopwordIndex {
                 docsPath = args[i+1];
                 i++;
             }
-            if(args[i].compareTo("-stopwords")==0) {
-                stopPath = args[i+1];
+            if(args[i].compareTo("-stemmer")==0) {
+                stemmer = args[i+1];
                 i++;
             }
         }
         
-        StopwordIndex index = new StopwordIndex();
+        StemIndex index = new StemIndex();
         
-        //index.build(docsPath, indexPath, new HTMLStopwordsParser(stopPath));
+        index.build(docsPath, indexPath, new HTMLStemParser(stemmer));
         
         index.load(indexPath);
         

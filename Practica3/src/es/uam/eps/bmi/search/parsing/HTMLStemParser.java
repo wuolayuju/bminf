@@ -24,6 +24,10 @@ public class HTMLStemParser extends HTMLSimpleParser {
      * Representa el lexematizador en idioma inglés
      */
     public static final String ENGLISH_STEMMER = "english";
+    /**
+     * Representa el lexematizador de Porter
+     */
+    public static final String PORTER_STEMMER = "porter";
     
     private SnowballStemmer stemmer;
 

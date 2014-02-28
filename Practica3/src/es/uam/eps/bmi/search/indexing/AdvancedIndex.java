@@ -10,6 +10,9 @@ package es.uam.eps.bmi.search.indexing;
  *
  * @author chus
  */
-public class AdvancedIndex {
-    
+public class AdvancedIndex extends BasicIndex {
+
+    public AdvancedIndex() {
+        super();
+    }   
 }
