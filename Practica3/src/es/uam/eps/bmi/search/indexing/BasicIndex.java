@@ -46,6 +46,14 @@ public class BasicIndex implements Index{
                 return;
             }
             
+            final File indexDir = new File(outputIndexPath);
+            if (!indexDir.exists()) {
+                if (!indexDir.mkdir()) {
+                    System.err.println("Index directory creation failed.");
+                    return;
+                }
+            }
+            
             // Creación de la carpeta de indexación
             if (outputIndexPath == null) {
                 System.err.println("No index path provided");
