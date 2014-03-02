@@ -49,12 +49,13 @@ public class TestStemIndex {
         
         List<String> terms = index.getTerms();
         
-        List<Posting> termPostings = index.getTermPostings(terms.get(terms.indexOf("family")));
+        List<Posting> termPostings = index.getTermPostings(terms.get(terms.indexOf("famili")));
         
-        Posting post1 = termPostings.get(1);
+        System.out.println("Famili postings:");
         
-        TextDocument doc = index.getDocument(post1.getDocumentId());
-        
-        System.out.println("Family => docId = "+doc.getId()+"("+doc.getName()+") , freq = "+post1.getTermFrequency());
+        for (Posting post : termPostings) {
+            TextDocument doc = index.getDocument(post.getDocumentId());
+            System.out.println("Doc = "+doc.getId()+"("+doc.getName()+") , freq = "+post.getTermFrequency());
+        }
      }
 }
