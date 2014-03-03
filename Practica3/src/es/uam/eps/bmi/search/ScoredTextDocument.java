@@ -1,5 +1,7 @@
 package es.uam.eps.bmi.search;
 
+import java.util.Objects;
+
 /**
  * Guarda la puntuación de un documento generalmente en consecuencia de una
  * consulta anterior.
@@ -57,5 +59,23 @@ public class ScoredTextDocument implements Comparable{
         final ScoredTextDocument other = (ScoredTextDocument) o;
         return this.documentId.compareTo(other.getDocumentId());
     }
-    
+ 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ScoredTextDocument other = (ScoredTextDocument) obj;
+        return Objects.equals(this.documentId, other.documentId);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 29 * hash + Objects.hashCode(this.documentId);
+        return hash;
+    }
 }

@@ -28,7 +28,7 @@ import it.unimi.dsi.fastutil.io.BinIO;
 public class BasicIndex implements Index{
 
     private static int CUR_DOC_ID = 0;
-    private HashMap<String, List<Posting>> indexMap;
+    protected HashMap<String, List<Posting>> indexMap;
     private List<TextDocument> documents;
     
     @Override
