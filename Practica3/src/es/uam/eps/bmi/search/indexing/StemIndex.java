@@ -12,7 +12,10 @@ import org.tartarus.snowball.ext.englishStemmer;
 
 /**
  *
- * @author chus
+ * Representa un índice que no hace filtrado de stopwords, 
+ * pero sí hace stemming de términos. 
+ * 
+ * @author Ari Handler - Adrián Lorenzo
  */
 public class StemIndex extends BasicIndex {
     

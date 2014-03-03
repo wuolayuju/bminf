@@ -23,6 +23,9 @@ import it.unimi.dsi.fastutil.io.BinIO;
 
 /**
  *
+ * Representa un índice básico que no hace ni filtrado de stopwords 
+ * ni stemming de términos.
+ * 
  * @author Ari Handler - Adrián Lorenzo
  */
 public class BasicIndex implements Index{
@@ -139,7 +142,16 @@ public class BasicIndex implements Index{
         
         return indexMap.get(term);
     }
-    
+    /**
+     * 
+     * Parsea el contenido de un ZipInputStrem con el TextParser
+     * introducido como parámetro. Devolviendo un array de Strings parseados.
+     * 
+     * @param zis
+     * @param parser
+     * @return
+     * @throws IOException 
+     */
     private String[] parseEntryToArray(ZipInputStream zis, TextParser parser) throws IOException {
         int len;
         byte[] buffer = new byte[4096];
@@ -153,7 +165,14 @@ public class BasicIndex implements Index{
         
         return text.split(" ");
     }
-    
+    /**
+     * 
+     * Actualiza el índice mediante la información del documento pasado
+     * como parámetro (su id) y su contenido parseado
+     * 
+     * @param doc
+     * @param contents 
+     */
     private void indexDoc(TextDocument doc, String[] contents) {
         for ( int i = 0; i < contents.length ; i++ ) {
             String term = contents[i];
@@ -203,7 +222,15 @@ public class BasicIndex implements Index{
             indexMap.put(term, oldPostings);
         }
     }
-    
+    /**
+     * 
+     * Escribe el índice en disco en la ruta indicada.
+     * Delimita el índice y los documentos mediante los separadores: index.st y
+     * docs.st
+     * 
+     * @param indexPath
+     * @throws IOException 
+     */
     private void indexToDisk(String indexPath) throws IOException {
         
         BinIO.storeObject(this.indexMap, new File(indexPath+File.separator+"index.st"));

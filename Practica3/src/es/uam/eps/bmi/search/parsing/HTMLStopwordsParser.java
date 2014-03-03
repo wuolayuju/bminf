@@ -16,8 +16,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
- * @author ari.handler
+ * Interfaz para procesar y limpiar un texto
+ * @author Ari Handler - Adrián Lorenzo
  */
 public class HTMLStopwordsParser extends HTMLSimpleParser{
 

@@ -7,8 +7,8 @@
 package es.uam.eps.bmi.search.parsing;
 
 /**
- *
- * @author chus
+ * Interfaz para procesar y limpiar un texto
+ * @author Ari Handler - Adrián Lorenzo
  */
 public class HTMLAdvancedParser extends HTMLSimpleParser {
     

@@ -14,7 +14,11 @@ import java.io.File;
 
 /**
  *
- * @author chus
+ * A partir de la colección de documentos proporcionada como parámetro
+ * crea sus índices de los cuatro tipos definidos, guardándolos en su
+ * carpeta correspondiente.
+ * 
+ * @author Ari Handler - Adrián Lorenzo
  */
 public class IndexBuilder {
 
@@ -23,12 +27,12 @@ public class IndexBuilder {
      */
     public static void main(String[] args) {
         String usage = "java es.uam.eps.bmi.indexing.IndexBuilder"
-                 + " [-index INDEX_PATH] [-docs DOCS_PATH] [-stopwords STOP_PATH] [-stemmer STEMMER]\n\n"
+                 + " [-index INDEX_PATH] [-docs DOCS_PATH]\n\n"
                  + "This indexes the documents in DOCS_PATH, creating a Lucene index"
                  + "in INDEX_PATH, bringing it then into RAM.";
         
-        String indexPath = "index";
-        String docsPath = "docs";
+        String indexPath = null;
+        String docsPath = null;
         
         for(int i=0;i<args.length;i++) {
             if(args[i].compareTo("-index")==0) {
@@ -41,7 +45,13 @@ public class IndexBuilder {
             }
         }
         
-        String stopPath = indexPath + "stopwords.txt";
+        if(indexPath == null || docsPath == null)
+        {
+            System.out.println("Error, Incorrect Path\n");
+            return;
+        }
+        
+        String stopPath = indexPath + File.separator + "stopwords.txt";
         String stemmerType = HTMLStemParser.ENGLISH_STEMMER;
         
         String basicPath = indexPath + "basic";
