@@ -21,9 +21,13 @@ import java.util.List;
  */
 public class LiteralMatchingSearcher implements Searcher {
 
+    
+    private Index index;
+    
+    
     @Override
     public void build(Index index) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.index = index;
     }
 
     @Override

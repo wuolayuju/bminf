@@ -8,6 +8,8 @@ package es.uam.eps.bmi.search.searching;
 
 import es.uam.eps.bmi.search.ScoredTextDocument;
 import es.uam.eps.bmi.search.indexing.Index;
+import es.uam.eps.bmi.search.indexing.Posting;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,14 +21,49 @@ import java.util.List;
  */
 public class TFIDFSearcher implements Searcher {
 
+    private Index index;
+    private int TOP_RES = 5;    
+    
     @Override
     public void build(Index index) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.index = index;
+    }
+    
+    /**
+     * Define la cantidad de resultados devueltos al realizar una búsqueda.
+     * @param n Nuevo límite de resultados.
+     */
+    public void setTopResults(int n) {
+        
+        if(n>0) this.TOP_RES = n;
     }
 
     @Override
     public List<ScoredTextDocument> search(String query) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
+        double idfTerm;
+        double tfTerm;
+        double tf_idfTerm;
+        
+        if (index == null) return null;
+
+        int docsSetSize = index.getDocumentIds().size();     
+        
+        List<ScoredTextDocument> listScorDocs = new ArrayList<>();
+        
+        String[] queryArray = query.split(" ");
+        
+        List<List<ScoredTextDocument>> listResults = new ArrayList<>();
+        
+        for (String clause : queryArray) {
+            
+            List<Posting> postingList = index.getTermPostings(clause);
+            idfTerm = Math.log(docsSetSize/postingList.size());
+            
+        }
+        
+        return null;
+        
     }
-    
+
 }
