@@ -27,12 +27,12 @@ public class IndexBuilder {
      */
     public static void main(String[] args) {
         String usage = "java es.uam.eps.bmi.indexing.IndexBuilder"
-                 + " [-index INDEX_PATH] [-docs DOCS_PATH] [-stopwords STOP_PATH] [-stemmer STEMMER]\n\n"
+                 + " [-index INDEX_PATH] [-docs DOCS_PATH]\n\n"
                  + "This indexes the documents in DOCS_PATH, creating a Lucene index"
                  + "in INDEX_PATH, bringing it then into RAM.";
         
-        String indexPath = "index";
-        String docsPath = "docs";
+        String indexPath = null;
+        String docsPath = null;
         
         for(int i=0;i<args.length;i++) {
             if(args[i].compareTo("-index")==0) {
@@ -43,6 +43,12 @@ public class IndexBuilder {
                 docsPath = args[i+1];
                 i++;
             }
+        }
+        
+        if(indexPath == null || docsPath == null)
+        {
+            System.out.println("Error, Incorrect Path\n");
+            return;
         }
         
         String stopPath = indexPath + File.separator + "stopwords.txt";
