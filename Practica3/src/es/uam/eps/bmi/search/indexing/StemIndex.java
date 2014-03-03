@@ -8,7 +8,10 @@ package es.uam.eps.bmi.search.indexing;
 
 /**
  *
- * @author chus
+ * Representa un índice que no hace filtrado de stopwords, 
+ * pero sí hace stemming de términos. 
+ * 
+ * @author Ari Handler - Adrián Lorenzo
  */
 public class StemIndex extends BasicIndex {
     

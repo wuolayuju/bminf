@@ -14,7 +14,11 @@ import java.io.File;
 
 /**
  *
- * @author chus
+ * A partir de la colección de documentos proporcionada como parámetro
+ * crea sus índices de los cuatro tipos definidos, guardándolos en su
+ * carpeta correspondiente.
+ * 
+ * @author Ari Handler - Adrián Lorenzo
  */
 public class IndexBuilder {
 

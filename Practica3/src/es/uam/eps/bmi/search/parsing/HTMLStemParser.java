@@ -15,8 +15,8 @@ import java.util.logging.Logger;
 import org.tartarus.snowball.SnowballStemmer;
 
 /**
- *
- * @author ari.handler
+ * Interfaz para procesar y limpiar un texto
+ * @author Ari Handler - Adrián Lorenzo
  */
 public class HTMLStemParser extends HTMLSimpleParser {
     
