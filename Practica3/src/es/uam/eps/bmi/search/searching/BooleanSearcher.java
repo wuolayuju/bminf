@@ -14,10 +14,14 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
+ 
 /**
  *
- * @author chus
+ * Buscador que implementa el modelo de recuperación de información Booleano.
+ * Permite establecer si los términos de una consulta 
+ * están relacionados con operadores OR o AND. 
+ * 
+ * @author Ari Handler - Adrián Lorenzo
  */
 public class BooleanSearcher implements Searcher {
 
@@ -72,7 +76,15 @@ public class BooleanSearcher implements Searcher {
     public void setQueryOperator(int operator) {
         this.operator = operator;
     }
-    
+    /**
+     * 
+     * Retorna la union de dos listas genéricas
+     * 
+     * @param <T>
+     * @param list1
+     * @param list2
+     * @return 
+     */
     private <T> List<T> union(List<T> list1, List<T> list2) {
         Set<T> set = new HashSet<>();
 
@@ -81,7 +93,15 @@ public class BooleanSearcher implements Searcher {
 
         return new ArrayList<>(set);
     }
-    
+    /**
+     * 
+     * Retorna la intersección de dos listas genéricas
+     * 
+     * @param <T>
+     * @param list1
+     * @param list2
+     * @return 
+     */
     public <T> List<T> intersection(List<T> list1, List<T> list2) {
         List<T> list = new ArrayList<>();
 
