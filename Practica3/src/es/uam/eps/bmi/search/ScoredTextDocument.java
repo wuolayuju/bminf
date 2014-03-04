@@ -59,7 +59,12 @@ public class ScoredTextDocument implements Comparable{
         final ScoredTextDocument other = (ScoredTextDocument) o;
         return this.documentId.compareTo(other.getDocumentId());
     }
- 
+
+    /**
+     * Determina si un documento es igual a otro, comparando sus identificadores.
+     * @param obj Documento con el que comparar.
+     * @return True si coinciden sus respectivos identificadores, false en caso contrario.
+     */
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {

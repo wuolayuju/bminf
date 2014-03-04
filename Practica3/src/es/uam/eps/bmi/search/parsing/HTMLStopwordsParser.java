@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 
 package es.uam.eps.bmi.search.parsing;
 
@@ -16,8 +11,15 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Interfaz para procesar y limpiar un texto
+ * Parseador de texto HTML que realiza eliminación de Stopwords además del
+ * limpiado correspondiente al método {@link HTMLSimpleParser#parse(java.lang.String) }
+ * de su clase padre.
+ * <p>
+ * Es necesario suministrar a este {@link TextParser} un fichero de Stopwords
+ * que le sirva de referencia.
  * @author Ari Handler - Adrián Lorenzo
+ * @see TextParser
+ * @see HTMLSimpleParser
  */
 public class HTMLStopwordsParser extends HTMLSimpleParser{
 
@@ -42,6 +44,14 @@ public class HTMLStopwordsParser extends HTMLSimpleParser{
         }
     }
     
+    /**
+     * Reliza un filtrado primero de tags HTML mediante la llamada a 
+     * {@link HTMLSimpleParser#parse(java.lang.String) } de su clase padre
+     * {@link HTMLSimpleParser} y luego elimina las stopwords del texto suministrado
+     * basándose en el fichero pasado al constructor.
+     * @param text texto para procesar
+     * @return el texto libre de tags HTML y Stopwords
+     */
     @Override
     public String parse(String text) {
         text = super.parse(text);

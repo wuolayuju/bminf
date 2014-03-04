@@ -1,12 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 
 package es.uam.eps.bmi.search.parsing;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ListIterator;
@@ -15,8 +9,17 @@ import java.util.logging.Logger;
 import org.tartarus.snowball.SnowballStemmer;
 
 /**
- * Interfaz para procesar y limpiar un texto
+ * Parseador de texto HTML que realiza una lexematización de términos además del
+ * limpiado correspondiente al método {@link HTMLSimpleParser#parse(java.lang.String) }
+ * de su clase padre.
+ * <p>
+ * Es necesario suministrar a este {@link TextParser} el tipo de lexematizador
+ * que usará en su método {@link parse}, pudiéndose valer de los nombres de las
+ * clases de lexematizadores declarados como atributos de clase.
  * @author Ari Handler - Adrián Lorenzo
+ * @see TextParser
+ * @see HTMLSimpleParser
+ * @see <a href="http://snowball.tartarus.org/">SnowBall Stemmer</a>
  */
 public class HTMLStemParser extends HTMLSimpleParser {
     
@@ -49,7 +52,16 @@ public class HTMLStemParser extends HTMLSimpleParser {
             Logger.getLogger(HTMLStemParser.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
+    /**
+     * Reliza un filtrado primero de tags HTML mediante la llamada a 
+     * {@link HTMLSimpleParser#parse(java.lang.String) } de su clase padre
+     * {@link HTMLSimpleParser} y luego lexematiza cada término con la API
+     * <a href="http://snowball.tartarus.org/">SnowBall Stemmer</a>.
+     * basándose en el fichero pasado al constructor.
+     * @param text texto para procesar
+     * @return el texto libre de tags HTML y con sus términos lexematizados
+     */
     @Override
     public String parse(String text) {
         text = super.parse(text);

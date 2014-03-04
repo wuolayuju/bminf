@@ -24,8 +24,14 @@ import java.util.Set;
  * @author Ari Handler - Adrián Lorenzo
  */
 public class BooleanSearcher implements Searcher {
-
+    
+    /**
+     * Representa la disyunción de cláusulas de las consultas
+     */
     public static int OR_OPERATOR = 0;
+    /**
+     * Representa la conjunción de cláusulas de las consultas
+     */
     public static int AND_OPERATOR = 1;
     
     private Index index;
@@ -44,10 +50,14 @@ public class BooleanSearcher implements Searcher {
         List<ScoredTextDocument> listScorDocs = new ArrayList<>();
         
         String[] queryArray = query.split(" ");
+        if (queryArray.length == 0) return listScorDocs;
         
+        // Lista de tantas listas como cláusulas de la consulta
         List<List<ScoredTextDocument>> listResults = new ArrayList<>();
         
         for (String clause : queryArray) {
+            // Por cada cláusula, se construye una lista de documentos puntuados
+            // a 1 (modelo booleano).
             List<Posting> postingList = index.getTermPostings(clause);
             List<ScoredTextDocument> docsList = new ArrayList<>();
             for (Posting postClause : postingList) {
@@ -57,13 +67,17 @@ public class BooleanSearcher implements Searcher {
             listResults.add(docsList);
         }
         
+        if (listResults.get(0).isEmpty()) return listScorDocs;
+        
         if (operator == OR_OPERATOR) {
+            // En caso de disyunción, unión sucesiva de listas
             listScorDocs.addAll(listResults.get(0));
             for (List<ScoredTextDocument> listClause : listResults) {
                 listScorDocs = union(listScorDocs, listClause);
             }
         }
         else if (operator == AND_OPERATOR) {
+            // En caso de conjunción, intersección sucesiva de listas
             listScorDocs.addAll(listResults.get(0));
             for (List<ScoredTextDocument> listClause : listResults) {
                 listScorDocs = intersection(listScorDocs, listClause);
@@ -73,18 +87,16 @@ public class BooleanSearcher implements Searcher {
         return listScorDocs;
     }
     
+    /**
+     * Define el tipo de operación entre cláusulas de la consulta a la hora
+     * de realizar una búsqueda (por defecto disyunción).
+     * @param operator disyunción mediante {@link BooleanSearcher#OR_OPERATOR}
+     * o conjunción con {@link BooleanSearcher#AND_OPERATOR}
+     */
     public void setQueryOperator(int operator) {
         this.operator = operator;
     }
-    /**
-     * 
-     * Retorna la union de dos listas genéricas
-     * 
-     * @param <T>
-     * @param list1
-     * @param list2
-     * @return 
-     */
+
     private <T> List<T> union(List<T> list1, List<T> list2) {
         Set<T> set = new HashSet<>();
 
@@ -93,15 +105,7 @@ public class BooleanSearcher implements Searcher {
 
         return new ArrayList<>(set);
     }
-    /**
-     * 
-     * Retorna la intersección de dos listas genéricas
-     * 
-     * @param <T>
-     * @param list1
-     * @param list2
-     * @return 
-     */
+
     public <T> List<T> intersection(List<T> list1, List<T> list2) {
         List<T> list = new ArrayList<>();
 
