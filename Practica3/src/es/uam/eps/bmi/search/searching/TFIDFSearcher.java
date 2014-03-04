@@ -10,7 +10,10 @@ import es.uam.eps.bmi.search.ScoredTextDocument;
 import es.uam.eps.bmi.search.indexing.Index;
 import es.uam.eps.bmi.search.indexing.Posting;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.PriorityQueue;
 
 /**
  *
@@ -41,10 +44,6 @@ public class TFIDFSearcher implements Searcher {
     @Override
     public List<ScoredTextDocument> search(String query) {
         
-        double idfTerm;
-        double tfTerm;
-        double tf_idfTerm;
-        
         if (index == null) return null;
 
         int docsSetSize = index.getDocumentIds().size();     
@@ -53,17 +52,65 @@ public class TFIDFSearcher implements Searcher {
         
         String[] queryArray = query.split(" ");
         
-        List<List<ScoredTextDocument>> listResults = new ArrayList<>();
+        //List<List<ScoredTextDocument>> listResults = new ArrayList<>();
+        
+        PriorityQueue<ScoredTextDocument> heapScores = 
+                new PriorityQueue<>(TOP_RES, new ScoredTextDocumentComparator());
         
         for (String clause : queryArray) {
             
             List<Posting> postingList = index.getTermPostings(clause);
-            idfTerm = Math.log(docsSetSize/postingList.size());
             
+            // Cálculo del valor IDF de cada término de la consulta
+            double idf = Math.log(docsSetSize/postingList.size());
+            
+            // Lista de documentos puntuados correspondiente a la cláusula
+            //List<ScoredTextDocument> docsList = new ArrayList<>();
+            for (Posting postClause : postingList) {
+                
+                // Cálculo del valor de TF para la cláusula en el documento
+                int freqTerm = postClause.getTermFrequency();
+                double tf = 0;
+                if (freqTerm > 0) {
+                    tf = 1 + Math.log(freqTerm);
+                }
+                
+                ScoredTextDocument scoredDoc = new ScoredTextDocument(postClause.getDocumentId(), tf * idf);
+                /***********HEAP**************/
+                
+                if (heapScores.size() == TOP_RES) {
+                    if (heapScores.peek().getScore() < scoredDoc.getScore()){
+                        heapScores.poll();
+                        heapScores.offer(scoredDoc);
+                    }
+                } else {
+                    heapScores.offer(scoredDoc);
+                }
+                
+                /***********FIN HEAP**********/
+                //docsList.add(scoredDoc);
+            }
+            //listResults.add(docsList);
         }
         
-        return null;
+        listScorDocs = Arrays.asList(heapScores.toArray(new ScoredTextDocument[0]));
+        
+        return listScorDocs;
         
     }
 
+    private class ScoredTextDocumentComparator implements Comparator<ScoredTextDocument> {
+
+        @Override
+        public int compare(ScoredTextDocument o1, ScoredTextDocument o2) {
+            if (o1.getScore() > o2.getScore())
+                return 1;
+            if (o1.getScore() < o2.getScore())
+                return -1;
+            return 0;
+        }
+
+        
+    }
+    
 }
