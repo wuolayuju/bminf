@@ -48,8 +48,6 @@ public class TFIDFSearcher implements Searcher {
 
         int docsSetSize = index.getDocumentIds().size();     
         
-        List<ScoredTextDocument> listScorDocs = new ArrayList<>();
-        
         String[] queryArray = query.split(" ");
         
         //List<List<ScoredTextDocument>> listResults = new ArrayList<>();
@@ -106,8 +104,11 @@ public class TFIDFSearcher implements Searcher {
         /***********FIN HEAP**********/
         
         // Conversión a lista del heap de puntuaciones
-        Arrays.sort(heapScores.toArray(new ScoredTextDocument[0]));
-        listScorDocs = Arrays.asList(heapScores.toArray(new ScoredTextDocument[0]));
+        List<ScoredTextDocument> listScorDocs = new ArrayList<>();
+
+        while(!heapScores.isEmpty()) {
+            listScorDocs.add(heapScores.poll());
+        }
         
         return listScorDocs;
         
