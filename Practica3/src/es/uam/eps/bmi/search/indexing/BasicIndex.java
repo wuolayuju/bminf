@@ -74,14 +74,18 @@ public class BasicIndex implements Index{
                 while ((entry = zis.getNextEntry())!=null)
                 {
                     System.out.println("Indexing document "+entry.getName()+" ...");
-                    // make a new, empty document
-                    TextDocument doc = new TextDocument(Integer.toString(CUR_DOC_ID++), entry.getName());
-                    documents.add(doc);
                     
                     // Lectura del contenido del documento.
                     // Se eliminan los simbolos de puntuación y cualquier otro
                     // término no alfanumérico.
                     String[] contents = parseEntryToArray(zis, textParser);
+                    
+                    // Creación del documento
+                    TextDocument doc = new TextDocument(
+                            Integer.toString(CUR_DOC_ID++), 
+                            entry.getName(),
+                            contents.length);
+                    documents.add(doc);
                     
                     // Indexación de los contenidos del documento
                     indexDoc(doc, contents);
@@ -127,7 +131,7 @@ public class BasicIndex implements Index{
 
     @Override
     public TextDocument getDocument(String documentId) {
-        return documents.get(documents.indexOf(new TextDocument(documentId, null)));
+        return documents.get(documents.indexOf(new TextDocument(documentId, null, 0)));
     }
 
     @Override

@@ -12,15 +12,18 @@ public class TextDocument implements Serializable{
     
     private final String id;
     private final String name;
+    private final int size;
 
     /**
      * Crea un nuevo documento dado un identificador y la ruta al mismo.
      * @param id Número de identifiación del documento.
      * @param name Ruta completa del archivo.
+     * @param size Tamaño del documento.
      */
-    public TextDocument(String id, String name) {
+    public TextDocument(String id, String name, int size) {
         this.id = id;
         this.name = name;
+        this.size = size;
     }
 
     @Override
@@ -64,4 +67,11 @@ public class TextDocument implements Serializable{
         return id;
     }
 
+    /**
+     * Devuelve el tamaño del documento.
+     * @return tamaño del documento.
+     */
+    public int getSize() {
+        return size;
+    }
 }

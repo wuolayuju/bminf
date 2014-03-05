@@ -10,7 +10,7 @@ import java.util.Objects;
 public class ScoredTextDocument implements Comparable{
 
     private final String documentId;
-    private final double score;
+    private double score;
 
     /**
      * Construye la puntuación de un documento
@@ -37,6 +37,15 @@ public class ScoredTextDocument implements Comparable{
      */
     public String getDocumentId() {
         return documentId;
+    }
+    
+    public double addToScore(double score) {
+        this.score += score;
+        return this.score;
+    }
+    
+    public void setScore(double score) {
+        this.score = score;
     }
     
     /**

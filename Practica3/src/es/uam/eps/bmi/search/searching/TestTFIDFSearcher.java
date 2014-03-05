@@ -49,7 +49,7 @@ public class TestTFIDFSearcher {
 
         for (ScoredTextDocument doc : results) {
             String docId = doc.getDocumentId();
-            System.out.println("DocID = " + docId + "(" + basicIndex.getDocument(docId).getName() + ").");
+            System.out.println("Doc = " + basicIndex.getDocument(docId).getName() + ". Score = " + doc.getScore());
         }
     }
     

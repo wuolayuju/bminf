@@ -57,6 +57,8 @@ public class TFIDFSearcher implements Searcher {
         PriorityQueue<ScoredTextDocument> heapScores = 
                 new PriorityQueue<>(TOP_RES, new ScoredTextDocumentComparator());
         
+        List<ScoredTextDocument> tfidfDocs = new ArrayList<>();
+        
         for (String clause : queryArray) {
             
             List<Posting> postingList = index.getTermPostings(clause);
@@ -76,23 +78,35 @@ public class TFIDFSearcher implements Searcher {
                 }
                 
                 ScoredTextDocument scoredDoc = new ScoredTextDocument(postClause.getDocumentId(), tf * idf);
-                /***********HEAP**************/
-                
-                if (heapScores.size() == TOP_RES) {
-                    if (heapScores.peek().getScore() < scoredDoc.getScore()){
-                        heapScores.poll();
-                        heapScores.offer(scoredDoc);
-                    }
+                if (tfidfDocs.contains(scoredDoc)) {
+                    // Actualizacion del valor tf-idf del documento
+                    tfidfDocs.get(tfidfDocs.indexOf(scoredDoc)).addToScore(scoredDoc.getScore());
                 } else {
-                    heapScores.offer(scoredDoc);
+                    tfidfDocs.add(scoredDoc);
                 }
-                
-                /***********FIN HEAP**********/
                 //docsList.add(scoredDoc);
             }
             //listResults.add(docsList);
         }
         
+        /***********HEAP**************/
+        for (ScoredTextDocument scoredDoc : tfidfDocs) {
+            int docSize = index.getDocument(scoredDoc.getDocumentId()).getSize();
+            double normScore = scoredDoc.getScore() / docSize;
+            scoredDoc.setScore(normScore);
+            if (heapScores.size() == TOP_RES) {
+                if (heapScores.peek().getScore() < normScore){
+                    heapScores.poll();
+                    heapScores.offer(scoredDoc);
+                }
+            } else {
+                heapScores.offer(scoredDoc);
+            }
+        }
+        /***********FIN HEAP**********/
+        
+        // Conversión a lista del heap de puntuaciones
+        Arrays.sort(heapScores.toArray(new ScoredTextDocument[0]));
         listScorDocs = Arrays.asList(heapScores.toArray(new ScoredTextDocument[0]));
         
         return listScorDocs;
