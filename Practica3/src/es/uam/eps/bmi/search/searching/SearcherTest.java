@@ -14,10 +14,13 @@ import es.uam.eps.bmi.search.indexing.StemIndex;
 import es.uam.eps.bmi.search.indexing.StopwordIndex;
 import es.uam.eps.bmi.search.parsing.HTMLStemParser;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,10 +37,12 @@ public class SearcherTest {
     private static StemIndex stemIndex = null;
     private static AdvancedIndex advancedIndex = null;
     
+    private static BufferedWriter writerPrecs = null;
+    
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws UnsupportedEncodingException, FileNotFoundException {
         String collectionsPath = "collections";
         String queriesPath = "queries";
         
@@ -63,9 +68,12 @@ public class SearcherTest {
         stemIndex = new StemIndex();
         advancedIndex = new AdvancedIndex();
         
-        testCollection(path_1k);
-        testCollection(path_10k);
-        testCollection(path_100k);
+        writerPrecs = writerPrecs = new BufferedWriter(
+                new OutputStreamWriter(new FileOutputStream(path_1k +"precision.txt"), "utf-8"));
+        
+        //testCollection(path_1k);
+        //testCollection(path_10k);
+        //testCollection(path_100k);
     }
 
     private static void testCollection(String collectionPath) throws Exception {
@@ -101,6 +109,9 @@ public class SearcherTest {
         String relevancePath = collectionPath + "relevance-" + collectionName + ".txt";
         
         for (String indexPath : indexesPaths) {
+            
+            //writerPrecs.write("");
+            
             basicIndex.load(indexPath);
             
             testIndex(basicIndex, queriesPath, relevancePath);
