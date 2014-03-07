@@ -8,7 +8,6 @@ package es.uam.eps.bmi.search.searching;
 
 import es.uam.eps.bmi.search.ScoredTextDocument;
 import es.uam.eps.bmi.search.indexing.BasicIndex;
-import es.uam.eps.bmi.search.indexing.StemIndex;
 import java.util.List;
 
 /**

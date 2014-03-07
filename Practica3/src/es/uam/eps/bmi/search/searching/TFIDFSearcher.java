@@ -11,6 +11,7 @@ import es.uam.eps.bmi.search.indexing.Index;
 import es.uam.eps.bmi.search.indexing.Posting;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.PriorityQueue;
@@ -105,10 +106,12 @@ public class TFIDFSearcher implements Searcher {
         
         // Conversión a lista del heap de puntuaciones
         List<ScoredTextDocument> listScorDocs = new ArrayList<>();
+        
+        listScorDocs.addAll(heapScores);
+        
+        Collections.sort(listScorDocs, new ScoredTextDocumentComparator());
 
-        while(!heapScores.isEmpty()) {
-            listScorDocs.add(heapScores.poll());
-        }
+        Collections.reverse(listScorDocs);
         
         return listScorDocs;
         

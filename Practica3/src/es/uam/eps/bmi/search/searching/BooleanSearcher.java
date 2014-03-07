@@ -7,7 +7,6 @@
 package es.uam.eps.bmi.search.searching;
 
 import es.uam.eps.bmi.search.ScoredTextDocument;
-import es.uam.eps.bmi.search.TextDocument;
 import es.uam.eps.bmi.search.indexing.Index;
 import es.uam.eps.bmi.search.indexing.Posting;
 import java.util.ArrayList;
