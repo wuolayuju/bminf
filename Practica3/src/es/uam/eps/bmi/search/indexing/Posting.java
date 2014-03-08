@@ -2,6 +2,7 @@ package es.uam.eps.bmi.search.indexing;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Clase que representa un <i>posting</i> asociado a un determinado término.
@@ -18,7 +19,7 @@ import java.util.List;
  *             
  * @author Ari Handler - Adrián Lorenzo
  */
-public class Posting implements Serializable, Comparable{
+public class Posting implements Serializable{
     
     private final String documentId;
     private int termFrequency;
@@ -67,11 +68,21 @@ public class Posting implements Serializable, Comparable{
         termPositions.add(newPosition);
         termFrequency++;
     }
-
+    
     @Override
-    public int compareTo(Object o) {
-        Posting p = (Posting)o;
-        return this.documentId.compareTo(p.documentId);
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Posting other = (Posting) obj;
+        if (!Objects.equals(this.documentId, other.documentId)) {
+            return false;
+        }
+        return true;
     }
+
 
 }
