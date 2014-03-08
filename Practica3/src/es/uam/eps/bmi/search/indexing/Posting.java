@@ -18,7 +18,7 @@ import java.util.List;
  *             
  * @author Ari Handler - Adrián Lorenzo
  */
-public class Posting implements Serializable{
+public class Posting implements Serializable, Comparable{
     
     private final String documentId;
     private int termFrequency;
@@ -66,6 +66,12 @@ public class Posting implements Serializable{
     public void incrFrequency(long newPosition) {
         termPositions.add(newPosition);
         termFrequency++;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        Posting p = (Posting)o;
+        return this.documentId.compareTo(p.documentId);
     }
 
 }

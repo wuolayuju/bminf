@@ -96,7 +96,7 @@ public class BooleanSearcher implements Searcher {
         this.operator = operator;
     }
 
-    private static <T> List<T> union(List<T> list1, List<T> list2) {
+    private <T> List<T> union(List<T> list1, List<T> list2) {
         Set<T> set = new HashSet<>();
 
         set.addAll(list1);
@@ -105,7 +105,7 @@ public class BooleanSearcher implements Searcher {
         return new ArrayList<>(set);
     }
 
-    public static <T> List<T> intersection(List<T> list1, List<T> list2) {
+    private <T> List<T> intersection(List<T> list1, List<T> list2) {
         List<T> list = new ArrayList<>();
 
         for (T t : list1) {
