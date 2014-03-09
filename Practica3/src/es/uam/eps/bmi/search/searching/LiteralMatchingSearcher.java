@@ -57,10 +57,11 @@ public class LiteralMatchingSearcher implements Searcher {
         return listScorDocs;
     }
     
-    public static <T> List<T> intersection(List<List<T>> list1) {
-        List<T> list = new ArrayList(list1.get(0));
+    public static List<Posting> intersection(List<List<Posting>> list1) {
         
-        for (T t : list1.get(0))
+        List<Posting> list = new ArrayList(list1.get(0));
+        
+        for (Posting t : list1.get(0))
         {
             for(int i=1;i<list1.size();i++)
             {
@@ -69,35 +70,58 @@ public class LiteralMatchingSearcher implements Searcher {
                 {
                     list.remove(t);
                     break;
-                } 
+                }
+                else
+                {
+                    Posting taux = list1.get(i).get(list1.get(i).indexOf(t));
+                    for(Long l : taux.getTermPositions())
+                    {
+                        
+                    }
+                }
             }
         }
-
+       /* for(int i=1;i<list1.size();i++)
+        {
+            if(list1.get()
+            {
+                list.remove(t);
+                break;
+            }            
+        }*/
+        
         return list;
     }  
     
     public static void main(String[] args) {
         
+        List<Long> pos2 = new ArrayList();
+        List<Long> pos1 = new ArrayList();
         List<Long> pos = new ArrayList();
-        pos.add(Long.MAX_VALUE);
-        pos.add(Long.MIN_VALUE);
+        pos.add((long)1);
+        pos.add((long) 6);
+        pos1.add((long)2);
+        pos1.add((long) 8);
+        pos2.add((long)3);
+        pos2.add((long) 2);
         List <Posting> postings = new ArrayList();
         List <Posting> postings1 = new ArrayList();
         List <Posting> postings2 = new ArrayList();
         List <List<Posting>> post = new ArrayList<>();
         Posting p1 = new Posting("01",4,pos);
         Posting p2 = new Posting("02",3,pos);
-        Posting p4 = new Posting("04",4,pos);
-        Posting p3 = new Posting("02",5,pos);    
+        Posting p4 = new Posting("04",4,pos1);
+        Posting p3 = new Posting("02",5,pos1);    
         postings.add(p1);
         postings.add(p2);
         postings1.add(p4);
         post.add(postings);
         postings1.add(p3);
         post.add(postings1);
-        postings2.add(new Posting("02",6,pos));
+        postings2.add(new Posting("02",6,pos2));
         post.add(postings2);
-        List<Posting> ojete = intersectionVectorial(post);
+        List<Posting> ojete = intersection(post);
+        
       
 
     }
