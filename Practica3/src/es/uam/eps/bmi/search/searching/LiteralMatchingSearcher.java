@@ -11,7 +11,9 @@ import es.uam.eps.bmi.search.indexing.Index;
 import es.uam.eps.bmi.search.indexing.Posting;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -52,7 +54,7 @@ public class LiteralMatchingSearcher implements Searcher {
             listQueryPostings.add(postingList);
         }
         
-       
+        //HashMap<String,Double> map = getFullIntersection(listQueryPostings);
         
         return listScorDocs;
     }
@@ -77,10 +79,10 @@ public class LiteralMatchingSearcher implements Searcher {
         return list;
     }  
     
-    public static HashMap<String,Integer> getFullIntersection(List<List<Posting>> list1)
+    public static HashMap<String,Double> getFullIntersection(List<List<Posting>> list1)
     {
         HashMap<String,Integer> hashDocFreq = new HashMap<>();
-        
+        HashMap<String,Double> mapTFIDF = new HashMap<>();
         List<Posting> intersection;
         intersection = intersection(list1);
         int i;
@@ -102,9 +104,13 @@ public class LiteralMatchingSearcher implements Searcher {
             if(freq>0)
                 hashDocFreq.put(p.getDocumentId(), freq);
         }
-        
-        
-        return hashDocFreq;
+        double idfTerm = Math.log(/*index.getDocumentIds().size()*/100/hashDocFreq.size());
+        for (String key : hashDocFreq.keySet()) {
+         
+            double tfidf = (1 + Math.log((double)hashDocFreq.get(key)))*idfTerm;
+            mapTFIDF.put(key, tfidf);
+        }
+        return mapTFIDF;
     }
     public static void main(String[] args) {
         
@@ -134,7 +140,7 @@ public class LiteralMatchingSearcher implements Searcher {
         postings2.add(new Posting("02",6,pos2));
         postings2.add(new Posting("01",6,pos2));
         post.add(postings2);
-        HashMap<String,Integer> ojete = getFullIntersection(post);
+        HashMap<String,Double> ojete = getFullIntersection(post);
         
       
 
