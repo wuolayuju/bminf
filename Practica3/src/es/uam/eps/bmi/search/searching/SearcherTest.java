@@ -19,12 +19,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.ListIterator;
 
 /**
  *
@@ -42,7 +44,7 @@ public class SearcherTest {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) throws UnsupportedEncodingException, FileNotFoundException {
+    public static void main(String[] args) throws UnsupportedEncodingException, FileNotFoundException, Exception {
         String collectionsPath = "collections";
         String queriesPath = "queries";
         
@@ -68,30 +70,26 @@ public class SearcherTest {
         stemIndex = new StemIndex();
         advancedIndex = new AdvancedIndex();
         
-        writerPrecs = writerPrecs = new BufferedWriter(
+        writerPrecs = new BufferedWriter(
                 new OutputStreamWriter(new FileOutputStream(path_1k +"precision.txt"), "utf-8"));
         
-        //testCollection(path_1k);
+        testCollection(path_1k);
         //testCollection(path_10k);
         //testCollection(path_100k);
+        
+        writerPrecs.close();
     }
 
     private static void testCollection(String collectionPath) throws Exception {
         
-        List<String> indexesPaths = new ArrayList<>();
-        
         // Path a cada tipo de índice
         String basicIndexPath = collectionPath + "basic";
-        indexesPaths.add(basicIndexPath);
         
         String stopwordIndexPath = collectionPath + "stopword";
-        indexesPaths.add(stopwordIndexPath);
         
         String stemIndexPath = collectionPath + "stem";
-        indexesPaths.add(stemIndexPath);
         
         String advancedIndexPath = collectionPath + "advanced";
-        indexesPaths.add(advancedIndexPath);
         
         // Path a la colección de documentos comprimida
         String docsPath = collectionPath + "docs.zip";
@@ -106,20 +104,28 @@ public class SearcherTest {
         String collectionName = collectionPath.substring(
                 collectionPath.lastIndexOf("-"),
                 collectionPath.lastIndexOf("/"));
-        String relevancePath = collectionPath + "relevance-" + collectionName + ".txt";
+        String relevancePath = collectionPath + "relevance" + collectionName + ".txt";
+
+        // Test de cada tipo de indice con los buscadores
+        writerPrecs.write("Basic\n");
+        System.out.print("Basic\n");
+        basicIndex.load(basicIndexPath);
+        testIndex(basicIndex, queriesPath, relevancePath);
+
+        writerPrecs.write("Stopword\n");
+        System.out.print("Stopword\n");
+        stopwordIndex.load(stopwordIndexPath);
+        testIndex(stopwordIndex, queriesPath, relevancePath);
         
-        for (String indexPath : indexesPaths) {
-            
-            //writerPrecs.write("");
-            
-            basicIndex.load(indexPath);
-            
-            testIndex(basicIndex, queriesPath, relevancePath);
-            
-            /**
-            * TODO : Buscar en cada indice las consultas y construir P@5 y P@10
-            */ 
-        }
+        writerPrecs.write("Stem\n");
+        System.out.print("Stem\n");
+        stemIndex.load(stemIndexPath);
+        testIndex(stemIndex, queriesPath, relevancePath);
+        
+        writerPrecs.write("Advanced\n");
+        System.out.print("Advanced\n");
+        advancedIndex.load(advancedIndexPath);
+        testIndex(advancedIndex, queriesPath, relevancePath);
     }
 
     private static void testIndex(Index index, String queriesPath, String relevancePath) throws Exception {
@@ -127,22 +133,42 @@ public class SearcherTest {
         List<String> listQueries = readQueries(queriesPath);
         List<List<String>> listsRelevance = readRelevance(relevancePath);
         
+        writerPrecs.write("Boolean\n");
+        System.out.print("Boolean\n");
         BooleanSearcher booleanSearcher = new BooleanSearcher();
+        booleanSearcher.build(index);
+        calcPrecisions(booleanSearcher, listQueries, listsRelevance);
         
-        List<Double> precisions = calcPrecisions(booleanSearcher, listQueries, listsRelevance);
+        writerPrecs.write("TF-IDF\n");
+        System.out.print("TF-IDF\n");
+        TFIDFSearcher tfidfSearcher = new TFIDFSearcher();
+        tfidfSearcher.build(index);
+        tfidfSearcher.setTopResults(10);
+        calcPrecisions(tfidfSearcher, listQueries, listsRelevance);
         
+        writerPrecs.write("Literal\n");
+        System.out.print("Literal\n");
+        //LiteralMatchingSearcher literalSearcher = new LiteralMatchingSearcher();
+        //literalSearcher.build(index);
+        //literalSearcher.setTopResults(10);
+        //calcPrecisions(literalSearcher, listQueries, listsRelevance);
     }
 
-    private static List<Double> calcPrecisions(Searcher searcher, List<String> queries, List<List<String>> relevances) {
+    private static void calcPrecisions(Searcher searcher, List<String> queries, List<List<String>> relevances) throws IOException {
         
-        int i = 0;
+        int i = 1;
         for (String query : queries) {
+            writerPrecs.write(i + ":\t");
+            System.out.print(i + ":\t");
             List<ScoredTextDocument> listResults = searcher.search(query);
             List<String> listRelevance = relevances.get(i);
+            int hits5 = getNumHits(listResults, listRelevance, 5);
+            int hits10 = getNumHits(listResults, listRelevance, 10);
+            double pat5 = hits5 / 5;
+            double pat10 = hits10 / 10;
+            writerPrecs.write(pat5 + "\t" + pat10 + "\n");
+            System.out.print(pat5 + "\t" + pat10 + "\n");
         }
-        
-        
-        return null;
     }
     
     private static List<String> readQueries(String queriesPath) throws Exception {
@@ -170,6 +196,20 @@ public class SearcherTest {
         }
         
         return listsRelevance;
+    }
+
+    private static int getNumHits(List<ScoredTextDocument> listResults, List<String> listRelevance, int top) {
+        ListIterator<ScoredTextDocument> itr = listResults.listIterator();
+        int numHits = 0;
+        int i = 0;
+        while(i++ < top) {
+            ScoredTextDocument doc = itr.next();
+            if (listRelevance.contains(doc.getDocumentId())) {
+                numHits ++;
+            }
+        }
+        
+        return numHits;
     }
     
 }

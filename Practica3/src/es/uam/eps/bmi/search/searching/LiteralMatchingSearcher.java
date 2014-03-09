@@ -28,6 +28,7 @@ public class LiteralMatchingSearcher implements Searcher {
 
     
     private Index index;
+    private int TOP_RES = 5;
     
     
     @Override
@@ -35,6 +36,15 @@ public class LiteralMatchingSearcher implements Searcher {
         this.index = index;
     }
 
+    /**
+     * Define la cantidad de resultados devueltos al realizar una búsqueda.
+     * @param n Nuevo límite de resultados.
+     */
+    public void setTopResults(int n) {
+        
+        if(n>0) this.TOP_RES = n;
+    }
+    
     @Override
     public List<ScoredTextDocument> search(String query) {
         
