@@ -7,6 +7,7 @@
 package es.uam.eps.bmi.search.searching;
 
 import es.uam.eps.bmi.search.ScoredTextDocument;
+import es.uam.eps.bmi.search.TextDocument;
 import es.uam.eps.bmi.search.indexing.AdvancedIndex;
 import es.uam.eps.bmi.search.indexing.BasicIndex;
 import es.uam.eps.bmi.search.indexing.Index;
@@ -107,23 +108,23 @@ public class SearcherTest {
         String relevancePath = collectionPath + "relevance" + collectionName + ".txt";
 
         // Test de cada tipo de indice con los buscadores
-        writerPrecs.write("Basic\n");
-        System.out.print("Basic\n");
+        writerPrecs.write("\nBasic\n");
+        System.out.print("\nBasic\n");
         basicIndex.load(basicIndexPath);
         testIndex(basicIndex, queriesPath, relevancePath);
 
-        writerPrecs.write("Stopword\n");
-        System.out.print("Stopword\n");
+        writerPrecs.write("\nStopword\n");
+        System.out.print("\nStopword\n");
         stopwordIndex.load(stopwordIndexPath);
         testIndex(stopwordIndex, queriesPath, relevancePath);
         
-        writerPrecs.write("Stem\n");
-        System.out.print("Stem\n");
+        writerPrecs.write("\nStem\n");
+        System.out.print("\nStem\n");
         stemIndex.load(stemIndexPath);
         testIndex(stemIndex, queriesPath, relevancePath);
         
-        writerPrecs.write("Advanced\n");
-        System.out.print("Advanced\n");
+        writerPrecs.write("\nAdvanced\n");
+        System.out.print("\nAdvanced\n");
         advancedIndex.load(advancedIndexPath);
         testIndex(advancedIndex, queriesPath, relevancePath);
     }
@@ -133,18 +134,24 @@ public class SearcherTest {
         List<String> listQueries = readQueries(queriesPath);
         List<List<String>> listsRelevance = readRelevance(relevancePath);
         
-        writerPrecs.write("Boolean\n");
-        System.out.print("Boolean\n");
+        writerPrecs.write("Boolean OR\n");
+        System.out.print("Boolean OR\n");
         BooleanSearcher booleanSearcher = new BooleanSearcher();
         booleanSearcher.build(index);
-        calcPrecisions(booleanSearcher, listQueries, listsRelevance);
+        booleanSearcher.setQueryOperator(BooleanSearcher.OR_OPERATOR);
+        calcPrecisions(booleanSearcher, index, listQueries, listsRelevance);
+
+        writerPrecs.write("Boolean AND\n");
+        System.out.print("Boolean AND\n");
+        booleanSearcher.setQueryOperator(BooleanSearcher.AND_OPERATOR);
+        calcPrecisions(booleanSearcher, index, listQueries, listsRelevance);
         
         writerPrecs.write("TF-IDF\n");
         System.out.print("TF-IDF\n");
         TFIDFSearcher tfidfSearcher = new TFIDFSearcher();
         tfidfSearcher.build(index);
         tfidfSearcher.setTopResults(10);
-        calcPrecisions(tfidfSearcher, listQueries, listsRelevance);
+        calcPrecisions(booleanSearcher, index, listQueries, listsRelevance);
         
         writerPrecs.write("Literal\n");
         System.out.print("Literal\n");
@@ -154,20 +161,21 @@ public class SearcherTest {
         //calcPrecisions(literalSearcher, listQueries, listsRelevance);
     }
 
-    private static void calcPrecisions(Searcher searcher, List<String> queries, List<List<String>> relevances) throws IOException {
+    private static void calcPrecisions(Searcher searcher, Index index, List<String> queries, List<List<String>> relevances) throws IOException {
         
-        int i = 1;
+        int i = 0;
         for (String query : queries) {
-            writerPrecs.write(i + ":\t");
-            System.out.print(i + ":\t");
+            writerPrecs.write(i+1 + ":\t");
+            System.out.print(i+1 + ":\t");
             List<ScoredTextDocument> listResults = searcher.search(query);
             List<String> listRelevance = relevances.get(i);
-            int hits5 = getNumHits(listResults, listRelevance, 5);
-            int hits10 = getNumHits(listResults, listRelevance, 10);
+            int hits5 = getNumHits(index, listResults, listRelevance, 5);
+            int hits10 = getNumHits(index, listResults, listRelevance, 10);
             double pat5 = hits5 / 5;
             double pat10 = hits10 / 10;
             writerPrecs.write(pat5 + "\t" + pat10 + "\n");
             System.out.print(pat5 + "\t" + pat10 + "\n");
+            i++;
         }
     }
     
@@ -198,13 +206,15 @@ public class SearcherTest {
         return listsRelevance;
     }
 
-    private static int getNumHits(List<ScoredTextDocument> listResults, List<String> listRelevance, int top) {
+    private static int getNumHits(Index index, List<ScoredTextDocument> listResults, List<String> listRelevance, int top) {
+        if (listResults.isEmpty()) return 0;
         ListIterator<ScoredTextDocument> itr = listResults.listIterator();
         int numHits = 0;
         int i = 0;
         while(i++ < top) {
-            ScoredTextDocument doc = itr.next();
-            if (listRelevance.contains(doc.getDocumentId())) {
+            ScoredTextDocument scoredDoc = itr.next();
+            TextDocument doc = index.getDocument(scoredDoc.getDocumentId());
+            if (listRelevance.contains(doc.getName())) {
                 numHits ++;
             }
         }

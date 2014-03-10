@@ -58,11 +58,14 @@ public class BooleanSearcher implements Searcher {
             // Por cada cláusula, se construye una lista de documentos puntuados
             // a 1 (modelo booleano).
             List<Posting> postingList = index.getTermPostings(clause);
+            if (postingList == null)
+                postingList = new ArrayList<>();
             /**
              * FIXME: Comprobar que se encuentran resultados
              */
+            
             List<ScoredTextDocument> docsList = new ArrayList<>();
-            if(!docsList.isEmpty())
+            if(!postingList.isEmpty())
             {
                 for (Posting postClause : postingList) {
                    ScoredTextDocument scoredDoc = 
@@ -72,6 +75,8 @@ public class BooleanSearcher implements Searcher {
             listResults.add(docsList);               
             }
         }
+        
+        if (listResults.isEmpty()) return listScorDocs;
         
         if (listResults.get(0).isEmpty()) return listScorDocs;
         
