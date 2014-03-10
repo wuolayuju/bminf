@@ -30,7 +30,6 @@ public class LiteralMatchingSearcher implements Searcher {
     private Index index;
     private int TOP_RES = 5;
     
-    
     @Override
     public void build(Index index) {
         this.index = index;

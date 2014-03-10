@@ -109,22 +109,22 @@ public class SearcherTest {
 
         // Test de cada tipo de indice con los buscadores
         writerPrecs.write("\nBasic\n");
-        System.out.print("\nBasic\n");
+        
         basicIndex.load(basicIndexPath);
         testIndex(basicIndex, queriesPath, relevancePath);
 
         writerPrecs.write("\nStopword\n");
-        System.out.print("\nStopword\n");
+        
         stopwordIndex.load(stopwordIndexPath);
         testIndex(stopwordIndex, queriesPath, relevancePath);
         
         writerPrecs.write("\nStem\n");
-        System.out.print("\nStem\n");
+        
         stemIndex.load(stemIndexPath);
         testIndex(stemIndex, queriesPath, relevancePath);
         
         writerPrecs.write("\nAdvanced\n");
-        System.out.print("\nAdvanced\n");
+        
         advancedIndex.load(advancedIndexPath);
         testIndex(advancedIndex, queriesPath, relevancePath);
     }
@@ -135,26 +135,26 @@ public class SearcherTest {
         List<List<String>> listsRelevance = readRelevance(relevancePath);
         
         writerPrecs.write("Boolean OR\n");
-        System.out.print("Boolean OR\n");
+        
         BooleanSearcher booleanSearcher = new BooleanSearcher();
         booleanSearcher.build(index);
         booleanSearcher.setQueryOperator(BooleanSearcher.OR_OPERATOR);
         calcPrecisions(booleanSearcher, index, listQueries, listsRelevance);
 
         writerPrecs.write("Boolean AND\n");
-        System.out.print("Boolean AND\n");
+        
         booleanSearcher.setQueryOperator(BooleanSearcher.AND_OPERATOR);
         calcPrecisions(booleanSearcher, index, listQueries, listsRelevance);
         
         writerPrecs.write("TF-IDF\n");
-        System.out.print("TF-IDF\n");
+        
         TFIDFSearcher tfidfSearcher = new TFIDFSearcher();
         tfidfSearcher.build(index);
         tfidfSearcher.setTopResults(10);
         calcPrecisions(booleanSearcher, index, listQueries, listsRelevance);
         
         writerPrecs.write("Literal\n");
-        System.out.print("Literal\n");
+        
         //LiteralMatchingSearcher literalSearcher = new LiteralMatchingSearcher();
         //literalSearcher.build(index);
         //literalSearcher.setTopResults(10);
@@ -166,7 +166,7 @@ public class SearcherTest {
         int i = 0;
         for (String query : queries) {
             writerPrecs.write(i+1 + ":\t");
-            System.out.print(i+1 + ":\t");
+            
             List<ScoredTextDocument> listResults = searcher.search(query);
             List<String> listRelevance = relevances.get(i);
             int hits5 = getNumHits(index, listResults, listRelevance, 5);
@@ -174,7 +174,7 @@ public class SearcherTest {
             double pat5 = hits5 / 5;
             double pat10 = hits10 / 10;
             writerPrecs.write(pat5 + "\t" + pat10 + "\n");
-            System.out.print(pat5 + "\t" + pat10 + "\n");
+            
             i++;
         }
     }
