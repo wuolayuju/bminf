@@ -62,11 +62,15 @@ public class BooleanSearcher implements Searcher {
              * FIXME: Comprobar que se encuentran resultados
              */
             List<ScoredTextDocument> docsList = new ArrayList<>();
-            for (Posting postClause : postingList) {
-                ScoredTextDocument scoredDoc = new ScoredTextDocument(postClause.getDocumentId(), 1);
-                docsList.add(scoredDoc);
+            if(!docsList.isEmpty())
+            {
+                for (Posting postClause : postingList) {
+                   ScoredTextDocument scoredDoc = 
+                           new ScoredTextDocument(postClause.getDocumentId(), 1);
+                   docsList.add(scoredDoc);
+                }
+            listResults.add(docsList);               
             }
-            listResults.add(docsList);
         }
         
         if (listResults.get(0).isEmpty()) return listScorDocs;
