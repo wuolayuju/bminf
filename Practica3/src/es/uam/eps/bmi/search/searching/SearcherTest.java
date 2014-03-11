@@ -91,7 +91,7 @@ public class SearcherTest {
         String docsPath = collectionPath + "docs.zip";
         
         // Fichero de stopwords y tipo de stemmizador
-        String stopPath = collectionPath + "stopwords.txt";
+        String stopPath = collectionPath + "stop-words.txt";
         String stemmerType = HTMLStemParser.ENGLISH_STEMMER;
         
         // Fichero de consultas y relevancias
@@ -158,10 +158,10 @@ public class SearcherTest {
         writerPrecs.write("Literal\n");
         System.out.print("Literal\n");
         
-        //LiteralMatchingSearcher literalSearcher = new LiteralMatchingSearcher();
-        //literalSearcher.build(index);
-        //literalSearcher.setTopResults(10);
-        //calcPrecisions(literalSearcher, listQueries, listsRelevance);
+        LiteralMatchingSearcher literalSearcher = new LiteralMatchingSearcher();
+        literalSearcher.build(index);
+        literalSearcher.setTopResults(10);
+        calcPrecisions(literalSearcher, index, listQueries, listsRelevance);
     }
 
     private static void calcPrecisions(Searcher searcher, Index index, List<String> queries, List<List<String>> relevances) throws IOException {

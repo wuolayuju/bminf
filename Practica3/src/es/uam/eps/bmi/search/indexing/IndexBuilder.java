@@ -51,7 +51,7 @@ public class IndexBuilder {
             return;
         }
         
-        String stopPath = indexPath + File.separator + "stopwords.txt";
+        String stopPath = indexPath + File.separator + "stop-words.txt";
         String stemmerType = HTMLStemParser.ENGLISH_STEMMER;
         
         String basicPath = indexPath + "basic";

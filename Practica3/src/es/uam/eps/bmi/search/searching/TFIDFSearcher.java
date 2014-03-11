@@ -10,7 +10,6 @@ import es.uam.eps.bmi.search.ScoredTextDocument;
 import es.uam.eps.bmi.search.indexing.Index;
 import es.uam.eps.bmi.search.indexing.Posting;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -127,8 +126,6 @@ public class TFIDFSearcher implements Searcher {
                 return -1;
             return 0;
         }
-
-        
     }
     
 }

@@ -10,10 +10,13 @@ import es.uam.eps.bmi.search.ScoredTextDocument;
 import es.uam.eps.bmi.search.indexing.Index;
 import es.uam.eps.bmi.search.indexing.Posting;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
 
 /**
  *
@@ -63,12 +66,53 @@ public class LiteralMatchingSearcher implements Searcher {
             listQueryPostings.add(postingList);
         }
         
-        //HashMap<String,Double> map = getFullIntersection(listQueryPostings);
+        List<ScoredTextDocument> listIntersection = getFullIntersection(listQueryPostings);
         
-        return listScorDocs;
+        PriorityQueue<ScoredTextDocument> heapScores = 
+                new PriorityQueue<>(TOP_RES, new LiteralMatchingSearcher.ScoredTextDocumentComparator());
+        
+        /***********HEAP**************/
+        for (ScoredTextDocument scoredDoc : listIntersection) {
+            int docSize = index.getDocument(scoredDoc.getDocumentId()).getSize();
+            double normScore = scoredDoc.getScore() / docSize;
+            scoredDoc.setScore(normScore);
+            if (heapScores.size() == TOP_RES) {
+                if (heapScores.peek().getScore() < normScore){
+                    heapScores.poll();
+                    heapScores.offer(scoredDoc);
+                }
+            } else {
+                heapScores.offer(scoredDoc);
+            }
+        }
+        /***********FIN HEAP**********/
+        
+        // Conversión a lista del heap de puntuaciones
+        List<ScoredTextDocument> scoredDocs = new ArrayList<>();
+        
+        scoredDocs.addAll(heapScores);
+        
+        Collections.sort(scoredDocs, new ScoredTextDocumentComparator());
+
+        Collections.reverse(scoredDocs);
+        
+        return scoredDocs;
+        
+    }
+
+    private class ScoredTextDocumentComparator implements Comparator<ScoredTextDocument> {
+
+        @Override
+        public int compare(ScoredTextDocument o1, ScoredTextDocument o2) {
+            if (o1.getScore() > o2.getScore())
+                return 1;
+            if (o1.getScore() < o2.getScore())
+                return -1;
+            return 0;
+        }
     }
     
-    public static List<Posting> intersection(List<List<Posting>> list1) {
+    private List<Posting> intersection(List<List<Posting>> list1) {
         
         List<Posting> list = new ArrayList(list1.get(0));
         
@@ -88,10 +132,10 @@ public class LiteralMatchingSearcher implements Searcher {
         return list;
     }  
     
-    public static HashMap<String,Double> getFullIntersection(List<List<Posting>> list1)
+    private List<ScoredTextDocument> getFullIntersection(List<List<Posting>> list1)
     {
         HashMap<String,Integer> hashDocFreq = new HashMap<>();
-        HashMap<String,Double> mapTFIDF = new HashMap<>();
+        List<ScoredTextDocument> documentlist = new ArrayList<>();
         List<Posting> intersection;
         intersection = intersection(list1);
         int i;
@@ -108,50 +152,21 @@ public class LiteralMatchingSearcher implements Searcher {
                         break;
                 }
                 if(i == list1.size())
-                freq++;   
+                    freq++;   
             }
             if(freq>0)
                 hashDocFreq.put(p.getDocumentId(), freq);
         }
-        double idfTerm = Math.log(/*index.getDocumentIds().size()*/100/hashDocFreq.size());
+        
+        double idfTerm = 0;
+        if (!hashDocFreq.isEmpty())
+            idfTerm = Math.log(index.getDocumentIds().size()/hashDocFreq.size());
+        
         for (String key : hashDocFreq.keySet()) {
          
             double tfidf = (1 + Math.log((double)hashDocFreq.get(key)))*idfTerm;
-            mapTFIDF.put(key, tfidf);
+            documentlist.add(new ScoredTextDocument(key,tfidf));
         }
-        return mapTFIDF;
-    }
-    public static void main(String[] args) {
-        
-        List<Long> pos2 = new ArrayList();
-        List<Long> pos1 = new ArrayList();
-        List<Long> pos = new ArrayList();
-        pos.add((long)1);
-        pos.add((long) 6);
-        pos1.add((long)2);
-        pos1.add((long) 7);
-        pos2.add((long)3);
-        pos2.add((long) 8);
-        List <Posting> postings = new ArrayList();
-        List <Posting> postings1 = new ArrayList();
-        List <Posting> postings2 = new ArrayList();
-        List <List<Posting>> post = new ArrayList<>();
-        Posting p1 = new Posting("01",4,pos);
-        Posting p2 = new Posting("02",3,pos);
-        Posting p4 = new Posting("01",4,pos1);
-        Posting p3 = new Posting("02",5,pos1);    
-        postings.add(p1);
-        postings.add(p2);
-        postings1.add(p4);
-        post.add(postings);
-        postings1.add(p3);
-        post.add(postings1);
-        postings2.add(new Posting("02",6,pos2));
-        postings2.add(new Posting("01",6,pos2));
-        post.add(postings2);
-        HashMap<String,Double> ojete = getFullIntersection(post);
-        
-      
-
+        return documentlist;
     }
 }
