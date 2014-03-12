@@ -66,16 +66,16 @@ public class SearcherTest {
         advancedIndex = new AdvancedIndex();
         
         //writerPrecs = new BufferedWriter(
-        //        new OutputStreamWriter(new FileOutputStream(path_1k +"precision.txt"), "utf-8"));
+        //        new OutputStreamWriter(new FileOutputStream(path_1k +"precision-1K.txt"), "utf-8"));
         //testCollection(path_1k);
         
-        writerPrecs = new BufferedWriter(
-                new OutputStreamWriter(new FileOutputStream(path_10k +"precision.txt"), "utf-8"));
-        testCollection(path_10k);
-        
         //writerPrecs = new BufferedWriter(
-        //        new OutputStreamWriter(new FileOutputStream(path_100k +"precision.txt"), "utf-8"));
-        //testCollection(path_100k);
+        //        new OutputStreamWriter(new FileOutputStream(path_10k +"precision-10K.txt"), "utf-8"));
+        //testCollection(path_10k);
+        
+        writerPrecs = new BufferedWriter(
+                new OutputStreamWriter(new FileOutputStream(path_100k +"precision-100K.txt"), "utf-8"));
+        testCollection(path_100k);
         
         
         writerPrecs.close();
