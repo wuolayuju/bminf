@@ -65,12 +65,18 @@ public class SearcherTest {
         stemIndex = new StemIndex();
         advancedIndex = new AdvancedIndex();
         
-        writerPrecs = new BufferedWriter(
-                new OutputStreamWriter(new FileOutputStream(path_1k +"precision.txt"), "utf-8"));
+        //writerPrecs = new BufferedWriter(
+        //        new OutputStreamWriter(new FileOutputStream(path_1k +"precision.txt"), "utf-8"));
+        //testCollection(path_1k);
         
-        testCollection(path_1k);
-        //testCollection(path_10k);
+        writerPrecs = new BufferedWriter(
+                new OutputStreamWriter(new FileOutputStream(path_10k +"precision.txt"), "utf-8"));
+        testCollection(path_10k);
+        
+        //writerPrecs = new BufferedWriter(
+        //        new OutputStreamWriter(new FileOutputStream(path_100k +"precision.txt"), "utf-8"));
         //testCollection(path_100k);
+        
         
         writerPrecs.close();
     }
@@ -106,24 +112,32 @@ public class SearcherTest {
         //System.out.print("\n################Basic#####################\n");
         
         basicIndex.load(basicIndexPath);
+        System.out.println("BUILD BASIC");
         testIndex(basicIndex, queriesPath, relevancePath);
+        basicIndex = null;
 
         writerPrecs.write("\n################Stopword#####################\n");
         //System.out.print("\n################Stopword#####################\n");
         
         stopwordIndex.load(stopwordIndexPath);
+        System.out.println("BUILD STOP");
         testIndex(stopwordIndex, queriesPath, relevancePath);
+        stopwordIndex = null;
         
         writerPrecs.write("\n################Stem#####################\n");
         //System.out.print("\n################Stem#####################\n");
         
         stemIndex.load(stemIndexPath);
+        System.out.println("BUILD STEM");
         testIndex(stemIndex, queriesPath, relevancePath);
+        stemIndex = null;
         
         writerPrecs.write("\n################Advanced#####################\n");
         //System.out.print("\n################Advanced#####################\n"); 
         advancedIndex.load(advancedIndexPath);
+        System.out.println("BUILD ADV");
         testIndex(advancedIndex, queriesPath, relevancePath);
+        advancedIndex = null;
     }
 
     private static void testIndex(Index index, String queriesPath, String relevancePath) throws Exception {
@@ -132,7 +146,7 @@ public class SearcherTest {
         List<List<String>> listsRelevance = readRelevance(relevancePath);
         
         writerPrecs.write("\n=Boolean OR=========================\n");
-        //System.out.print("\n=Boolean OR==========================\n");
+        System.out.print("\n=Boolean OR==========================\n");
         
         BooleanSearcher booleanSearcher = new BooleanSearcher();
         booleanSearcher.build(index);
@@ -140,13 +154,13 @@ public class SearcherTest {
         calcPrecisions(booleanSearcher, index, listQueries, listsRelevance);
 
         writerPrecs.write("\n=Boolean AND=========================\n");
-        //System.out.print("\n=Boolean AND==========================\n");
+        System.out.print("\n=Boolean AND==========================\n");
         
         booleanSearcher.setQueryOperator(BooleanSearcher.AND_OPERATOR);
         calcPrecisions(booleanSearcher, index, listQueries, listsRelevance);
         
         writerPrecs.write("\n=TF-IDF=========================\n");
-        //System.out.print("\n=TF_IDF==========================\n");
+        System.out.print("\n=TF_IDF==========================\n");
         
         TFIDFSearcher tfidfSearcher = new TFIDFSearcher();
         tfidfSearcher.build(index);
@@ -154,7 +168,7 @@ public class SearcherTest {
         calcPrecisions(tfidfSearcher, index, listQueries, listsRelevance);
         
         writerPrecs.write("\n=Literal=========================\n");
-        //System.out.print("\n=Literal==========================\n");
+        System.out.print("\n=Literal==========================\n");
         
         LiteralMatchingSearcher literalSearcher = new LiteralMatchingSearcher();
         literalSearcher.build(index);
@@ -165,6 +179,8 @@ public class SearcherTest {
     private static void calcPrecisions(Searcher searcher, Index index, List<String> queries, List<List<String>> relevances) throws IOException {
         
         int i = 0;
+        double totalPat5 = 0;
+        double totalPat10 = 0;
         for (String query : queries) {
             writerPrecs.write(i+1 + ":\t");
             //System.out.print(i+1 + ":\t");
@@ -175,15 +191,21 @@ public class SearcherTest {
             double hits10 = getNumHits(index, listResults, listRelevance, 10);
             double pat5 = hits5 / 5;
             double pat10 = hits10 / 10;
-            writerPrecs.write("P@5 = " + pat5 + "\tP@10 = " + pat10 + "\n\n");
+            totalPat5 += pat5;
+            totalPat10 += pat10;
+            writerPrecs.write("P@5 = " + pat5 + "\tP@10 = " + pat10 + "\n");
             //System.out.print("P@5 = " + pat5 + "\tP@10 = " + pat10 + "\n\n");
             
-            printResults(listResults, 10, index);
+            //printResults(listResults, 10, index);
             //System.out.print("\n");
-            writerPrecs.write("\n");
+            //writerPrecs.write("\n");
             
             i++;
         }
+        totalPat5 = totalPat5 / queries.size();
+        totalPat10 = totalPat10 / queries.size();
+        
+        writerPrecs.write("\nPrecisión total: \tP@5 = " + totalPat5 + "\tP@10 = " + totalPat10 + "\n");
     }
     
     private static List<String> readQueries(String queriesPath) throws Exception {

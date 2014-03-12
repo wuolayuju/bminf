@@ -65,9 +65,13 @@ public class IndexBuilder {
         AdvancedIndex advIndex = new AdvancedIndex();
         
         basicIndex.build(docsPath, basicPath, new HTMLSimpleParser());
+        basicIndex = null;
         stopIndex.build(docsPath, stopwordPath, new HTMLStopwordsParser(stopPath));
+        stopIndex = null;
         stemIndex.build(docsPath, stemPath, new HTMLStemParser(stemmerType));
+        stemIndex = null;
         advIndex.build(docsPath, advancedPath, new HTMLAdvancedParser(stopPath, stemmerType));
+        advIndex = null;
     }
     
 }
