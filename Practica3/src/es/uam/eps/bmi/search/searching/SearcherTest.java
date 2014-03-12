@@ -175,8 +175,8 @@ public class SearcherTest {
             double hits10 = getNumHits(index, listResults, listRelevance, 10);
             double pat5 = hits5 / 5;
             double pat10 = hits10 / 10;
-            writerPrecs.write("P@5 = " + pat5 + "\tP@10 = " + pat10 + "\n");
-            //System.out.print("P@5 = " + pat5 + "\tP@10 = " + pat10 + "\n");
+            writerPrecs.write("P@5 = " + pat5 + "\tP@10 = " + pat10 + "\n\n");
+            //System.out.print("P@5 = " + pat5 + "\tP@10 = " + pat10 + "\n\n");
             
             printResults(listResults, 10, index);
             //System.out.print("\n");
@@ -242,6 +242,8 @@ public class SearcherTest {
             writerPrecs.write(doc.getName() + "\t");
             i++;
         }
+        //System.out.print("\n");
+        writerPrecs.write("\n");
     }
     
 }

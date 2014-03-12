@@ -73,7 +73,7 @@ public class BasicIndex implements Index{
                 ZipEntry entry;
                 while ((entry = zis.getNextEntry())!=null)
                 {
-                    System.out.println("Indexing document "+entry.getName()+" ...");
+                    //System.out.println("Indexing document "+entry.getName()+" ...");
                     
                     // Lectura del contenido del documento.
                     // Se eliminan los simbolos de puntuación y cualquier otro
