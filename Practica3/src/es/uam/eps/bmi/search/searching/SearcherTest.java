@@ -16,7 +16,6 @@ import es.uam.eps.bmi.search.indexing.StopwordIndex;
 import es.uam.eps.bmi.search.parsing.HTMLStemParser;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -103,27 +102,26 @@ public class SearcherTest {
         String relevancePath = collectionPath + "relevance" + collectionName + ".txt";
 
         // Test de cada tipo de indice con los buscadores
-        System.out.print("\nBasic\n");
-        writerPrecs.write("\nBasic\n");
+        writerPrecs.write("\n################Basic#####################\n");
+        //System.out.print("\n################Basic#####################\n");
         
         basicIndex.load(basicIndexPath);
         testIndex(basicIndex, queriesPath, relevancePath);
 
-        writerPrecs.write("\nStopword\n");
-        System.out.print("\nStopword\n");
+        writerPrecs.write("\n################Stopword#####################\n");
+        //System.out.print("\n################Stopword#####################\n");
         
         stopwordIndex.load(stopwordIndexPath);
         testIndex(stopwordIndex, queriesPath, relevancePath);
         
-        writerPrecs.write("\nStem\n");
-        System.out.print("\nStem\n");
+        writerPrecs.write("\n################Stem#####################\n");
+        //System.out.print("\n################Stem#####################\n");
         
         stemIndex.load(stemIndexPath);
         testIndex(stemIndex, queriesPath, relevancePath);
         
-        writerPrecs.write("\nAdvanced\n");
-        System.out.print("\nAdvanced\n");
-        
+        writerPrecs.write("\n################Advanced#####################\n");
+        //System.out.print("\n################Advanced#####################\n"); 
         advancedIndex.load(advancedIndexPath);
         testIndex(advancedIndex, queriesPath, relevancePath);
     }
@@ -133,30 +131,30 @@ public class SearcherTest {
         List<String> listQueries = readQueries(queriesPath);
         List<List<String>> listsRelevance = readRelevance(relevancePath);
         
-        writerPrecs.write("Boolean OR\n");
-        System.out.print("Boolean OR\n");
+        writerPrecs.write("\n=Boolean OR=========================\n");
+        //System.out.print("\n=Boolean OR==========================\n");
         
         BooleanSearcher booleanSearcher = new BooleanSearcher();
         booleanSearcher.build(index);
         booleanSearcher.setQueryOperator(BooleanSearcher.OR_OPERATOR);
         calcPrecisions(booleanSearcher, index, listQueries, listsRelevance);
 
-        writerPrecs.write("Boolean AND\n");
-        System.out.print("Boolean AND\n");
+        writerPrecs.write("\n=Boolean AND=========================\n");
+        //System.out.print("\n=Boolean AND==========================\n");
         
         booleanSearcher.setQueryOperator(BooleanSearcher.AND_OPERATOR);
         calcPrecisions(booleanSearcher, index, listQueries, listsRelevance);
         
-        writerPrecs.write("TF-IDF\n");
-        System.out.print("TF-IDF\n");
+        writerPrecs.write("\n=TF-IDF=========================\n");
+        //System.out.print("\n=TF_IDF==========================\n");
         
         TFIDFSearcher tfidfSearcher = new TFIDFSearcher();
         tfidfSearcher.build(index);
         tfidfSearcher.setTopResults(10);
         calcPrecisions(tfidfSearcher, index, listQueries, listsRelevance);
         
-        writerPrecs.write("Literal\n");
-        System.out.print("Literal\n");
+        writerPrecs.write("\n=Literal=========================\n");
+        //System.out.print("\n=Literal==========================\n");
         
         LiteralMatchingSearcher literalSearcher = new LiteralMatchingSearcher();
         literalSearcher.build(index);
@@ -169,16 +167,20 @@ public class SearcherTest {
         int i = 0;
         for (String query : queries) {
             writerPrecs.write(i+1 + ":\t");
-            System.out.print(i+1 + ":\t");
+            //System.out.print(i+1 + ":\t");
             
             List<ScoredTextDocument> listResults = searcher.search(query);
             List<String> listRelevance = relevances.get(i);
-            int hits5 = getNumHits(index, listResults, listRelevance, 5);
-            int hits10 = getNumHits(index, listResults, listRelevance, 10);
+            double hits5 = getNumHits(index, listResults, listRelevance, 5);
+            double hits10 = getNumHits(index, listResults, listRelevance, 10);
             double pat5 = hits5 / 5;
             double pat10 = hits10 / 10;
-            writerPrecs.write(pat5 + "\t" + pat10 + "\n");
-            System.out.print(pat5 + "\t" + pat10 + "\n");
+            writerPrecs.write("P@5 = " + pat5 + "\tP@10 = " + pat10 + "\n");
+            //System.out.print("P@5 = " + pat5 + "\tP@10 = " + pat10 + "\n");
+            
+            printResults(listResults, 10, index);
+            //System.out.print("\n");
+            writerPrecs.write("\n");
             
             i++;
         }
@@ -211,20 +213,35 @@ public class SearcherTest {
         return listsRelevance;
     }
 
-    private static int getNumHits(Index index, List<ScoredTextDocument> listResults, List<String> listRelevance, int top) {
+    private static double getNumHits(Index index, List<ScoredTextDocument> listResults, List<String> listRelevance, int top) {
         if (listResults.isEmpty()) return 0;
         ListIterator<ScoredTextDocument> itr = listResults.listIterator();
-        int numHits = 0;
+        double numHits = 0;
         int i = 0;
         while(i++ < top) {
             ScoredTextDocument scoredDoc = itr.next();
             TextDocument doc = index.getDocument(scoredDoc.getDocumentId());
-            if (listRelevance.contains(doc.getName())) {
+            String docName = doc.getName().substring(0, doc.getName().indexOf(".html"));
+            if (listRelevance.contains(docName)) {
                 numHits ++;
             }
         }
         
         return numHits;
+    }
+
+    private static void printResults(List<ScoredTextDocument> listResults, int top, Index index) throws IOException {
+        if (listResults.isEmpty()) return;
+
+        int i = 0;
+        ListIterator<ScoredTextDocument> itr = listResults.listIterator();
+        while (i < top) {
+            ScoredTextDocument scoredDoc = itr.next();
+            TextDocument doc = index.getDocument(scoredDoc.getDocumentId());
+            //System.out.print(doc.getName() + "\t");
+            writerPrecs.write(doc.getName() + "\t");
+            i++;
+        }
     }
     
 }
