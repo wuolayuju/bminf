@@ -19,6 +19,9 @@ import org.tartarus.snowball.ext.englishStemmer;
  */
 public class StemIndex extends BasicIndex {
     
+    /**
+     * Construye este tipo de índice.
+     */
     public StemIndex() {
         super();
     }

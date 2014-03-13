@@ -39,11 +39,20 @@ public class ScoredTextDocument implements Comparable{
         return documentId;
     }
     
+    /**
+     * Incrementa en una cantidad determinada la puntuación de un documento
+     * @param score cantidad a incrementar
+     * @return la nueva puntuación
+     */
     public double addToScore(double score) {
         this.score += score;
         return this.score;
     }
     
+    /**
+     * Define la puntuación del documento
+     * @param score nueva puntuación
+     */
     public void setScore(double score) {
         this.score = score;
     }

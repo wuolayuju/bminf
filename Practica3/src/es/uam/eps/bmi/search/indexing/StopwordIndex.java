@@ -10,6 +10,9 @@ package es.uam.eps.bmi.search.indexing;
  */
 public class StopwordIndex extends BasicIndex {
 
+    /**
+     * Construye este tipo de índice.
+     */
     public StopwordIndex() {
         super();
     }

@@ -42,7 +42,12 @@ public class SearcherTest {
     private static BufferedWriter writerPrecs = null;
     
     /**
-     * @param args the command line arguments
+     * Prueba las precisiones de cada una de las configuraciones de índice
+     * y buscador
+     * @param args ruta a una carpeta que contiene cada una de las colecciones
+     * @throws UnsupportedEncodingException si no se soporta UTF-8.
+     * @throws FileNotFoundException Si no se encuentra algún archivo necesario
+     * @throws Exception en caso de algún otro error.
      */
     public static void main(String[] args) throws UnsupportedEncodingException, FileNotFoundException, Exception {
         String collectionsPath = "collections";

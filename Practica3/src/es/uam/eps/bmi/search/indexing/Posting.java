@@ -25,6 +25,13 @@ public class Posting implements Serializable{
     private int termFrequency;
     private final List<Long> termPositions;
 
+    /**
+     * Construye un Posting dado el identificador del documento, la frecuencia
+     * del término en dicho documento y las posiciones de este.
+     * @param documentId identificador del documento.
+     * @param termFrequency frecuencia del término en el documento.
+     * @param termPositions lista de posiciones del término en el documento.
+     */
     public Posting(String documentId, int termFrequency, List<Long> termPositions) {
         this.documentId = documentId;
         this.termFrequency = termFrequency;

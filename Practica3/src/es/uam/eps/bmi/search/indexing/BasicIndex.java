@@ -34,6 +34,9 @@ import it.unimi.dsi.fastutil.io.BinIO;
 public class BasicIndex implements Index{
 
     private static int CUR_DOC_ID = 0;
+    /**
+     * Diccionario que representa la relación entre los términos y sus correspondientes listas de Posting.
+     */
     protected HashMap<String, List<Posting>> indexMap;
     private List<TextDocument> documents;
     

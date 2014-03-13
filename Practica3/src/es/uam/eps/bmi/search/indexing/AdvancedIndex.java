@@ -14,6 +14,9 @@ import org.tartarus.snowball.ext.englishStemmer;
  */
 public class AdvancedIndex extends BasicIndex {
 
+    /**
+     * Construye este tipo de índice
+     */
     public AdvancedIndex() {
         super();
     }

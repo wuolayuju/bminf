@@ -7,7 +7,6 @@
 package es.uam.eps.bmi.search.indexing;
 
 import es.uam.eps.bmi.search.TextDocument;
-import es.uam.eps.bmi.search.parsing.HTMLAdvancedParser;
 import es.uam.eps.bmi.search.parsing.HTMLStemParser;
 import java.io.IOException;
 import java.util.List;
