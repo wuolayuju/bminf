@@ -29,8 +29,8 @@ import java.util.List;
 import java.util.ListIterator;
 
 /**
- *
- * @author uam
+ * 
+ * @author Ari Handler - Adrián Lorenzo
  */
 public class SearcherTest {
 

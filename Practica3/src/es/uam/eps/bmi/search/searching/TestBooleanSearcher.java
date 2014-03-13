@@ -12,8 +12,8 @@ import es.uam.eps.bmi.search.indexing.StemIndex;
 import java.util.List;
 
 /**
- *
- * @author ari.handler
+ * 
+ * @author Ari Handler - Adrián Lorenzo
  */
 public class TestBooleanSearcher {
 

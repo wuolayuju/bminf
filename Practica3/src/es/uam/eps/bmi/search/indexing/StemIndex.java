@@ -22,7 +22,13 @@ public class StemIndex extends BasicIndex {
     public StemIndex() {
         super();
     }
-    
+    /**
+     * Retorna la lista de postings correspondiente al término
+     * (internamente el término se stemmiza para buscarlo en el índice)
+     * 
+     * @param term
+     * @return 
+     */  
     @Override
     public List<Posting> getTermPostings(String term) {
         if (indexMap == null)

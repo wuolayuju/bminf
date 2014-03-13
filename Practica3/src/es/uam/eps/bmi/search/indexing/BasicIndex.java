@@ -24,7 +24,10 @@ import it.unimi.dsi.fastutil.io.BinIO;
 /**
  *
  * Representa un índice básico que no hace ni filtrado de stopwords 
- * ni stemming de términos.
+ * ni stemming de términos. Almacena internamente un Map (con el par
+ * termino / lista de postings correspondiente al término). Asimismo 
+ * almacena una lista de documentos con su correspondiente id, nombre
+ * y tamaño.
  * 
  * @author Ari Handler - Adrián Lorenzo
  */
@@ -103,7 +106,13 @@ public class BasicIndex implements Index{
             Logger.getLogger(BasicIndex.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
+    /**
+     * 
+     * Carga en RAM el índice correspondiente al path introducido. Esta función
+     * se realiza mediante la librería Fastutils.
+     * 
+     * @param indexPath 
+     */
     @Override
     public void load(String indexPath) {
         try {
