@@ -2,8 +2,6 @@ package es.uam.eps.bmi.search.parsing;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.safety.Cleaner;
-import org.jsoup.safety.Whitelist;
 
 /**
  * Parser que limpia un texto de tags HTML haciendo uso de <a href="http://jsoup.org/apidocs/">JSoup</a>.

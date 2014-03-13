@@ -28,8 +28,7 @@ public class IndexBuilder {
     public static void main(String[] args) {
         String usage = "java es.uam.eps.bmi.indexing.IndexBuilder"
                  + " [-index INDEX_PATH] [-docs DOCS_PATH]\n\n"
-                 + "This indexes the documents in DOCS_PATH, creating a Lucene index"
-                 + "in INDEX_PATH, bringing it then into RAM.";
+                 + "Crea los 4 tipos de índice en INDEX_PATH dada la colección DOCS_PATH.";
         
         String indexPath = null;
         String docsPath = null;
