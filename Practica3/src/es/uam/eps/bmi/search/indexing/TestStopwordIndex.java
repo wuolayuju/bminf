@@ -11,8 +11,8 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- *
- * @author ari.handler
+ * 
+ * @author Ari Handler - Adrián Lorenzo
  */
 public class TestStopwordIndex {
      public static void  main(String[] args) throws IOException {

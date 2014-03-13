@@ -13,8 +13,8 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- *
- * @author chus
+ * 
+ * @author Ari Handler - Adrián Lorenzo
  */
 public class TestAdvancedIndex {
      public static void  main(String[] args) throws IOException {
