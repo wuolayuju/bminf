@@ -10,6 +10,7 @@ import es.uam.eps.bmi.search.ScoredTextDocument;
 import es.uam.eps.bmi.search.indexing.Index;
 import es.uam.eps.bmi.search.indexing.Posting;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -98,6 +99,58 @@ public class ProximalSearcher implements Searcher{
         }
         return intersectionList;
     }   
+    
+    public List<ScoredTextDocument> getIntervals(List<List<Posting>> intersection)
+    {
+//2. a ← −∞
+//3. b ← max min l ∩ (a, ∞) |l ∈ P d
+//4. Si “b = ∞” fin // O bien antes del paso 3, a = min long l l ∈ P d
+//5. a ← min max l ∩ (0, b) | l ∈ P d
+//6. Devolver [a, b], volver a 3
+
+        List<Long> bminList = new ArrayList(); 
+        List<Long> amaxList = new ArrayList(); 
+        for(int docIndex=0;docIndex<intersection.get(0).size();docIndex++)
+        {
+            for(int i=0;i<intersection.size();i++)
+            {
+                long min = Collections.min(intersection.get(i).get(docIndex)
+                        .getTermPositions());
+                
+                bminList.add(min);
+            }
+            long b = Collections.max(bminList);
+ 
+            for(int i=0;i<intersection.size();i++)
+            {
+                int sizeTermPositions = intersection.get(i).get(docIndex)
+                        .getTermPositions().size();
+                
+                long max = Long.MIN_VALUE;
+                
+                for(int j=0;j<sizeTermPositions;j++)
+                {
+                    if(intersection.get(i).get(docIndex)
+                        .getTermPositions().get(j) > b)
+                        
+                        break;
+                    
+                    else if(intersection.get(i).get(docIndex)
+                        .getTermPositions().get(j) > max)
+                        
+                        max = intersection.get(i).get(docIndex)
+                        .getTermPositions().get(j);
+                }
+                amaxList.add(max);
+                
+            }
+            long a = Collections.min(amaxList);
+            
+        }
+        
+        
+        return null;
+    }
     
  public static void main(String[] args) {
         
