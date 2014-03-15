@@ -58,9 +58,10 @@ public class ProximalSearcher implements Searcher{
     }
     
     
-    private List<Posting> intersection(List<List<Posting>> list1) {
+    public static List<List<Posting>> intersection(List<List<Posting>> list1) {
         
-        List<Posting> list = new ArrayList();
+        List<List<Posting>> intersectionList = new ArrayList();
+        List <Posting> auxlist = new ArrayList();
         List <String> listdocumentIds = new ArrayList();
         int i;
         
@@ -82,13 +83,55 @@ public class ProximalSearcher implements Searcher{
 
             for(int j=0;j<list1.get(i).size();j++)
             {
+                
                 if(listdocumentIds.contains(list1.get(i).get(j).getDocumentId()))
                 {
-                    list.add(list1.get(i).get(j));
-                    break;
+                    auxlist.add(list1.get(i).get(j));
                 }
             }
+            if(!auxlist.isEmpty())
+            {
+                intersectionList.add(auxlist);
+                 auxlist = new ArrayList();
+            }
+            
         }
-        return list;
+        return intersectionList;
     }   
+    
+ public static void main(String[] args) {
+        
+        List<Long> pos2 = new ArrayList();
+        List<Long> pos1 = new ArrayList();
+        List<Long> pos = new ArrayList();
+        pos.add((long)1);
+        pos.add((long) 6);
+        pos1.add((long)2);
+        pos1.add((long) 7);
+        pos2.add((long)3);
+        pos2.add((long) 8);
+        List <Posting> postings = new ArrayList();
+        List <Posting> postings1 = new ArrayList();
+        List <Posting> postings2 = new ArrayList();
+        List <List<Posting>> post = new ArrayList<>();
+        Posting p1 = new Posting("04",4,pos);
+        Posting p2 = new Posting("03",4,pos);
+        Posting p4 = new Posting("01",5,pos1);
+        Posting p3 = new Posting("02",5,pos1);
+        postings.add(p1);
+        postings.add(p2);
+        postings1.add(p4);
+        post.add(postings);
+        postings1.add(p3);
+        post.add(postings1);
+        postings2.add(new Posting("02",6,pos2));
+        postings2.add(new Posting("01",6,pos2));
+        post.add(postings2);
+        List<List<Posting>> ojete = intersection(post);
+        
+        if(ojete.isEmpty())
+            System.out.print("muy bien");
+      
+
+    }
 }
