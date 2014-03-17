@@ -223,8 +223,31 @@ public class ProximalSearcher implements Searcher{
         List<Integer> currentIndexes = new ArrayList<>();
         // Inicializamos a 0 los índices
         for(int i = 0; i < numTerms ; i++)
-            currentIndexes.add(i);
+            currentIndexes.add(0);
         
-        return 0.0;
+        int aIndex = 0;
+        long b = -1;
+        int listIndexOfB;
+        int tempI = 0;
+        do{
+            // Calculo de B
+            for (Posting post : listPostingsPerDoc) {
+                tempI++;
+                // min l ∩ (a, ∞) 
+                long tempB = Collections.min(
+                        post.getTermPositions().subList(aIndex, post.getTermPositions().size()));
+                // b ← max min l ∩ (a, ∞) 
+                if (tempB > b) {
+                    b = tempB;
+                    listIndexOfB = tempI++;
+                }
+            }
+            
+            
+            
+            
+        }while(true);
+        
+        //return 0.0;
     }
 }
