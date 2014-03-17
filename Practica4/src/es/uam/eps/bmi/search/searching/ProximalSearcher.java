@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
 
 /**
  *
@@ -54,7 +55,37 @@ public class ProximalSearcher implements Searcher{
             List<Posting> postingList = index.getTermPostings(clause);
             listQueryPostings.add(postingList);
         }
-    
+        
+        // Intersección de las listas de Posting de cada cláusula
+        listQueryPostings = intersection(listQueryPostings);
+        
+        // Si no existe la interseccion entre dichas listas, devolvemos vacio
+        if (listQueryPostings.isEmpty())
+            return new ArrayList<>();
+        else if (listQueryPostings.get(0).isEmpty())
+            return new ArrayList<>();
+        
+        /*
+         * Al estar ordenadas las listas de Posting por su docId, los Posting 
+         * de cada documento se encuentran en las mismas posiciones en cada lista de clausula.
+         * 
+         * Cada una de las listas de Posting de cada clausula deben tener
+         * el mismo tamaño, por lo que iterando sobre los indices de la primera
+         * de ellas es suficiente para recorrer las de todas las demas
+         */
+        List<Posting> listPostingsPerDoc = new ArrayList<>();
+        for (int indexDoc = 0; indexDoc < listQueryPostings.get(0).size() ; indexDoc++) 
+        {
+            // Obtenemos los Posting de cada clausula por cada documento
+            listPostingsPerDoc.clear();
+            for (List<Posting> listPostingClause : listQueryPostings) {
+                listPostingsPerDoc.add(listPostingClause.get(indexDoc));
+            }
+            
+            double scoreDoc = getProximalScore(listPostingsPerDoc, queryArray.length);
+            
+        }
+        
         return listScorDocs;
     }
     
@@ -186,5 +217,14 @@ public class ProximalSearcher implements Searcher{
             System.out.print("muy bien");
       
 
+    }
+
+    private double getProximalScore(List<Posting> listPostingsPerDoc, int numTerms) {
+        List<Integer> currentIndexes = new ArrayList<>();
+        // Inicializamos a 0 los índices
+        for(int i = 0; i < numTerms ; i++)
+            currentIndexes.add(i);
+        
+        return 0.0;
     }
 }
