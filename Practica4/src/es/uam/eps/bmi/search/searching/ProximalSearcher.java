@@ -82,8 +82,13 @@ public class ProximalSearcher implements Searcher{
                 listPostingsPerDoc.add(listPostingClause.get(indexDoc));
             }
             
-            double scoreDoc = getProximalScore(listPostingsPerDoc, queryArray.length);
+            double score = getProximalScore(listPostingsPerDoc);
             
+            ScoredTextDocument scoredDoc = new ScoredTextDocument(
+                    listQueryPostings.get(0).get(indexDoc).getDocumentId(),
+                    score);
+            
+            listScorDocs.add(scoredDoc);
         }
         
         return listScorDocs;
@@ -129,125 +134,128 @@ public class ProximalSearcher implements Searcher{
             
         }
         return intersectionList;
-    }   
-    
-    public List<ScoredTextDocument> getIntervals(List<List<Posting>> intersection)
-    {
-//2. a ← −∞
-//3. b ← max min l ∩ (a, ∞) |l ∈ P d
-//4. Si “b = ∞” fin // O bien antes del paso 3, a = min long l l ∈ P d
-//5. a ← min max l ∩ (0, b) | l ∈ P d
-//6. Devolver [a, b], volver a 3
-
-        List<Long> bminList = new ArrayList(); 
-        List<Long> amaxList = new ArrayList(); 
-        for(int docIndex=0;docIndex<intersection.get(0).size();docIndex++)
-        {
-            for(int i=0;i<intersection.size();i++)
-            {
-                long min = Collections.min(intersection.get(i).get(docIndex)
-                        .getTermPositions());
-                
-                bminList.add(min);
-            }
-            long b = Collections.max(bminList);
- 
-            for(int i=0;i<intersection.size();i++)
-            {
-                int sizeTermPositions = intersection.get(i).get(docIndex)
-                        .getTermPositions().size();
-                
-                long max = Long.MIN_VALUE;
-                
-                for(int j=0;j<sizeTermPositions;j++)
-                {
-                    if(intersection.get(i).get(docIndex)
-                        .getTermPositions().get(j) > b)
-                        
-                        break;
-                    
-                    else if(intersection.get(i).get(docIndex)
-                        .getTermPositions().get(j) > max)
-                        
-                        max = intersection.get(i).get(docIndex)
-                        .getTermPositions().get(j);
-                }
-                amaxList.add(max);
-                
-            }
-            long a = Collections.min(amaxList);
-            
-        }
-        
-        
-        return null;
     }
     
- public static void main(String[] args) {
-        
-        List<Long> pos2 = new ArrayList();
-        List<Long> pos1 = new ArrayList();
-        List<Long> pos = new ArrayList();
-        pos.add((long)1);
-        pos.add((long) 6);
-        pos1.add((long)2);
-        pos1.add((long) 7);
-        pos2.add((long)3);
-        pos2.add((long) 8);
-        List <Posting> postings = new ArrayList();
-        List <Posting> postings1 = new ArrayList();
-        List <Posting> postings2 = new ArrayList();
-        List <List<Posting>> post = new ArrayList<>();
-        Posting p1 = new Posting("04",4,pos);
-        Posting p2 = new Posting("03",4,pos);
-        Posting p4 = new Posting("01",5,pos1);
-        Posting p3 = new Posting("02",5,pos1);
-        postings.add(p1);
-        postings.add(p2);
-        postings1.add(p4);
-        post.add(postings);
-        postings1.add(p3);
-        post.add(postings1);
-        postings2.add(new Posting("02",6,pos2));
-        postings2.add(new Posting("01",6,pos2));
-        post.add(postings2);
-        List<List<Posting>> ojete = intersection(post);
-        
-        if(ojete.isEmpty())
-            System.out.print("muy bien");
-      
+    public static void main(String[] args) {
 
+        List<Long> pos1 = new ArrayList<>();
+        List<Long> pos2 = new ArrayList<>();
+        List<Long> pos3 = new ArrayList<>();
+
+        pos1.add((long)0);pos1.add((long)11);pos1.add((long)22);
+        pos2.add((long)5);pos2.add((long)7);pos2.add((long)15);pos2.add((long)31);pos2.add((long)36);pos2.add((long)39);pos2.add((long)41);pos2.add((long)43);pos2.add((long)46);
+        pos3.add((long)8);pos3.add((long)14);pos3.add((long)42);pos3.add((long)44);pos3.add((long)56);
+
+        Posting posting1 = new Posting("0", 3, pos1);
+        Posting posting2 = new Posting("1", 9, pos2);
+        Posting posting3 = new Posting("2", 5, pos3);
+
+        List<Posting> postingList = new ArrayList<>();
+        postingList.add(posting1);
+        postingList.add(posting2);
+        postingList.add(posting3);
+
+        getProximalScore(postingList);
+        
+        System.out.println("=============================");
+        
+        pos1.clear();
+        pos1.add((long)5);pos1.add((long)7);pos1.add((long)15);pos1.add((long)31);pos1.add((long)36);pos1.add((long)39);pos1.add((long)41);pos1.add((long)43);pos1.add((long)46);
+        pos2.clear();
+        pos2.add((long)8);pos2.add((long)14);pos2.add((long)42);pos2.add((long)44);pos2.add((long)56);
+
+        posting1 = new Posting("0", 9, pos1);
+        posting2 = new Posting("1", 5, pos2);
+        
+        postingList.clear();
+        postingList.add(posting1);
+        postingList.add(posting2);
+        
+        getProximalScore(postingList);
     }
 
-    private double getProximalScore(List<Posting> listPostingsPerDoc, int numTerms) {
-        List<Integer> currentIndexes = new ArrayList<>();
-        // Inicializamos a 0 los índices
-        for(int i = 0; i < numTerms ; i++)
-            currentIndexes.add(0);
+    private static double getProximalScore(List<Posting> listPostingsPerDoc) {
+        //2. a ← −∞
+        //3. b ← max min l ∩ (a, ∞) |l ∈ P d
+        //4. Si “b = ∞” fin // O bien antes del paso 3, a = min long l l ∈ P d
+        //5. a ← min max l ∩ (0, b) | l ∈ P d
+        //6. Devolver [a, b], volver a 3
         
-        int aIndex = 0;
-        long b = -1;
-        int listIndexOfB;
-        int tempI = 0;
+        long a = -1;
+        long b;
+        boolean isBInfinite = false;
+        double score = 0.0;
         do{
             // Calculo de B
+            long tempB = -1;
             for (Posting post : listPostingsPerDoc) {
-                tempI++;
+                List<Long> l = post.getTermPositions();
                 // min l ∩ (a, ∞) 
-                long tempB = Collections.min(
-                        post.getTermPositions().subList(aIndex, post.getTermPositions().size()));
+                int indexCeil = getIndexCeilOf(l, a);
+                if (indexCeil < 0) {
+                    /* Condicion de parada */
+                    isBInfinite = true;
+                    break;
+                }
+                long currentMin = Collections.min(l.subList(getIndexCeilOf(l, a), l.size()));
                 // b ← max min l ∩ (a, ∞) 
-                if (tempB > b) {
-                    b = tempB;
-                    listIndexOfB = tempI++;
+                if (currentMin > tempB) {
+                    tempB = currentMin;
                 }
             }
             
+            if (isBInfinite) break; /* Flag de condicion de parada */
             
+            b = tempB;
+            // Calculo de A
+            long tempA = Long.MAX_VALUE;
+            for (Posting post : listPostingsPerDoc) {
+                List<Long> l = post.getTermPositions();
+                // max l ∩ (0, b) 
+                int indexFloor = getIndexFloorOf(l, b);
+                indexFloor = indexFloor == 0 ? 1 : indexFloor;
+                long currentMax = Collections.max(l.subList(0, indexFloor));
+                // a ← min max l ∩ (0, b) 
+                if (currentMax < tempA) {
+                    tempA = currentMax;
+                }
+            }
+            a = tempA;
             
+            // Calculo del score y acumulacion del mismo
+            System.out.println("[" + a + "," + b + "]");
+            
+            double denominator = b - a - listPostingsPerDoc.size() + 2;
+            score += 1 / denominator;
+            
+            System.out.println("denominator = " + denominator);
+            System.out.println("score = " + score);
             
         }while(true);
         
-        //return 0.0;
+        return score;
+    }
+    
+    /* Devuelve el indice de una lista ordenada a partir del cual sus elementos
+     * son mayores que un valor
+    */
+    private static int getIndexCeilOf(List<Long> list, long a) {
+        for(int i = 0; i < list.size() ; i++) {
+            if (list.get(i) > a)
+                return i;
+        }
+        return -1;
+    }
+    
+    /* Devuelve el indice de una lista ordenada hasta el cual sus elementos
+     * son menores que un valor
+    */
+    private static int getIndexFloorOf(List<Long> list, long b) {
+        for(int i = 0; i < list.size() ; i++) {
+            if (list.get(i) > b) {
+                return i;
+            }
+        }
+        return list.size();
     }
 }
