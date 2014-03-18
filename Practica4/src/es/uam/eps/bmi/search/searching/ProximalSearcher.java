@@ -11,9 +11,10 @@ import es.uam.eps.bmi.search.indexing.Index;
 import es.uam.eps.bmi.search.indexing.Posting;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.ListIterator;
+import java.util.PriorityQueue;
 
 /**
  *
@@ -28,12 +29,22 @@ public class ProximalSearcher implements Searcher{
 
     
     private Index index;
+    private int TOP_RES = 5;
     
     @Override
     public void build(Index index) {
         this.index = index;
     }
 
+    /**
+     * Define la cantidad de resultados devueltos al realizar una búsqueda.
+     * @param n Nuevo límite de resultados.
+     */
+    public void setTopResults(int n) {
+        
+        if(n>0) this.TOP_RES = n;
+    }
+    
     @Override
     public List<ScoredTextDocument> search(String query) {
         
@@ -41,11 +52,10 @@ public class ProximalSearcher implements Searcher{
             return null;
         
         HashMap<String,Double> docTFIDF = new HashMap<>();
-        List<ScoredTextDocument> listScorDocs = new ArrayList<>();
         
         String[] queryArray = query.split(" ");
         if (queryArray.length == 0) 
-            return listScorDocs;
+            return null;
         
         // Lista de tantas listas como cláusulas de la consulta
         List<List<Posting>> listQueryPostings = new ArrayList<>();
@@ -73,6 +83,8 @@ public class ProximalSearcher implements Searcher{
          * el mismo tamaño, por lo que iterando sobre los indices de la primera
          * de ellas es suficiente para recorrer las de todas las demas
          */
+        PriorityQueue<ScoredTextDocument> heapScores = 
+                new PriorityQueue<>(TOP_RES, new ProximalSearcher.ScoredTextDocumentComparator());
         List<Posting> listPostingsPerDoc = new ArrayList<>();
         for (int indexDoc = 0; indexDoc < listQueryPostings.get(0).size() ; indexDoc++) 
         {
@@ -83,13 +95,30 @@ public class ProximalSearcher implements Searcher{
             }
             
             double score = getProximalScore(listPostingsPerDoc);
-            
+
             ScoredTextDocument scoredDoc = new ScoredTextDocument(
                     listQueryPostings.get(0).get(indexDoc).getDocumentId(),
                     score);
             
-            listScorDocs.add(scoredDoc);
+            /***********HEAP**************/
+            if (heapScores.size() == TOP_RES) {
+                if (heapScores.peek().getScore() < scoredDoc.getScore()){
+                    heapScores.poll();
+                    heapScores.offer(scoredDoc);
+                }
+            } else {
+                heapScores.offer(scoredDoc);
+            }
+            /***********FIN HEAP**********/
         }
+        
+        // Conversión a lista del heap de puntuaciones
+        List<ScoredTextDocument> listScorDocs = new ArrayList<>();
+                listScorDocs.addAll(heapScores);
+        
+        Collections.sort(listScorDocs, new ProximalSearcher.ScoredTextDocumentComparator());
+
+        Collections.reverse(listScorDocs);
         
         return listScorDocs;
     }
@@ -135,45 +164,8 @@ public class ProximalSearcher implements Searcher{
         }
         return intersectionList;
     }
+
     
-    public static void main(String[] args) {
-
-        List<Long> pos1 = new ArrayList<>();
-        List<Long> pos2 = new ArrayList<>();
-        List<Long> pos3 = new ArrayList<>();
-
-        pos1.add((long)0);pos1.add((long)11);pos1.add((long)22);
-        pos2.add((long)5);pos2.add((long)7);pos2.add((long)15);pos2.add((long)31);pos2.add((long)36);pos2.add((long)39);pos2.add((long)41);pos2.add((long)43);pos2.add((long)46);
-        pos3.add((long)8);pos3.add((long)14);pos3.add((long)42);pos3.add((long)44);pos3.add((long)56);
-
-        Posting posting1 = new Posting("0", 3, pos1);
-        Posting posting2 = new Posting("1", 9, pos2);
-        Posting posting3 = new Posting("2", 5, pos3);
-
-        List<Posting> postingList = new ArrayList<>();
-        postingList.add(posting1);
-        postingList.add(posting2);
-        postingList.add(posting3);
-
-        getProximalScore(postingList);
-        
-        System.out.println("=============================");
-        
-        pos1.clear();
-        pos1.add((long)5);pos1.add((long)7);pos1.add((long)15);pos1.add((long)31);pos1.add((long)36);pos1.add((long)39);pos1.add((long)41);pos1.add((long)43);pos1.add((long)46);
-        pos2.clear();
-        pos2.add((long)8);pos2.add((long)14);pos2.add((long)42);pos2.add((long)44);pos2.add((long)56);
-
-        posting1 = new Posting("0", 9, pos1);
-        posting2 = new Posting("1", 5, pos2);
-        
-        postingList.clear();
-        postingList.add(posting1);
-        postingList.add(posting2);
-        
-        getProximalScore(postingList);
-    }
-
     private static double getProximalScore(List<Posting> listPostingsPerDoc) {
         //2. a ← −∞
         //3. b ← max min l ∩ (a, ∞) |l ∈ P d
@@ -257,5 +249,54 @@ public class ProximalSearcher implements Searcher{
             }
         }
         return list.size();
+    }
+
+    private class ScoredTextDocumentComparator implements Comparator<ScoredTextDocument> {
+
+        @Override
+        public int compare(ScoredTextDocument o1, ScoredTextDocument o2) {
+            if (o1.getScore() > o2.getScore())
+                return 1;
+            if (o1.getScore() < o2.getScore())
+                return -1;
+            return 0;
+        }
+    }
+    public static void main(String[] args) {
+
+        List<Long> pos1 = new ArrayList<>();
+        List<Long> pos2 = new ArrayList<>();
+        List<Long> pos3 = new ArrayList<>();
+
+        pos1.add((long)0);pos1.add((long)11);pos1.add((long)22);
+        pos2.add((long)5);pos2.add((long)7);pos2.add((long)15);pos2.add((long)31);pos2.add((long)36);pos2.add((long)39);pos2.add((long)41);pos2.add((long)43);pos2.add((long)46);
+        pos3.add((long)8);pos3.add((long)14);pos3.add((long)42);pos3.add((long)44);pos3.add((long)56);
+
+        Posting posting1 = new Posting("0", 3, pos1);
+        Posting posting2 = new Posting("1", 9, pos2);
+        Posting posting3 = new Posting("2", 5, pos3);
+
+        List<Posting> postingList = new ArrayList<>();
+        postingList.add(posting1);
+        postingList.add(posting2);
+        postingList.add(posting3);
+
+        getProximalScore(postingList);
+        
+        System.out.println("=============================");
+        
+        pos1.clear();
+        pos1.add((long)5);pos1.add((long)7);pos1.add((long)15);pos1.add((long)31);pos1.add((long)36);pos1.add((long)39);pos1.add((long)41);pos1.add((long)43);pos1.add((long)46);
+        pos2.clear();
+        pos2.add((long)8);pos2.add((long)14);pos2.add((long)42);pos2.add((long)44);pos2.add((long)56);
+
+        posting1 = new Posting("0", 9, pos1);
+        posting2 = new Posting("1", 5, pos2);
+        
+        postingList.clear();
+        postingList.add(posting1);
+        postingList.add(posting2);
+        
+        getProximalScore(postingList);
     }
 }

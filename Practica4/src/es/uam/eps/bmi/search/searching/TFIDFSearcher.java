@@ -25,7 +25,7 @@ import java.util.PriorityQueue;
 public class TFIDFSearcher implements Searcher {
 
     private Index index;
-    private int TOP_RES = 5;    
+    private int TOP_RES = 5;
     
     @Override
     public void build(Index index) {
