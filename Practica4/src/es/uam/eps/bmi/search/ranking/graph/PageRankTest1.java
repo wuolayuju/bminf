@@ -22,7 +22,9 @@ public class PageRankTest1 {
     public static void main(String[] args) {
         String linksPath = args[0];
         try {
-            PageRank pr = new PageRank(linksPath);
+            PageRank pr = new PageRank();
+            pr.loadFromfile(linksPath);
+            pr.calculatePageRank(0.01, 0.85, true);
         } catch (IOException ex) {
             Logger.getLogger(PageRankTest1.class.getName()).log(Level.SEVERE, null, ex);
         }

@@ -35,7 +35,7 @@ public class PageRank {
 	private static final int OUT_LINKS_INDEX = 0;
 	private static final int PAGERANK_INDEX = 1;
     
-    public PageRank (String fileGraph) throws FileNotFoundException, IOException {
+    public PageRank () throws FileNotFoundException, IOException {
     
          graph = new SparseGraph();
          nodes = new HashMap<>();
@@ -61,7 +61,7 @@ public class PageRank {
             int outlinks = Integer.parseInt(st.nextToken());
             List<Object> outrank = new ArrayList<>();
             outrank.add(outlinks);
-            outrank.add(1 / numNodes);
+            outrank.add(1.0 / numNodes);
             if (nodes.containsKey(source)) { nodes.remove(source); }
             nodes.put(source, outrank);
             
@@ -99,24 +99,59 @@ public class PageRank {
         return 0.0;
     }
     
-    public void calculatePageRank(double tolerance, double damping) {
+    public void calculatePageRank(double tolerance, double damping, boolean verbose) {
         
+        double maxDelta;
+        int nIterations = 0;
         do {
+            maxDelta = 0;
+            HashMap<String, Double> newRanks = new HashMap<>();
             Iterator<String> itr = graph.getVertices().iterator();
+            
+            if (verbose) System.out.println("=====Iteracion " + nIterations + "=====");
+            
+            // P(dj) = r/N + (1 - r) * sum{ P(di)/#out(di) ; di->dj }
             while(itr.hasNext()) {
                 String id = itr.next();
+                // r / N
                 double pr = damping / graph.getVertexCount();
-				Collection predecessorsList = graph.getPredecessors(id);
-				double sumPr = 0;
-				for (Object predObj : predecessorsList) {
-					String pred = (String) predObj;
-					double pr_old = (Double) nodes.get(pred).get(OUT_LINKS_INDEX);
-					int outlinks = (Integer) nodes.get(pred).get(PAGERANK_INDEX);
-					sumPr += pr_old / outlinks;
-				}
-				
-                //graph.getPredecessors(id);
+                Collection predecessorsList = graph.getPredecessors(id);
+                double sumPr = 0;
+                for (Object predObj : predecessorsList) {
+                    String pred = (String) predObj;
+                    double pr_old = (Double) nodes.get(pred).get(PAGERANK_INDEX);
+                    int outlinks = (Integer) nodes.get(pred).get(OUT_LINKS_INDEX);
+                    // sum{ P(di)/#out(di) ; di->dj }
+                    sumPr += pr_old / outlinks;
+                }
+                // (1 - r) * sum
+                pr += ( 1 - damping) * sumPr;
+                newRanks.put(id, pr);
             }
-        } while(true);
+            
+            // Actualizacion de los PR de los nodos
+            itr = newRanks.keySet().iterator();
+            while(itr.hasNext()) {
+                String id = itr.next();
+                double newPr = newRanks.get(id);
+                // Calculo del maximo cambio de PR
+                List<Object> value = nodes.get(id);
+                double oldPr = (Double) value.get(PAGERANK_INDEX);
+                if (verbose) {
+                    System.out.println("Node '" + id + ""
+                            + "' => PR_old = " + oldPr + ""
+                            + " PR_new = " + newPr);
+                }
+                
+                if ((oldPr - newPr) > maxDelta) {
+                    maxDelta = (Double) value.get(PAGERANK_INDEX);
+                }
+                // Actualizacion de PR
+                value.set(PAGERANK_INDEX, newPr);
+                nodes.put(id, value);
+            }
+            nIterations ++;
+            if (verbose) { System.out.println("\nMax Delta = " + maxDelta);}
+        } while(maxDelta > tolerance && nIterations < 20);
     }
 }

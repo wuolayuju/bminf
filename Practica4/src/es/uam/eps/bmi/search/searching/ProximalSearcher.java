@@ -221,9 +221,10 @@ public class ProximalSearcher implements Searcher{
             score += 1 / denominator;
             
             System.out.println("denominator = " + denominator);
-            System.out.println("score = " + score);
             
         }while(true);
+        
+        System.out.println("score = " + score);
         
         return score;
     }
