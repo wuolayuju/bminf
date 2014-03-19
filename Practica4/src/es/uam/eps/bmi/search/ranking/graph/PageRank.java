@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -30,6 +31,9 @@ public class PageRank {
     
     private SparseGraph graph;
     private HashMap <String, List<Object>> nodes;
+	
+	private static final int OUT_LINKS_INDEX = 0;
+	private static final int PAGERANK_INDEX = 1;
     
     public PageRank (String fileGraph) throws FileNotFoundException, IOException {
     
@@ -102,6 +106,15 @@ public class PageRank {
             while(itr.hasNext()) {
                 String id = itr.next();
                 double pr = damping / graph.getVertexCount();
+				Collection predecessorsList = graph.getPredecessors(id);
+				double sumPr = 0;
+				for (Object predObj : predecessorsList) {
+					String pred = (String) predObj;
+					double pr_old = (Double) nodes.get(pred).get(OUT_LINKS_INDEX);
+					int outlinks = (Integer) nodes.get(pred).get(PAGERANK_INDEX);
+					sumPr += pr_old / outlinks;
+				}
+				
                 //graph.getPredecessors(id);
             }
         } while(true);
