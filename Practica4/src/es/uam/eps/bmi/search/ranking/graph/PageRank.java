@@ -58,6 +58,8 @@ public class PageRank {
             
             graph.addVertex(source);
             
+            if (!st.hasMoreTokens()) continue; /* Nodos sumidero */
+            
             int outlinks = Integer.parseInt(st.nextToken());
             List<Object> outrank = new ArrayList<>();
             outrank.add(outlinks);
@@ -96,7 +98,7 @@ public class PageRank {
     }
     
     public double getScoreOf(String documentId) {
-        return 0.0;
+        return (Double) nodes.get(documentId).get(PAGERANK_INDEX);
     }
     
     public void calculatePageRank(double tolerance, double damping, boolean verbose) {
