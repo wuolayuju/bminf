@@ -25,6 +25,8 @@ public class PageRankTest1 {
             PageRank pr = new PageRank();
             pr.loadFromfile(linksPath);
             pr.calculatePageRank(0.01, 0.85, true);
+            
+            System.out.println("PR(paginaA) = " + pr.getScoreOf("paginaA"));
         } catch (IOException ex) {
             Logger.getLogger(PageRankTest1.class.getName()).log(Level.SEVERE, null, ex);
         }

@@ -18,9 +18,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.PriorityQueue;
 import java.util.StringTokenizer;
 
 /**
@@ -32,8 +35,8 @@ public class PageRank {
     private SparseGraph graph;
     private HashMap <String, List<Object>> nodes;
 	
-	private static final int OUT_LINKS_INDEX = 0;
-	private static final int PAGERANK_INDEX = 1;
+    private static final int OUT_LINKS_INDEX = 0;
+    private static final int PAGERANK_INDEX = 1;
     
     public PageRank () throws FileNotFoundException, IOException {
     
@@ -57,8 +60,6 @@ public class PageRank {
             String source = st.nextToken();
             
             graph.addVertex(source);
-            
-            if (!st.hasMoreTokens()) continue; /* Nodos sumidero */
             
             int outlinks = Integer.parseInt(st.nextToken());
             List<Object> outrank = new ArrayList<>();
@@ -112,7 +113,9 @@ public class PageRank {
             
             if (verbose) System.out.println("=====Iteracion " + nIterations + "=====");
             
-            // P(dj) = r/N + (1 - r) * sum{ P(di)/#out(di) ; di->dj }
+            /*
+             * P(dj) = r/N + (1 - r) * sum{ P(di)/#out(di) ; di->dj }
+             */
             while(itr.hasNext()) {
                 String id = itr.next();
                 // r / N
@@ -154,6 +157,74 @@ public class PageRank {
             }
             nIterations ++;
             if (verbose) { System.out.println("\nMax Delta = " + maxDelta);}
-        } while(maxDelta > tolerance && nIterations < 20);
+        } while(maxDelta > tolerance && nIterations < 50);
+    }
+    
+    public List<String> getTopNPages(int top) {
+        
+        PriorityQueue<NodePr> heap = new PriorityQueue<>(top, new PageRank.NodePrComparator());
+        
+        Iterator<String> itr = nodes.keySet().iterator();
+        
+        while (itr.hasNext()) {
+            String id = itr.next();
+            NodePr node = new NodePr(id, (Double) nodes.get(id).get(PAGERANK_INDEX));
+            /***********HEAP**************/
+            if (heap.size() == top) {
+                if (heap.peek().getPr() < node.getPr()){
+                    heap.poll();
+                    heap.offer(node);
+                }
+            } else {
+                heap.offer(node);
+            }
+            /***********FIN HEAP**********/
+        }
+        
+        // Conversión a lista del heap de puntuaciones
+        List<NodePr> listScorDocs = new ArrayList<>();
+                listScorDocs.addAll(heap);
+        
+        Collections.sort(listScorDocs, new PageRank.NodePrComparator());
+
+        Collections.reverse(listScorDocs);
+        
+        List<String> listIds = new ArrayList<>();
+        for (NodePr node : listScorDocs) {
+            listIds.add(node.getId());
+        }
+        
+        return listIds;
+    }
+    
+    private class NodePr {
+        private String id;
+        private double pr;
+
+        public NodePr(String id, double pr) {
+            this.id = id;
+            this.pr = pr;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public double getPr() {
+            return pr;
+        }
+    }
+    
+    private class NodePrComparator implements Comparator<NodePr> {
+
+        @Override
+        public int compare(NodePr o1, NodePr o2) {
+            if (o1.getPr() > o2.getPr())
+                return 1;
+            if (o1.getPr() < o2.getPr())
+                return -1;
+            return 0;
+        }
+        
     }
 }
