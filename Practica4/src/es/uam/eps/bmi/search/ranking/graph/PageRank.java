@@ -38,7 +38,7 @@ public class PageRank {
     private static final int OUT_LINKS_INDEX = 0;
     private static final int PAGERANK_INDEX = 1;
     
-    public PageRank () throws FileNotFoundException, IOException {
+    public PageRank () {
     
          graph = new SparseGraph();
          nodes = new HashMap<>();
@@ -198,8 +198,8 @@ public class PageRank {
     }
     
     private class NodePr {
-        private String id;
-        private double pr;
+        private final String id;
+        private final double pr;
 
         public NodePr(String id, double pr) {
             this.id = id;
