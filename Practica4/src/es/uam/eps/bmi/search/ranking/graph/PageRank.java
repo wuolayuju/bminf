@@ -111,15 +111,16 @@ public class PageRank {
             HashMap<String, Double> newRanks = new HashMap<>();
             Iterator<String> itr = graph.getVertices().iterator();
             
-            if (verbose) System.out.println("=====Iteracion " + nIterations + "=====");
+            if (verbose) System.out.println("=====Iteration " + nIterations + "=====");
             
             /*
              * P(dj) = r/N + (1 - r) * sum{ P(di)/#out(di) ; di->dj }
              */
+            double sumNewPrs = 0;
             while(itr.hasNext()) {
                 String id = itr.next();
                 // r / N
-                double pr = damping / graph.getVertexCount();
+                double pr = damping / nodes.size();
                 Collection predecessorsList = graph.getPredecessors(id);
                 double sumPr = 0;
                 for (Object predObj : predecessorsList) {
@@ -131,6 +132,7 @@ public class PageRank {
                 }
                 // (1 - r) * sum
                 pr += ( 1 - damping) * sumPr;
+                sumNewPrs += pr;
                 newRanks.put(id, pr);
             }
             
@@ -142,13 +144,17 @@ public class PageRank {
                 // Calculo del maximo cambio de PR
                 List<Object> value = nodes.get(id);
                 double oldPr = (Double) value.get(PAGERANK_INDEX);
+                
                 if (verbose) {
                     System.out.println("Node '" + id + ""
                             + "' => PR_old = " + oldPr + ""
                             + " PR_new = " + newPr);
                 }
                 
-                if ((oldPr - newPr) > maxDelta) {
+                // Nodos sumidero : (1 - sum{P'[i]}) / N
+                newPr += (1 - sumNewPrs) / nodes.size();
+                
+                if (Math.abs(oldPr - newPr) > maxDelta) {
                     maxDelta = (Double) value.get(PAGERANK_INDEX);
                 }
                 // Actualizacion de PR
@@ -156,7 +162,9 @@ public class PageRank {
                 nodes.put(id, value);
             }
             nIterations ++;
+            
             if (verbose) { System.out.println("\nMax Delta = " + maxDelta);}
+            
         } while(maxDelta > tolerance && nIterations < 50);
     }
     

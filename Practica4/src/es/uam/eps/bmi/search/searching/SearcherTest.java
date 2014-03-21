@@ -70,17 +70,17 @@ public class SearcherTest {
         stemIndex = new StemIndex();
         advancedIndex = new AdvancedIndex();
         
-        //writerPrecs = new BufferedWriter(
-        //        new OutputStreamWriter(new FileOutputStream(path_1k +"precision-1K.txt"), "utf-8"));
-        //testCollection(path_1k);
+        writerPrecs = new BufferedWriter(
+                new OutputStreamWriter(new FileOutputStream(path_1k +"precision-1K.txt"), "utf-8"));
+        testCollection(path_1k);
         
         //writerPrecs = new BufferedWriter(
         //        new OutputStreamWriter(new FileOutputStream(path_10k +"precision-10K.txt"), "utf-8"));
         //testCollection(path_10k);
         
-        writerPrecs = new BufferedWriter(
-                new OutputStreamWriter(new FileOutputStream(path_100k +"precision-100K.txt"), "utf-8"));
-        testCollection(path_100k);
+        //writerPrecs = new BufferedWriter(
+        //        new OutputStreamWriter(new FileOutputStream(path_100k +"precision-100K.txt"), "utf-8"));
+        //testCollection(path_100k);
         
         
         writerPrecs.close();
@@ -179,6 +179,14 @@ public class SearcherTest {
         literalSearcher.build(index);
         literalSearcher.setTopResults(10);
         calcPrecisions(literalSearcher, index, listQueries, listsRelevance);
+        
+        writerPrecs.write("\n=Proximal=========================\n");
+        System.out.print("\n=Proximal==========================\n");
+        
+        ProximalSearcher proximalSearcher = new ProximalSearcher();
+        proximalSearcher.build(index);
+        proximalSearcher.setTopResults(10);
+        calcPrecisions(proximalSearcher, index, listQueries, listsRelevance);
     }
 
     private static void calcPrecisions(Searcher searcher, Index index, List<String> queries, List<List<String>> relevances) throws IOException {

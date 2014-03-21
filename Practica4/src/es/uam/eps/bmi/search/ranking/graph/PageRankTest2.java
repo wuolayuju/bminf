@@ -26,11 +26,11 @@ public class PageRankTest2 {
             PageRank pr = new PageRank();
             pr.loadFromfile(linksPath);
             pr.calculatePageRank(0.01, 0.85, false);
-            List<String> top3 = pr.getTopNPages(10);
+            List<String> top10 = pr.getTopNPages(10);
             System.out.println("TOP 10 Paginas:");
             int pos = 1;
-            for (String doc : top3) {
-                System.out.println(pos++ + ". " + doc);
+            for (String doc : top10) {
+                System.out.println(pos++ + ". " + doc + " = " + pr.getScoreOf(doc));
             }
         } catch (IOException ex) {
             Logger.getLogger(PageRankTest1.class.getName()).log(Level.SEVERE, null, ex);

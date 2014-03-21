@@ -215,16 +215,16 @@ public class ProximalSearcher implements Searcher{
             a = tempA;
             
             // Calculo del score y acumulacion del mismo
-            System.out.println("[" + a + "," + b + "]");
+            //System.out.println("[" + a + "," + b + "]");
             
             double denominator = b - a - listPostingsPerDoc.size() + 2;
             score += 1 / denominator;
             
-            System.out.println("denominator = " + denominator);
+            //System.out.println("denominator = " + denominator);
             
         }while(true);
         
-        System.out.println("score = " + score);
+        //System.out.println("score = " + score);
         
         return score;
     }
