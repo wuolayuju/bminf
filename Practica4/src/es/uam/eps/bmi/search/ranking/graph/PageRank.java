@@ -8,6 +8,7 @@ package es.uam.eps.bmi.search.ranking.graph;
 
 import edu.uci.ics.jung.graph.*;
 import edu.uci.ics.jung.graph.util.EdgeType;
+import es.uam.eps.bmi.search.ScoredTextDocument;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -145,14 +146,14 @@ public class PageRank {
                 List<Object> value = nodes.get(id);
                 double oldPr = (Double) value.get(PAGERANK_INDEX);
                 
+                // Nodos sumidero : (1 - sum{P'[i]}) / N
+                newPr += (1 - sumNewPrs) / nodes.size();
+                
                 if (verbose) {
                     System.out.println("Node '" + id + ""
                             + "' => PR_old = " + oldPr + ""
                             + " PR_new = " + newPr);
                 }
-                
-                // Nodos sumidero : (1 - sum{P'[i]}) / N
-                newPr += (1 - sumNewPrs) / nodes.size();
                 
                 if (Math.abs(oldPr - newPr) > maxDelta) {
                     maxDelta = (Double) value.get(PAGERANK_INDEX);
@@ -168,41 +169,38 @@ public class PageRank {
         } while(maxDelta > tolerance && nIterations < 50);
     }
     
-    public List<String> getTopNPages(int top) {
+    public List<ScoredTextDocument> getTopNPages(int top) {
         
-        PriorityQueue<NodePr> heap = new PriorityQueue<>(top, new PageRank.NodePrComparator());
+        PriorityQueue<ScoredTextDocument> heap = 
+                new PriorityQueue<>(top, new PageRank.ScoredTextDocumentComparator());
         
         Iterator<String> itr = nodes.keySet().iterator();
         
         while (itr.hasNext()) {
             String id = itr.next();
-            NodePr node = new NodePr(id, (Double) nodes.get(id).get(PAGERANK_INDEX));
+            ScoredTextDocument doc = new ScoredTextDocument(id, (Double) nodes.get(id).get(PAGERANK_INDEX));
             /***********HEAP**************/
             if (heap.size() == top) {
-                if (heap.peek().getPr() < node.getPr()){
+                if (heap.peek().getScore() < doc.getScore()){
                     heap.poll();
-                    heap.offer(node);
+                    heap.offer(doc);
                 }
             } else {
-                heap.offer(node);
+                heap.offer(doc);
             }
             /***********FIN HEAP**********/
         }
         
         // Conversión a lista del heap de puntuaciones
-        List<NodePr> listScorDocs = new ArrayList<>();
+        // Conversión a lista del heap de puntuaciones
+        List<ScoredTextDocument> listScorDocs = new ArrayList<>();
                 listScorDocs.addAll(heap);
         
-        Collections.sort(listScorDocs, new PageRank.NodePrComparator());
+        Collections.sort(listScorDocs, new PageRank.ScoredTextDocumentComparator());
 
         Collections.reverse(listScorDocs);
         
-        List<String> listIds = new ArrayList<>();
-        for (NodePr node : listScorDocs) {
-            listIds.add(node.getId());
-        }
-        
-        return listIds;
+        return listScorDocs;
     }
     
     private class NodePr {
@@ -235,4 +233,17 @@ public class PageRank {
         }
         
     }
+    
+    private class ScoredTextDocumentComparator implements Comparator<ScoredTextDocument> {
+
+        @Override
+        public int compare(ScoredTextDocument o1, ScoredTextDocument o2) {
+            if (o1.getScore() > o2.getScore())
+                return 1;
+            if (o1.getScore() < o2.getScore())
+                return -1;
+            return 0;
+        }
+    }
 }
+

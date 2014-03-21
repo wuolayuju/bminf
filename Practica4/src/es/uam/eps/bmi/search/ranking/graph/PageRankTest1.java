@@ -6,6 +6,7 @@
 
 package es.uam.eps.bmi.search.ranking.graph;
 
+import es.uam.eps.bmi.search.ScoredTextDocument;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
@@ -27,11 +28,11 @@ public class PageRankTest1 {
             pr.loadFromfile(linksPath);
             pr.calculatePageRank(0.01, 0.85, true);
             
-            List<String> top = pr.getTopNPages(10);
+            List<ScoredTextDocument> top = pr.getTopNPages(10);
             System.out.println("TOP 10 Paginas:");
             int pos = 1;
-            for (String doc : top) {
-                System.out.println(pos++ + ". " + doc + " = " + pr.getScoreOf(doc));
+            for (ScoredTextDocument doc : top) {
+                System.out.println(pos++ + ". " + doc + " = " + doc.getScore());
             }
             
         } catch (IOException ex) {
