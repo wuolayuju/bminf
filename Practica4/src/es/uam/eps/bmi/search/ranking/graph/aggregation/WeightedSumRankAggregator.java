@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.PriorityQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -48,10 +47,7 @@ public class WeightedSumRankAggregator {
     
     public List<ScoredTextDocument> aggregateRankings() {
         
-        PriorityQueue<ScoredTextDocument> heapScores = 
-                new PriorityQueue<>(
-                        rankings.get(0).size(), 
-                        new WeightedSumRankAggregator.ScoredTextDocumentComparator());
+        List<ScoredTextDocument> listScorDocs = new ArrayList<>();
         
         /*
          Por cada documento en cada lista de rankings, obtenemos la puntuacion
@@ -61,7 +57,7 @@ public class WeightedSumRankAggregator {
             List<ScoredTextDocument> list = rankings.get(i); // Por cada lista
             for (ScoredTextDocument doc : list) {
                 // Comprobacion de que el documento no este ya ponderado
-                if (heapScores.contains(doc)) continue;
+                if (listScorDocs.contains(doc)) continue;
                 
                 // Cada documento dentro del ranking
                 // Puntuacion ponderada para esta lista
@@ -81,17 +77,11 @@ public class WeightedSumRankAggregator {
                 
                 ScoredTextDocument weightedDoc = new ScoredTextDocument(doc.getDocumentId(), weightedScore);
                 
-                heapScores.offer(weightedDoc);
+                listScorDocs.add(weightedDoc);
             }
         }
-        
-        // Conversión a lista del heap de puntuaciones
-        List<ScoredTextDocument> listScorDocs = new ArrayList<>();
-                listScorDocs.addAll(heapScores);
-        
+   
         Collections.sort(listScorDocs, new WeightedSumRankAggregator.ScoredTextDocumentComparator());
-
-        Collections.reverse(listScorDocs);
         
         return listScorDocs;
     }
@@ -100,9 +90,9 @@ public class WeightedSumRankAggregator {
 
         @Override
         public int compare(ScoredTextDocument o1, ScoredTextDocument o2) {
-            if (o1.getScore() > o2.getScore())
-                return 1;
             if (o1.getScore() < o2.getScore())
+                return 1;
+            if (o1.getScore() > o2.getScore())
                 return -1;
             return 0;
         }
