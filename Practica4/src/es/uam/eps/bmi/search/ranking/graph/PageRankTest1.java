@@ -32,7 +32,7 @@ public class PageRankTest1 {
             System.out.println("TOP 10 Paginas:");
             int pos = 1;
             for (ScoredTextDocument doc : top) {
-                System.out.println(pos++ + ". " + doc + " = " + doc.getScore());
+                System.out.println(pos++ + ". " + doc.getDocumentId() + " = " + doc.getScore());
             }
             
         } catch (IOException ex) {

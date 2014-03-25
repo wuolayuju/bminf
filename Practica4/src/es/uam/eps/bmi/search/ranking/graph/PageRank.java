@@ -115,13 +115,12 @@ public class PageRank {
             if (verbose) System.out.println("=====Iteration " + nIterations + "=====");
             
             /*
-             * P(dj) = r/N + (1 - r) * sum{ P(di)/#out(di) ; di->dj }
+             * P(dj) = r + (1 - r) * sum{ P(di)/#out(di) ; di->dj }
              */
             double sumNewPrs = 0;
             while(itr.hasNext()) {
                 String id = itr.next();
-                // r / N
-                double pr = damping / nodes.size();
+                double pr = damping;
                 Collection predecessorsList = graph.getPredecessors(id);
                 double sumPr = 0;
                 for (Object predObj : predecessorsList) {

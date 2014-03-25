@@ -48,10 +48,10 @@ public class WeightedSumRankAggregator {
     
     public List<ScoredTextDocument> aggregateRankings() {
         
-        int top = rankings.get(0).size();
-        
         PriorityQueue<ScoredTextDocument> heapScores = 
-                new PriorityQueue<>(top, new WeightedSumRankAggregator.ScoredTextDocumentComparator());
+                new PriorityQueue<>(
+                        rankings.get(0).size(), 
+                        new WeightedSumRankAggregator.ScoredTextDocumentComparator());
         
         /*
          Por cada documento en cada lista de rankings, obtenemos la puntuacion
@@ -81,16 +81,7 @@ public class WeightedSumRankAggregator {
                 
                 ScoredTextDocument weightedDoc = new ScoredTextDocument(doc.getDocumentId(), weightedScore);
                 
-                /***********HEAP**************/
-                if (heapScores.size() == top) {
-                    if (heapScores.peek().getScore() < weightedDoc.getScore()){
-                        heapScores.poll();
-                        heapScores.offer(weightedDoc);
-                    }
-                } else {
-                    heapScores.offer(weightedDoc);
-                }
-                /***********FIN HEAP**********/
+                heapScores.offer(weightedDoc);
             }
         }
         
@@ -127,7 +118,8 @@ public class WeightedSumRankAggregator {
         List<ScoredTextDocument> rank2 = new ArrayList<>();
         rank2.add(new ScoredTextDocument("doc4", 0.8));
         rank2.add(new ScoredTextDocument("doc1", 0.6));
-        rank2.add(new ScoredTextDocument("doc5", 0.1));
+        rank2.add(new ScoredTextDocument("doc5", 0.3));
+        rank2.add(new ScoredTextDocument("doc6", 0.2));
         
         List<ScoredTextDocument> rank3 = new ArrayList<>();
         rank3.add(new ScoredTextDocument("doc2", 0.7));
