@@ -202,37 +202,6 @@ public class PageRank {
         return listScorDocs;
     }
     
-    private class NodePr {
-        private final String id;
-        private final double pr;
-
-        public NodePr(String id, double pr) {
-            this.id = id;
-            this.pr = pr;
-        }
-
-        public String getId() {
-            return id;
-        }
-
-        public double getPr() {
-            return pr;
-        }
-    }
-    
-    private class NodePrComparator implements Comparator<NodePr> {
-
-        @Override
-        public int compare(NodePr o1, NodePr o2) {
-            if (o1.getPr() > o2.getPr())
-                return 1;
-            if (o1.getPr() < o2.getPr())
-                return -1;
-            return 0;
-        }
-        
-    }
-    
     private class ScoredTextDocumentComparator implements Comparator<ScoredTextDocument> {
 
         @Override

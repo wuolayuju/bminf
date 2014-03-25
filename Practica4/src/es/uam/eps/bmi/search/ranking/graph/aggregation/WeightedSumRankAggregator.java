@@ -34,15 +34,30 @@ public class WeightedSumRankAggregator {
             throw new AggregatorException("List sizes of rankings and weights differ.");
         
         this.rankings = rankings;
+        normalizeRankingsMinMax();
         this.weights = weights;
     }
 
-    public List<List<ScoredTextDocument>> getOriginalRankings() {
+    public List<List<ScoredTextDocument>> getRankings() {
         return rankings;
     }
 
     public List<Double> getWeights() {
         return weights;
+    }
+    
+    private void normalizeRankingsMinMax() {
+        Comparator comparator = new WeightedSumRankAggregator.ScoredTextDocumentComparator();
+        // s'(d) = (s(d) - min{s(d')}) / (max{s(d')} - min{s(d')})
+        for (List<ScoredTextDocument> list : rankings) {
+            double min = Collections.max(list, comparator).getScore();
+            double max = Collections.min(list, comparator).getScore();
+            double denominator = max - min;
+            for (ScoredTextDocument doc : list) {
+                double normScore = (doc.getScore() - min) / denominator;
+                doc.setScore(normScore);
+            }
+        }
     }
     
     public List<ScoredTextDocument> aggregateRankings() {
