@@ -51,8 +51,6 @@ public class ProximalSearcher implements Searcher{
         if (index == null) 
             return null;
         
-        HashMap<String,Double> docTFIDF = new HashMap<>();
-        
         String[] queryArray = query.split(" ");
         if (queryArray.length == 0) 
             return null;
