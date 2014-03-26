@@ -34,7 +34,8 @@ public class WeightedSumRankAggregator {
             throw new AggregatorException("List sizes of rankings and weights differ.");
         
         this.rankings = rankings;
-        normalizeRankingsMinMax();
+        
+        normalizeRankings();
         this.weights = weights;
     }
 
@@ -46,17 +47,10 @@ public class WeightedSumRankAggregator {
         return weights;
     }
     
-    private void normalizeRankingsMinMax() {
-        Comparator comparator = new WeightedSumRankAggregator.ScoredTextDocumentComparator();
-        // s'(d) = (s(d) - min{s(d')}) / (max{s(d')} - min{s(d')})
+    private void normalizeRankings() {
         for (List<ScoredTextDocument> list : rankings) {
-            double min = Collections.max(list, comparator).getScore();
-            double max = Collections.min(list, comparator).getScore();
-            double denominator = max - min;
-            for (ScoredTextDocument doc : list) {
-                double normScore = (doc.getScore() - min) / denominator;
-                doc.setScore(normScore);
-            }
+            ScoreNormalizer norm = new ScoreNormalizer(list);
+            list = norm.normalizeZScore();
         }
     }
     
@@ -85,7 +79,7 @@ public class WeightedSumRankAggregator {
                     // En caso contrario, el valor es 0
                     double actualScore = otherList.contains(doc) ? 
                             otherList.get(otherList.indexOf(doc)).getScore() :
-                            0;
+                            -2;
                     
                     weightedScore += actualScore * weights.get(j);
                 }
