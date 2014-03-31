@@ -7,6 +7,7 @@
 package es.uam.eps.bmi.search.searching;
 
 import es.uam.eps.bmi.search.ScoredTextDocument;
+import es.uam.eps.bmi.search.indexing.BasicIndex;
 import es.uam.eps.bmi.search.indexing.Index;
 import es.uam.eps.bmi.search.indexing.Posting;
 import java.util.ArrayList;
@@ -91,7 +92,13 @@ public class ProximalSearcher implements Searcher{
                 listPostingsPerDoc.add(listPostingClause.get(indexDoc));
             }
             
-            double score = getProximalScore(listPostingsPerDoc);
+            boolean verbose = false;
+            if ("447".equals(listPostingsPerDoc.get(0).getDocumentId()) || "33".equals(listPostingsPerDoc.get(0).getDocumentId())){
+                System.out.println("===" + listPostingsPerDoc.get(0).getDocumentId() + "===");
+                verbose = true;
+            }
+            
+            double score = getProximalScore(listPostingsPerDoc, verbose);
 
             ScoredTextDocument scoredDoc = new ScoredTextDocument(
                     listQueryPostings.get(0).get(indexDoc).getDocumentId(),
@@ -163,7 +170,7 @@ public class ProximalSearcher implements Searcher{
     }
 
     
-    private static double getProximalScore(List<Posting> listPostingsPerDoc) {
+    private static double getProximalScore(List<Posting> listPostingsPerDoc, boolean verbose) {
         //2. a ← −∞
         //3. b ← max min l ∩ (a, ∞) |l ∈ P d
         //4. Si “b = ∞” fin // O bien antes del paso 3, a = min long l l ∈ P d
@@ -212,7 +219,7 @@ public class ProximalSearcher implements Searcher{
             a = tempA;
             
             // Calculo del score y acumulacion del mismo
-            //System.out.println("[" + a + "," + b + "]");
+            if (verbose) System.out.println("[" + a + "," + b + "]");
             
             double denominator = b - a - listPostingsPerDoc.size() + 2;
             score += 1 / denominator;
@@ -262,7 +269,32 @@ public class ProximalSearcher implements Searcher{
     }
     public static void main(String[] args) {
 
-        List<Long> pos1 = new ArrayList<>();
+        String indexPath = "indexPath";
+        
+        for(int i=0;i<args.length;i++) {
+            if(args[i].compareTo("-index")==0) {
+                indexPath = args[i+1];
+                i++;
+            }
+        }
+        
+        BasicIndex index = new BasicIndex();
+        index.load(indexPath);
+        
+        ProximalSearcher proxSearcher = new ProximalSearcher();
+        proxSearcher.build(index);
+        proxSearcher.setTopResults(5);
+        List<ScoredTextDocument> res = proxSearcher.search("getting organized");
+        
+        int pos = 1;
+        for (ScoredTextDocument doc : res) {
+            
+            System.out.println(pos++ + ". " + doc.getDocumentId() + " , " +
+                    index.getDocument(doc.getDocumentId()).getName() + " = " + doc.getScore());
+        }
+        
+        
+        /*List<Long> pos1 = new ArrayList<>();
         List<Long> pos2 = new ArrayList<>();
         List<Long> pos3 = new ArrayList<>();
 
@@ -295,6 +327,6 @@ public class ProximalSearcher implements Searcher{
         postingList.add(posting1);
         postingList.add(posting2);
         
-        getProximalScore(postingList);
+        getProximalScore(postingList);*/
     }
 }
