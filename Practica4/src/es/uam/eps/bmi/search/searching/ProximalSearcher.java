@@ -91,14 +91,9 @@ public class ProximalSearcher implements Searcher{
             for (List<Posting> listPostingClause : listQueryPostings) {
                 listPostingsPerDoc.add(listPostingClause.get(indexDoc));
             }
+
             
-            boolean verbose = false;
-            if ("447".equals(listPostingsPerDoc.get(0).getDocumentId()) || "33".equals(listPostingsPerDoc.get(0).getDocumentId())){
-                System.out.println("===" + listPostingsPerDoc.get(0).getDocumentId() + "===");
-                verbose = true;
-            }
-            
-            double score = getProximalScore(listPostingsPerDoc, verbose);
+            double score = getProximalScore(listPostingsPerDoc);
 
             ScoredTextDocument scoredDoc = new ScoredTextDocument(
                     listQueryPostings.get(0).get(indexDoc).getDocumentId(),
@@ -170,7 +165,7 @@ public class ProximalSearcher implements Searcher{
     }
 
     
-    private static double getProximalScore(List<Posting> listPostingsPerDoc, boolean verbose) {
+    private static double getProximalScore(List<Posting> listPostingsPerDoc) {
         //2. a ← −∞
         //3. b ← max min l ∩ (a, ∞) |l ∈ P d
         //4. Si “b = ∞” fin // O bien antes del paso 3, a = min long l l ∈ P d
@@ -219,7 +214,7 @@ public class ProximalSearcher implements Searcher{
             a = tempA;
             
             // Calculo del score y acumulacion del mismo
-            if (verbose) System.out.println("[" + a + "," + b + "]");
+            //if (verbose) System.out.println("[" + a + "," + b + "]");
             
             double denominator = b - a - listPostingsPerDoc.size() + 2;
             score += 1 / denominator;

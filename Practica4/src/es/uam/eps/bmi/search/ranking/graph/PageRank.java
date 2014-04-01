@@ -45,7 +45,7 @@ public class PageRank {
          nodes = new HashMap<>();
     }
     
-    public void loadFromfile (String fileGraph) throws FileNotFoundException, IOException {
+    public int loadFromfile (String fileGraph) throws FileNotFoundException, IOException {
         
         BufferedReader br = new BufferedReader(
                 new InputStreamReader(
@@ -76,6 +76,8 @@ public class PageRank {
             }
         }
         br.close();
+        
+        return graph.getVertexCount();
     }
     
     private int countLinesFile(String filename) throws IOException {
@@ -163,7 +165,7 @@ public class PageRank {
             }
             nIterations ++;
             
-            if (verbose) { System.out.println("\nMax Delta = " + maxDelta);}
+            if (verbose) { System.out.println("\nMax Delta = " + maxDelta + "\n");}
             
         } while(maxDelta > tolerance && nIterations < 50);
     }
