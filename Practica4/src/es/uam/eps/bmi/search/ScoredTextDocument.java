@@ -9,7 +9,7 @@ import java.util.Objects;
  */
 public class ScoredTextDocument implements Comparable{
 
-    private final String documentId;
+    private String documentId;
     private double score;
 
     /**
@@ -55,6 +55,10 @@ public class ScoredTextDocument implements Comparable{
      */
     public void setScore(double score) {
         this.score = score;
+    }
+    
+    public void setId(String documentId) {
+        this.documentId = documentId;
     }
     
     /**

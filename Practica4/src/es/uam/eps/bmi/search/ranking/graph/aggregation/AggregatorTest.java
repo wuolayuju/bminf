@@ -16,6 +16,7 @@ import es.uam.eps.bmi.search.searching.ProximalSearcher;
 import es.uam.eps.bmi.search.searching.Searcher;
 import es.uam.eps.bmi.search.searching.TFIDFSearcher;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -78,7 +79,7 @@ public class AggregatorTest {
         }
         
         if (!indexPath
-                .substring(indexPath.lastIndexOf("/"))
+                .substring(indexPath.lastIndexOf(File.separator))
                 .contains("advanced"))
         {
             System.err.println("The provided index must be of type 'Advanced'.");
@@ -137,6 +138,9 @@ public class AggregatorTest {
             TF-IDF SEARCHER
             */
             List<ScoredTextDocument> topTf = tfSearcher.search(query);
+            for (ScoredTextDocument doc : topTf) { // Conversion a nombre completo
+                doc.setId(index.getDocument(doc.getDocumentId()).getName());
+            }
             pat5Tf += getNumHits(index, topTf, relevance.get(relevanceIndex), 5) / 5;
             pat10Tf += getNumHits(index, topTf, relevance.get(relevanceIndex), 10) / 10;
             
@@ -144,6 +148,9 @@ public class AggregatorTest {
             LITERAL MATCHING
             */
             List<ScoredTextDocument> topLiteral = literalSearcher.search(query);
+            for (ScoredTextDocument doc : topLiteral) { // Conversion a nombre completo
+                doc.setId(index.getDocument(doc.getDocumentId()).getName());
+            }
             pat5Lit += getNumHits(index, topLiteral, relevance.get(relevanceIndex), 5) / 5;
             pat10Lit += getNumHits(index, topLiteral, relevance.get(relevanceIndex), 10) / 10;
             
@@ -151,6 +158,9 @@ public class AggregatorTest {
             PROXIMAL SEARCHER
             */
             List<ScoredTextDocument> topProximal = proxSearcher.search(query);
+            for (ScoredTextDocument doc : topProximal) { // Conversion a nombre completo
+                doc.setId(index.getDocument(doc.getDocumentId()).getName());
+            }
             pat5Prox += getNumHits(index, topProximal, relevance.get(relevanceIndex), 5) / 5;
             pat10Prox += getNumHits(index, topProximal, relevance.get(relevanceIndex), 10) / 10;
             
@@ -262,8 +272,8 @@ public class AggregatorTest {
         int i = 0;
         while(i++ < top) {
             ScoredTextDocument scoredDoc = itr.next();
-            TextDocument doc = index.getDocument(scoredDoc.getDocumentId());
-            String docName = doc.getName().substring(0, doc.getName().indexOf(".html"));
+            String docName = scoredDoc.getDocumentId().
+                    substring(0, scoredDoc.getDocumentId().indexOf(".html"));
             if (listRelevance.contains(docName)) {
                 numHits ++;
             }
