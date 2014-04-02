@@ -32,7 +32,7 @@ import java.util.logging.Logger;
  */
 public class AggregatorTest {
     
-    public static void main(String[] args) {
+    public static void main(String[] args) throws AggregatorException {
         String indexPath = "";
         String linksFile = "";
         String queriesFile = "";
@@ -124,22 +124,87 @@ public class AggregatorTest {
             Logger.getLogger(AggregatorTest.class.getName()).log(Level.SEVERE, null, ex);
         }
         
+        int relevanceIndex = 0;
+        double pat5Tf = 0, pat10Tf = 0;
+        double pat5Lit = 0, pat10Lit = 0;
+        double pat5Prox = 0, pat10Prox = 0;
+        double pat5TfPr = 0, pat10TfPr = 0;
+        double pat5LitPr = 0, pat10LitPr = 0;
+        double pat5TfProxPr = 0, pat10TfProxPr = 0;
         for (String query : queries) {
+            
+            /*
+            TF-IDF SEARCHER
+            */
             List<ScoredTextDocument> topTf = tfSearcher.search(query);
-            System.out.println("--- TFIDFSearcher ---");
-            calcPrecisions(index, topTf, queries, relevance);
+            pat5Tf += getNumHits(index, topTf, relevance.get(relevanceIndex), 5) / 5;
+            pat10Tf += getNumHits(index, topTf, relevance.get(relevanceIndex), 10) / 10;
             
+            /*
+            LITERAL MATCHING
+            */
             List<ScoredTextDocument> topLiteral = literalSearcher.search(query);
-            System.out.println("--- LiteralSearcher ---");
-            calcPrecisions(index, topLiteral, queries, relevance);
+            pat5Lit += getNumHits(index, topLiteral, relevance.get(relevanceIndex), 5) / 5;
+            pat10Lit += getNumHits(index, topLiteral, relevance.get(relevanceIndex), 10) / 10;
             
+            /*
+            PROXIMAL SEARCHER
+            */
             List<ScoredTextDocument> topProximal = proxSearcher.search(query);
-            System.out.println("--- ProximalSearcher ---");
-            calcPrecisions(index, topProximal, queries, relevance);
+            pat5Prox += getNumHits(index, topProximal, relevance.get(relevanceIndex), 5) / 5;
+            pat10Prox += getNumHits(index, topProximal, relevance.get(relevanceIndex), 10) / 10;
             
-            //List<ScoredTextDocument> topPageRank = pageRank.getTopNPages(10);
+            List<ScoredTextDocument> topPageRank = pageRank.getTopNPages(10);
+            
+            /*
+            TF-IDF + PAGERANK
+            */
+            List<List<ScoredTextDocument>> rankingsTfPr = new ArrayList<>();
+            rankingsTfPr.add(topTf);rankingsTfPr.add(topPageRank);
+            List<Double> weightsTfPr = new ArrayList<>();
+            weightsTfPr.add(0.5);weightsTfPr.add(0.5);
+            WeightedSumRankAggregator aggregator = new WeightedSumRankAggregator(rankingsTfPr, weightsTfPr);
+            List<ScoredTextDocument> topTfPr = aggregator.aggregateRankings();
+            pat5TfPr += getNumHits(index, topTfPr, relevance.get(relevanceIndex), 5) / 5;
+            pat10TfPr += getNumHits(index, topTfPr, relevance.get(relevanceIndex), 10) / 10;
+            
+            /*
+            LITERAL + PAGERANK
+            */
+            List<List<ScoredTextDocument>> rankingsLitPr = new ArrayList<>();
+            rankingsLitPr.add(topTf);rankingsLitPr.add(topPageRank);
+            List<Double> weightsLitPr = new ArrayList<>();
+            weightsLitPr.add(0.5);weightsLitPr.add(0.5);
+            aggregator = new WeightedSumRankAggregator(rankingsLitPr, weightsLitPr);
+            List<ScoredTextDocument> topLitPr = aggregator.aggregateRankings();
+            pat5LitPr += getNumHits(index, topLitPr, relevance.get(relevanceIndex), 5) / 5;
+            pat10LitPr += getNumHits(index, topLitPr, relevance.get(relevanceIndex), 10) / 10;
+            
+            /*
+            TF-IDF + PROXIMAL + PAGERANK
+            */
+            List<List<ScoredTextDocument>> rankingsTfProxPr = new ArrayList<>();
+            rankingsTfProxPr.add(topTf);rankingsTfProxPr.add(topPageRank);
+            List<Double> weightsTfProxPr = new ArrayList<>();
+            weightsTfProxPr.add(0.3);weightsTfProxPr.add(0.4);weightsTfProxPr.add(0.3);
+            aggregator = new WeightedSumRankAggregator(rankingsTfProxPr, weightsTfProxPr);
+            List<ScoredTextDocument> topTfProxPr = aggregator.aggregateRankings();
+            pat5TfProxPr += getNumHits(index, topTfProxPr, relevance.get(relevanceIndex), 5) / 5;
+            pat10TfProxPr += getNumHits(index, topTfProxPr, relevance.get(relevanceIndex), 10) / 10;
         }
         
+        System.out.println("--- TFIDFSearcher ---");
+        System.out.println("P@5 = " + pat5Tf / queries.size() + "\tP@10 = " + pat10Tf / queries.size() + "\n");
+        System.out.println("--- LiteralSearcher ---");
+        System.out.println("P@5 = " + pat5Lit / queries.size() + "\tP@10 = " + pat10Lit / queries.size() + "\n");
+        System.out.println("--- ProximalSearcher ---");
+        System.out.println("P@5 = " + pat5Prox / queries.size() + "\tP@10 = " + pat10Prox / queries.size() + "\n");
+        System.out.println("--- TF-IDF + PageRank ---");
+        System.out.println("P@5 = " + pat5TfPr / queries.size() + "\tP@10 = " + pat10TfPr / queries.size() + "\n");
+        System.out.println("--- Literal + PageRank ---");
+        System.out.println("P@5 = " + pat5LitPr / queries.size() + "\tP@10 = " + pat10LitPr / queries.size() + "\n");
+        System.out.println("--- Tf-IDF + Proximal + PageRank ---");
+        System.out.println("P@5 = " + pat5TfProxPr / queries.size() + "\tP@10 = " + pat10TfProxPr / queries.size() + "\n");
     }
     
     private static List<String> readQueries(String queriesPath) throws Exception {
