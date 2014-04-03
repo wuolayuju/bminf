@@ -132,6 +132,7 @@ public class AggregatorTest {
         double pat5TfPr = 0, pat10TfPr = 0;
         double pat5LitPr = 0, pat10LitPr = 0;
         double pat5TfProxPr = 0, pat10TfProxPr = 0;
+        
         for (String query : queries) {
             
             /*
@@ -165,6 +166,9 @@ public class AggregatorTest {
             pat10Prox += getNumHits(index, topProximal, relevance.get(relevanceIndex), 10) / 10;
             
             List<ScoredTextDocument> topPageRank = pageRank.getTopNPages(10);
+            for (ScoredTextDocument doc : topPageRank) { // Conversion a nombre completo
+                doc.setId(doc.getDocumentId().concat(".html"));
+            }
             
             /*
             TF-IDF + PAGERANK
@@ -172,7 +176,7 @@ public class AggregatorTest {
             List<List<ScoredTextDocument>> rankingsTfPr = new ArrayList<>();
             rankingsTfPr.add(topTf);rankingsTfPr.add(topPageRank);
             List<Double> weightsTfPr = new ArrayList<>();
-            weightsTfPr.add(0.5);weightsTfPr.add(0.5);
+            weightsTfPr.add(0.9);weightsTfPr.add(0.1);
             WeightedSumRankAggregator aggregator = new WeightedSumRankAggregator(rankingsTfPr, weightsTfPr);
             List<ScoredTextDocument> topTfPr = aggregator.aggregateRankings();
             pat5TfPr += getNumHits(index, topTfPr, relevance.get(relevanceIndex), 5) / 5;
@@ -184,7 +188,7 @@ public class AggregatorTest {
             List<List<ScoredTextDocument>> rankingsLitPr = new ArrayList<>();
             rankingsLitPr.add(topTf);rankingsLitPr.add(topPageRank);
             List<Double> weightsLitPr = new ArrayList<>();
-            weightsLitPr.add(0.5);weightsLitPr.add(0.5);
+            weightsLitPr.add(0.9);weightsLitPr.add(0.1);
             aggregator = new WeightedSumRankAggregator(rankingsLitPr, weightsLitPr);
             List<ScoredTextDocument> topLitPr = aggregator.aggregateRankings();
             pat5LitPr += getNumHits(index, topLitPr, relevance.get(relevanceIndex), 5) / 5;
@@ -194,13 +198,17 @@ public class AggregatorTest {
             TF-IDF + PROXIMAL + PAGERANK
             */
             List<List<ScoredTextDocument>> rankingsTfProxPr = new ArrayList<>();
-            rankingsTfProxPr.add(topTf);rankingsTfProxPr.add(topPageRank);
+            rankingsTfProxPr.add(topTf);
+            rankingsTfProxPr.add(topProximal);
+            rankingsTfProxPr.add(topPageRank);
             List<Double> weightsTfProxPr = new ArrayList<>();
-            weightsTfProxPr.add(0.3);weightsTfProxPr.add(0.4);weightsTfProxPr.add(0.3);
+            weightsTfProxPr.add(0.05);weightsTfProxPr.add(0.9);weightsTfProxPr.add(0.05);
             aggregator = new WeightedSumRankAggregator(rankingsTfProxPr, weightsTfProxPr);
             List<ScoredTextDocument> topTfProxPr = aggregator.aggregateRankings();
             pat5TfProxPr += getNumHits(index, topTfProxPr, relevance.get(relevanceIndex), 5) / 5;
             pat10TfProxPr += getNumHits(index, topTfProxPr, relevance.get(relevanceIndex), 10) / 10;
+            
+            relevanceIndex++;
         }
         
         System.out.println("--- TFIDFSearcher ---");
