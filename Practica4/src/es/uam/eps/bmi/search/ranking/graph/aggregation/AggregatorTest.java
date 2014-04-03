@@ -176,7 +176,7 @@ public class AggregatorTest {
             List<List<ScoredTextDocument>> rankingsTfPr = new ArrayList<>();
             rankingsTfPr.add(topTf);rankingsTfPr.add(topPageRank);
             List<Double> weightsTfPr = new ArrayList<>();
-            weightsTfPr.add(0.9);weightsTfPr.add(0.1);
+            weightsTfPr.add(0.95);weightsTfPr.add(0.05);
             WeightedSumRankAggregator aggregator = new WeightedSumRankAggregator(rankingsTfPr, weightsTfPr);
             List<ScoredTextDocument> topTfPr = aggregator.aggregateRankings();
             pat5TfPr += getNumHits(index, topTfPr, relevance.get(relevanceIndex), 5) / 5;
@@ -188,7 +188,7 @@ public class AggregatorTest {
             List<List<ScoredTextDocument>> rankingsLitPr = new ArrayList<>();
             rankingsLitPr.add(topTf);rankingsLitPr.add(topPageRank);
             List<Double> weightsLitPr = new ArrayList<>();
-            weightsLitPr.add(0.9);weightsLitPr.add(0.1);
+            weightsLitPr.add(0.95);weightsLitPr.add(0.05);
             aggregator = new WeightedSumRankAggregator(rankingsLitPr, weightsLitPr);
             List<ScoredTextDocument> topLitPr = aggregator.aggregateRankings();
             pat5LitPr += getNumHits(index, topLitPr, relevance.get(relevanceIndex), 5) / 5;

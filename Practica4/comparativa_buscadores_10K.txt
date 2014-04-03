@@ -1,0 +1,70 @@
+--- TFIDFSearcher ---
+P@5 = 0.0	P@10 = 0.05
+
+
+--- LiteralSearcher ---
+P@5 = 0.08	P@10 = 0.08
+
+
+--- ProximalSearcher ---
+P@5 = 0.19999999999999998	P@10 = 0.16000000000000003
+
+
+--- TF-IDF + PageRank (0.1) ---
+P@5 = 0.0	P@10 = 0.0
+
+--- TF-IDF + PageRank (0.2) ---
+P@5 = 0.0	P@10 = 0.0
+
+--- TF-IDF + PageRank (0.3) ---
+P@5 = 0.0	P@10 = 0.0
+
+--- TF-IDF + PageRank (0.4) ---
+P@5 = 0.0	P@10 = 0.0
+
+--- TF-IDF + PageRank (0.5) ---
+P@5 = 0.0	P@10 = 0.0
+
+--- TF-IDF + PageRank (0.6) ---
+P@5 = 0.0	P@10 = 0.0
+
+--- TF-IDF + PageRank (0.7) ---
+P@5 = 0.0	P@10 = 0.0
+
+--- TF-IDF + PageRank (0.8) ---
+P@5 = 0.0	P@10 = 0.0
+
+--- TF-IDF + PageRank (0.9) ---
+P@5 = 0.0	P@10 = 0.0
+
+
+--- Literal + PageRank (0.1) ---
+P@5 = 0.0	P@10 = 0.0
+
+--- Literal + PageRank (0.2) ---
+P@5 = 0.0	P@10 = 0.0
+
+--- Literal + PageRank (0.3) ---
+P@5 = 0.0	P@10 = 0.0
+
+--- Literal + PageRank (0.4) ---
+P@5 = 0.0	P@10 = 0.0
+
+--- Literal + PageRank (0.5) ---
+P@5 = 0.0	P@10 = 0.0
+
+--- Literal + PageRank (0.6) ---
+P@5 = 0.0	P@10 = 0.0
+
+--- Literal + PageRank (0.7) ---
+P@5 = 0.0	P@10 = 0.0
+
+--- Literal + PageRank (0.8) ---
+P@5 = 0.0	P@10 = 0.0
+
+--- Literal + PageRank (0.9) ---
+P@5 = 0.0	P@10 = 0.0
+
+
+--- Tf-IDF + Proximal + PageRank ---
+P@5 = 0.06	P@10 = 0.03
