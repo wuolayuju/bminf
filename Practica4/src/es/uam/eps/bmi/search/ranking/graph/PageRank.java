@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package es.uam.eps.bmi.search.ranking.graph;
 
 import edu.uci.ics.jung.graph.*;
@@ -28,8 +22,12 @@ import java.util.PriorityQueue;
 import java.util.StringTokenizer;
 
 /**
- *
- * @author uam
+ * Clase que implementa el algoritmo iterativo PageRank dado un fichero de enlaces.<br>
+ * Para usar correctamente esta clase, es necesario primero instanciarla, llamar a
+ * {@link PageRank#loadFromfile(java.lang.String) } para crear el grafo de enlaces y
+ * por último llamar a {@link PageRank#calculatePageRank(double, double, boolean) }
+ * para realizar el cálculo del score de los nodos.
+ * @author Ari Handler y Adrián Lorenzo
  */
 public class PageRank {
     
@@ -39,12 +37,24 @@ public class PageRank {
     private static final int OUT_LINKS_INDEX = 0;
     private static final int PAGERANK_INDEX = 1;
     
+    /**
+     * Construye la clase PageRank, inicializando el grafo de enlaces y la lista de nodos
+     */
     public PageRank () {
     
          graph = new SparseGraph();
          nodes = new HashMap<>();
     }
     
+    /**
+     * Construye el grafo de enlaces dado el nombre de un fichero que sigue el 
+     * formato:<br>
+     * id_cluweb n_outlinks [id_clueweb_link]*
+     * @param fileGraph fichero que contiene los nodos y sus enlaces
+     * @return el número de nodos leídos
+     * @throws FileNotFoundException si no se encuentra el fichero fileGraph
+     * @throws IOException si se produce algún error con el fichero
+     */
     public int loadFromfile (String fileGraph) throws FileNotFoundException, IOException {
         
         BufferedReader br = new BufferedReader(
@@ -101,10 +111,28 @@ public class PageRank {
         }
     }
     
+    /**
+     * Devuelve el valor PageRank de un determinado documento
+     * @param documentId el identificador del documento
+     * @return la puntuación PageRank del documento
+     */
     public double getScoreOf(String documentId) {
         return (Double) nodes.get(documentId).get(PAGERANK_INDEX);
     }
     
+    /**
+     * Implementa el método iterativo para calcular el valor de PageRank de cada
+     * uno de los nodos en el grafo montado mediante {@link PageRank#loadFromfile(java.lang.String) }.<br>
+     * El algoritmo se detiene si se ha llegado al criterio de convergencia pasado
+     * como uno de los argumentos o bien, si el número de iteraciones que se han
+     * realizado son un total de 50.<br>
+     * Para el tratamiento de nodos sumidero se ha hecho uso de (1 - P'[i]) / |links|).
+     * @param tolerance criterio de convergencia. Si el cambio mayor de score
+     * en una iteración entera es menor que este valor, el algoritmo se detiene.
+     * @param damping factor de amortiguamiento.
+     * @param verbose si está activado, imprimirá por salida estándar el desarrollo
+     * del algoritmo.
+     */
     public void calculatePageRank(double tolerance, double damping, boolean verbose) {
         
         double maxDelta;
@@ -170,6 +198,11 @@ public class PageRank {
         } while(maxDelta > tolerance && nIterations < 50);
     }
     
+    /**
+     * Devuelve el top de documentos dado su PageRank
+     * @param top numero máximo de documentos devueltos
+     * @return lista de documentos puntuados en orden descendiente
+     */
     public List<ScoredTextDocument> getTopNPages(int top) {
         
         PriorityQueue<ScoredTextDocument> heap = 
@@ -192,7 +225,6 @@ public class PageRank {
             /***********FIN HEAP**********/
         }
         
-        // Conversión a lista del heap de puntuaciones
         // Conversión a lista del heap de puntuaciones
         List<ScoredTextDocument> listScorDocs = new ArrayList<>();
                 listScorDocs.addAll(heap);

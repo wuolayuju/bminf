@@ -7,8 +7,8 @@
 package es.uam.eps.bmi.search.ranking.graph.aggregation;
 
 /**
- *
- * @author uam
+ * Indica algún error a la hora de realizar agregaciones de ránkings.
+ * @author Ari Handler y Adrián Lorenzo
  */
 public class AggregatorException extends Exception {
 

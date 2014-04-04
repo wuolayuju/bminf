@@ -12,17 +12,26 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- *
- * @author uam
+ * Clase auxiliar para realizar operaciones estadísticas sobre un lista de 
+ * documentos puntuados con el fin de normalizarlos.
+ * @author Ari Handler y Adrián Lorenzo
  */
 public class ScoreNormalizer {
 
     List<ScoredTextDocument> data;
 
+    /**
+     * Inicializa la clase con los datos que se van a normalizar
+     * @param data datos
+     */
     public ScoreNormalizer(List<ScoredTextDocument> data) {
         this.data = data;
     }
     
+    /**
+     * Normaliza los datos aplicando Z-Score o Standard Score
+     * @return lista de documentos normalizados
+     */
     public List<ScoredTextDocument> normalizeZScore() {
         double mean = getMean();
         double sd = getSD(mean);
@@ -33,6 +42,10 @@ public class ScoreNormalizer {
         return data;
     }
     
+    /**
+     * Normalizao los datos aplicando MinMax
+     * @return lista de documentos normalizados
+     */
     public List<ScoredTextDocument> normalizeMinMax() {
         Comparator comparator = new ScoreNormalizer.ScoredTextDocumentComparator();
         // s'(d) = (s(d) - min{s(d')}) / (max{s(d')} - min{s(d')})

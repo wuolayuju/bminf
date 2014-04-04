@@ -1,13 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package es.uam.eps.bmi.search.searching;
 
 import es.uam.eps.bmi.search.ScoredTextDocument;
-import es.uam.eps.bmi.search.indexing.BasicIndex;
 import es.uam.eps.bmi.search.indexing.Index;
 import es.uam.eps.bmi.search.indexing.Posting;
 import java.util.ArrayList;
@@ -18,16 +11,13 @@ import java.util.PriorityQueue;
 
 /**
  *
- *  Buscador que implementa una búsqueda literal. Esto es, una búsqueda en la 
- * que las palabras de la consulta van entre comillas, y los documentos 
- * devueltos deben contener estos términos de forma consecutiva y en el mismo
- * orden en que se dan en la consulta. 
- * 
+ *  Buscador que implementa una búsqueda proximal. Esto es, para una determinada
+ * consulta, se recuperan los intervalos mínimos en cada documento tal que todos
+ * los términos de dicha consulta se encuentren en esos intervalos.
  * @author Ari Handler - Adrián Lorenzo
  */
 public class ProximalSearcher implements Searcher{
 
-    
     private Index index;
     private int TOP_RES = 5;
     
@@ -123,7 +113,7 @@ public class ProximalSearcher implements Searcher{
     }
     
     
-    public static List<List<Posting>> intersection(List<List<Posting>> list1) {
+    private static List<List<Posting>> intersection(List<List<Posting>> list1) {
         
         List<List<Posting>> intersectionList = new ArrayList();
         List <Posting> auxlist = new ArrayList();
@@ -214,16 +204,16 @@ public class ProximalSearcher implements Searcher{
             a = tempA;
             
             // Calculo del score y acumulacion del mismo
-            //if (verbose) System.out.println("[" + a + "," + b + "]");
+            System.out.println("[" + a + "," + b + "]");
             
             double denominator = b - a - listPostingsPerDoc.size() + 2;
             score += 1 / denominator;
             
-            //System.out.println("denominator = " + denominator);
+            System.out.println("denominator = " + denominator);
             
         }while(true);
         
-        //System.out.println("score = " + score);
+        System.out.println("score = " + score);
         
         return score;
     }
@@ -264,7 +254,7 @@ public class ProximalSearcher implements Searcher{
     }
     public static void main(String[] args) {
 
-        String indexPath = "indexPath";
+        /*String indexPath = "indexPath";
         
         for(int i=0;i<args.length;i++) {
             if(args[i].compareTo("-index")==0) {
@@ -286,10 +276,10 @@ public class ProximalSearcher implements Searcher{
             
             System.out.println(pos++ + ". " + doc.getDocumentId() + " , " +
                     index.getDocument(doc.getDocumentId()).getName() + " = " + doc.getScore());
-        }
+        }*/
         
         
-        /*List<Long> pos1 = new ArrayList<>();
+        List<Long> pos1 = new ArrayList<>();
         List<Long> pos2 = new ArrayList<>();
         List<Long> pos3 = new ArrayList<>();
 
@@ -322,6 +312,6 @@ public class ProximalSearcher implements Searcher{
         postingList.add(posting1);
         postingList.add(posting2);
         
-        getProximalScore(postingList);*/
+        getProximalScore(postingList);
     }
 }

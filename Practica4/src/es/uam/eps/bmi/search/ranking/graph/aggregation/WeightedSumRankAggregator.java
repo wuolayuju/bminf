@@ -15,14 +15,25 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
- * @author uam
+ * Clase que implmenta un agregador de ránkings que realiza una suma pesada
+ * de cada uno de los resultados pasados y devuelve un ránking combinado.
+ * @author Ari Handler y Adrián Lorenzo
  */
 public class WeightedSumRankAggregator {
     
     private List<List<ScoredTextDocument>> rankings;
     private List<Double> weights;
 
+    /**
+     * Instancia el agregador de ránkings dados n ránkings y los correspondientes
+     * pesos que se aplicarán a la hora de combinarlos. <br>
+     * Es importante recalcar que es necesario que el número de ránkings y 
+     * el número de pesos coincidan.
+     * @param rankings ránkings que se quieren combinar
+     * @param weights pesos que se aplicarán a cada ránking, en el mismo orden
+     * que el argumento anterior
+     * @throws AggregatorException si se produce algún error con los argumentos
+     */
     public WeightedSumRankAggregator(List<List<ScoredTextDocument>> rankings, List<Double> weights) throws AggregatorException {
         String excCause = "";
         // Las listas deben contener elementos
@@ -39,10 +50,18 @@ public class WeightedSumRankAggregator {
         this.weights = weights;
     }
 
+    /**
+     * Devuelve los ránkings que se combinan
+     * @return lista de ránkings original
+     */
     public List<List<ScoredTextDocument>> getRankings() {
         return rankings;
     }
 
+    /**
+     * Devuelve los pesos
+     * @return lista de pesos
+     */
     public List<Double> getWeights() {
         return weights;
     }
@@ -54,6 +73,11 @@ public class WeightedSumRankAggregator {
         }
     }
     
+    /**
+     * Realiza la agregación de los ránkings mediante la suma pesada de 
+     * cada uno de los documentos y los ordena en un orden descendiente
+     * @return ránking combinado y pesado
+     */
     public List<ScoredTextDocument> aggregateRankings() {
         
         List<ScoredTextDocument> listScorDocs = new ArrayList<>();

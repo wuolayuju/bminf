@@ -7,13 +7,11 @@
 package es.uam.eps.bmi.search.ranking.graph.aggregation;
 
 import es.uam.eps.bmi.search.ScoredTextDocument;
-import es.uam.eps.bmi.search.TextDocument;
 import es.uam.eps.bmi.search.indexing.AdvancedIndex;
 import es.uam.eps.bmi.search.indexing.Index;
 import es.uam.eps.bmi.search.ranking.graph.PageRank;
 import es.uam.eps.bmi.search.searching.LiteralMatchingSearcher;
 import es.uam.eps.bmi.search.searching.ProximalSearcher;
-import es.uam.eps.bmi.search.searching.Searcher;
 import es.uam.eps.bmi.search.searching.TFIDFSearcher;
 import java.io.BufferedReader;
 import java.io.File;

@@ -19,7 +19,9 @@ import java.util.logging.Logger;
 public class PageRankTest2 {
 
     /**
-     * @param args the command line arguments
+     * USAGE: java es.uam.eps.bmi.search.ranking.graph.PageRankTest2 -links LINKS_FILE<br>
+     * Ejecuta PageRank sobre el grafo definido en el fichero suministrado.
+     * @param args -links LINKS_FILE
      */
     public static void main(String[] args) {
         String usage = "USAGE: java es.uam.eps.bmi.search.ranking.graph.PageRankTest2"

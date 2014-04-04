@@ -13,13 +13,15 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
- * @author uam
+ * 
+ * @author Ari Handler y Adrián Lorenzo
  */
 public class PageRankTest1 {
 
     /**
-     * @param args the command line arguments
+     * USAGE: java es.uam.eps.bmi.search.ranking.graph.PageRankTest1 -links LINKS_FILE<br>
+     * Ejecuta PageRank sobre el grafo definido en el fichero suministrado.
+     * @param args -links LINKS_FILE
      */
     public static void main(String[] args) {
         
