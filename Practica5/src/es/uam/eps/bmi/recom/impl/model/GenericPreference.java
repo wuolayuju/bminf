@@ -24,25 +24,41 @@ public class GenericPreference implements Preference{
         this.value = value;
     }
     
-    
     @Override
     public long getUserID() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return userID;
     }
 
     @Override
     public long getItemID() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return itemID;
     }
 
     @Override
     public float getValue() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return value;
     }
 
     @Override
     public void setValue(float value) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.value = value;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final GenericPreference other = (GenericPreference) obj;
+        if (this.userID != other.userID) {
+            return false;
+        }
+        return this.itemID == other.itemID;
+    }
+    
+    
     
 }

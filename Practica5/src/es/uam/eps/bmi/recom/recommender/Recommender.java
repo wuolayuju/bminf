@@ -6,6 +6,7 @@
 
 package es.uam.eps.bmi.recom.recommender;
 
+import es.uam.eps.bmi.recom.model.DataModel;
 import java.util.List;
 
 /**
@@ -15,5 +16,7 @@ import java.util.List;
 public interface Recommender {
     List<RecommendedItem> recommend(long userID, int top);
     
-    float estimatePreference(long userID, long itemID);
+    double estimatePreference(long userID, long itemID);
+    
+    DataModel getDataModel();
 }
