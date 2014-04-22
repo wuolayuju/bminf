@@ -163,7 +163,13 @@ public class FileDataModel implements DataModel{
 
     @Override
     public void setPreference(long userID, long itemID, float value) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        List<Preference> prefs = usersPreferences.get(userID);
+        for (Preference p : prefs) {
+            if (p.getItemID() == itemID) {
+                p.setValue(value);
+                return;
+            }
+        }
     }
 
     @Override
