@@ -6,6 +6,7 @@
 
 package es.uam.eps.bmi.recom.impl.model;
 
+import es.uam.eps.bmi.recom.exceptions.GenericRecommendationException;
 import es.uam.eps.bmi.recom.model.DataModel;
 import es.uam.eps.bmi.recom.model.Preference;
 import java.io.BufferedReader;
@@ -85,12 +86,14 @@ public class FileDataModel implements DataModel{
     }
 
     @Override
-    public List<Preference> getPreferencesFromUser(long userID) {
+    public List<Preference> getPreferencesFromUser(long userID) throws GenericRecommendationException{
+        if (usersPreferences.get(userID) == null)
+            throw new GenericRecommendationException("User " + userID + " does not exist.");
         return usersPreferences.get(userID);
     }
 
     @Override
-    public List<Long> getItemIDsFromUser(long userID) {
+    public List<Long> getItemIDsFromUser(long userID) throws GenericRecommendationException {
         List<Preference> listPrefs = this.getPreferencesFromUser(userID);
         List<Long> listIds = new ArrayList<>();
         for (Preference p : listPrefs) {
@@ -118,8 +121,9 @@ public class FileDataModel implements DataModel{
     }
 
     @Override
-    public float getPreferenceValue(long userID, long itemID) {
-        for (Preference p : usersPreferences.get(userID)) {
+    public float getPreferenceValue(long userID, long itemID) throws GenericRecommendationException{
+        
+        for (Preference p : this.getPreferencesFromUser(userID)) {
             if (p.getItemID() == itemID)
                 return p.getValue();
         }

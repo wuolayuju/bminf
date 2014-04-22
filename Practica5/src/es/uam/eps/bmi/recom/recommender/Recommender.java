@@ -6,6 +6,7 @@
 
 package es.uam.eps.bmi.recom.recommender;
 
+import es.uam.eps.bmi.recom.exceptions.GenericRecommendationException;
 import es.uam.eps.bmi.recom.model.DataModel;
 import java.util.List;
 
@@ -14,9 +15,9 @@ import java.util.List;
  * @author uam
  */
 public interface Recommender {
-    List<RecommendedItem> recommend(long userID, int top);
+    List<RecommendedItem> recommend(long userID, int top) throws GenericRecommendationException;
     
-    double estimatePreference(long userID, long itemID);
+    double estimatePreference(long userID, long itemID) throws GenericRecommendationException;
     
     DataModel getDataModel();
 }

@@ -6,10 +6,12 @@
 
 package es.uam.eps.bmi.recom.similarity;
 
+import es.uam.eps.bmi.recom.exceptions.GenericRecommendationException;
+
 /**
  *
  * @author uam
  */
 public interface VectorSimilarity {
-    double vectorSimilarity(long userID, long itemID);
+    double vectorSimilarity(long userID, long itemID) throws GenericRecommendationException;
 }

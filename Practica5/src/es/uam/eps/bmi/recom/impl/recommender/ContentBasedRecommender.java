@@ -6,6 +6,7 @@
 
 package es.uam.eps.bmi.recom.impl.recommender;
 
+import es.uam.eps.bmi.recom.exceptions.GenericRecommendationException;
 import es.uam.eps.bmi.recom.model.DataModel;
 import es.uam.eps.bmi.recom.recommender.RecommendedItem;
 import es.uam.eps.bmi.recom.recommender.Recommender;
@@ -31,8 +32,10 @@ public class ContentBasedRecommender implements Recommender{
     }
     
     @Override
-    public List<RecommendedItem> recommend(long userID, int top) {
+    public List<RecommendedItem> recommend(long userID, int top) throws GenericRecommendationException {
         List<Long> itemsRatedByUser = dataModel.getItemIDsFromUser(userID);
+        if (itemsRatedByUser == null)
+            throw new GenericRecommendationException("User " + userID + " does not exist.");
         
         PriorityQueue<RecommendedItem> heapRecommended = 
                 new PriorityQueue<>(top, new RecommendedItemComparator());
@@ -65,7 +68,7 @@ public class ContentBasedRecommender implements Recommender{
     }
 
     @Override
-    public double estimatePreference(long userID, long itemID) {
+    public double estimatePreference(long userID, long itemID) throws GenericRecommendationException{
         return similarity.vectorSimilarity(userID, itemID);
     }
 

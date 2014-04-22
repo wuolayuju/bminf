@@ -6,6 +6,7 @@
 
 package es.uam.eps.bmi.recom.impl.similarity;
 
+import es.uam.eps.bmi.recom.exceptions.GenericRecommendationException;
 import es.uam.eps.bmi.recom.impl.model.GenericPreference;
 import es.uam.eps.bmi.recom.model.DataModel;
 import es.uam.eps.bmi.recom.model.Preference;
@@ -31,6 +32,9 @@ public class UserItemSimilarity implements VectorSimilarity{
     private HashMap<Long, List<ItemFeature>> itemFeatures;
     private List<Long> featuresIDs;
     private DataModel dataModel;
+    
+    private Map<Long, Double> cachedUserCentroid;
+    private long cachedUserID;
 
     public UserItemSimilarity(File itemFile, DataModel dataModel) throws IOException {
         this.itemFile = itemFile;
@@ -66,10 +70,11 @@ public class UserItemSimilarity implements VectorSimilarity{
     }
     
     @Override
-    public double vectorSimilarity(long userID, long itemID) {
+    public double vectorSimilarity(long userID, long itemID) throws GenericRecommendationException{
         Map<Long, Double> userCentroid = processUserCentroid(userID);
-        List<ItemFeature> feats = itemFeatures.get(itemID);
         
+        List<ItemFeature> feats = itemFeatures.get(itemID);
+        if (feats == null) return -1.0;
         // Cosine
         double numerator = 0.0;
         double itemModule = 0.0;
@@ -89,7 +94,11 @@ public class UserItemSimilarity implements VectorSimilarity{
         return (numerator / (itemModule * userModule));
     }
     
-    private Map<Long, Double> processUserCentroid(long userID) {
+    private Map<Long, Double> processUserCentroid(long userID) throws GenericRecommendationException {
+        
+        if (this.cachedUserID == userID)
+            return this.cachedUserCentroid;
+        
         List<Preference> userPrefs = dataModel.getPreferencesFromUser(userID);
         if (userPrefs == null) return null;
         
@@ -101,6 +110,7 @@ public class UserItemSimilarity implements VectorSimilarity{
             for (Preference p : userPrefs) {
                 long itemID = p.getItemID();
                 List<ItemFeature> itemVector = itemFeatures.get(itemID);
+                if (itemVector == null) continue;
                 for (ItemFeature itf : itemVector) {
                     if (itf.getFeatID() == feature){
                         numerator += p.getValue() * itf.getWeight();
@@ -111,6 +121,9 @@ public class UserItemSimilarity implements VectorSimilarity{
             centroid.put(feature, numerator / userPrefs.size());
         }
 
+        this.cachedUserCentroid = centroid;
+        this.cachedUserID = userID;
+        
         return centroid;
     }
 }
