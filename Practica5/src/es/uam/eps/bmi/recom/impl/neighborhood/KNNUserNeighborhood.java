@@ -48,9 +48,7 @@ public class KNNUserNeighborhood extends AbstractUserNeighborhood{
             if (vID == userID) continue; // Not myself
             double simil = this.getUserSimilarity().userSimilarity(userID, vID);
             Preference userSimil = new GenericPreference(vID, 0, (float) simil); // Item 0 (not necessary)
-            
-            System.out.println("User " + vID + " = " + userSimil.getValue());
-            
+                       
             /***********HEAP**************/
             if (heapNeighbours.size() == k) {
                 if (heapNeighbours.peek().getValue() < userSimil.getValue()){

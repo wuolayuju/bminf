@@ -38,29 +38,23 @@ public class ContentBasedRecommenderTest {
                  + " [-ratings RATINGS_PATH] [-tags MOVIE_TAGS_PATH] [-userTags USER_TAGS_PATH]\n\n"
                  + "RATINGS_PATH fichero de ratings, MOVIE_TAGS_PATH fichero de tags para los items, USER_TAGS_PATH fichero de tags de usuarios a items.";
         
-        String ratingsFile = null;
-        String tagsFile = null;
-        String userTagsFile = null;
+        String dataPath = null;
         
         for(int i=0;i<args.length;i++) {
-            if(args[i].compareTo("-ratings")==0) {
-                ratingsFile = args[i+1];
-                i++;
-            }
-            if(args[i].compareTo("-tags")==0) {
-                tagsFile = args[i+1];
-                i++;
-            }
-            if(args[i].compareTo("-userTags")==0) {
-                userTagsFile = args[i+1];
+            if(args[i].compareTo("-data")==0) {
+                dataPath = args[i+1];
                 i++;
             }
         }
         
-        if (ratingsFile == null || tagsFile == null || userTagsFile == null) {
+        if (dataPath == null) {
             System.err.println("Usage: " + usage);
             System.exit(0);
         }
+        
+        String ratingsFile = dataPath + "user_ratedmovies.dat";
+        String tagsFile = dataPath + "movie_tags.dat";
+        String userTagsFile = dataPath + "user_taggedmovies.dat";
         
         try {
             System.out.print("Enter the ID of the user: ");

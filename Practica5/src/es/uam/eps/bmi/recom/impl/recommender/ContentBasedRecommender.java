@@ -9,7 +9,6 @@ package es.uam.eps.bmi.recom.impl.recommender;
 import es.uam.eps.bmi.recom.exceptions.GenericRecommendationException;
 import es.uam.eps.bmi.recom.model.DataModel;
 import es.uam.eps.bmi.recom.recommender.RecommendedItem;
-import es.uam.eps.bmi.recom.recommender.Recommender;
 import es.uam.eps.bmi.recom.similarity.VectorSimilarity;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,26 +20,26 @@ import java.util.PriorityQueue;
  *
  * @author chus
  */
-public class ContentBasedRecommender implements Recommender{
+public class ContentBasedRecommender extends AbstractRecommender{
 
-    private DataModel dataModel;
     private VectorSimilarity similarity;
 
-    public ContentBasedRecommender(DataModel dataModel, VectorSimilarity similarity) {
-        this.dataModel = dataModel;
+    public ContentBasedRecommender(DataModel dataModel, VectorSimilarity similarity) throws GenericRecommendationException {
+        super(dataModel);
+        if (similarity == null) throw new GenericRecommendationException("vectorSimilarity is null.");
         this.similarity = similarity;
     }
     
     @Override
     public List<RecommendedItem> recommend(long userID, int top) throws GenericRecommendationException {
-        List<Long> itemsRatedByUser = dataModel.getItemIDsFromUser(userID);
+        List<Long> itemsRatedByUser = this.getDataModel().getItemIDsFromUser(userID);
         if (itemsRatedByUser == null)
             throw new GenericRecommendationException("User " + userID + " does not exist.");
         
         PriorityQueue<RecommendedItem> heapRecommended = 
                 new PriorityQueue<>(top, new RecommendedItemComparator());
         
-        for (Long itemId : dataModel.getItemIDs()) {
+        for (Long itemId : this.getDataModel().getItemIDs()) {
             if ( !itemsRatedByUser.contains(itemId)) {
                 RecommendedItem recItem = new GenericRecommendedItem(itemId, (float) estimatePreference(userID, itemId));
                 
@@ -70,11 +69,6 @@ public class ContentBasedRecommender implements Recommender{
     @Override
     public double estimatePreference(long userID, long itemID) throws GenericRecommendationException{
         return similarity.vectorSimilarity(userID, itemID);
-    }
-
-    @Override
-    public DataModel getDataModel() {
-        return dataModel;
     }
     
     private class RecommendedItemComparator implements Comparator<RecommendedItem> {

@@ -9,9 +9,12 @@ package es.uam.eps.bmi.recom.test;
 import es.uam.eps.bmi.recom.exceptions.GenericRecommendationException;
 import es.uam.eps.bmi.recom.impl.model.FileDataModel;
 import es.uam.eps.bmi.recom.impl.neighborhood.KNNUserNeighborhood;
+import es.uam.eps.bmi.recom.impl.recommender.GenericUserBasedRecommender;
 import es.uam.eps.bmi.recom.impl.similarity.CosineSimilarity;
 import es.uam.eps.bmi.recom.model.DataModel;
 import es.uam.eps.bmi.recom.neighborhood.UserNeighborhood;
+import es.uam.eps.bmi.recom.recommender.RecommendedItem;
+import es.uam.eps.bmi.recom.recommender.Recommender;
 import es.uam.eps.bmi.recom.similarity.UserSimilarity;
 import java.io.File;
 import java.io.IOException;
@@ -31,25 +34,36 @@ public class KNNTest {
     public static void main(String[] args) {
         
         String usage = "java es.uam.eps.bmi.recom.test.ContentBasedRecommenderTest"
-                 + " [-ratings RATINGS_PATH] [-tags MOVIE_TAGS_PATH] [-userTags USER_TAGS_PATH]\n\n"
-                 + "RATINGS_PATH fichero de ratings, MOVIE_TAGS_PATH fichero de tags para los items, USER_TAGS_PATH fichero de tags de usuarios a items.";
+                 + " [-data HETREC_PATH]\n\n"
+                 + "HETREC_PATH ruta al repositorio HetRec.";
         
         String ratingsFile = null;
+        String dataPath = null;
         
         for(int i=0;i<args.length;i++) {
-            if(args[i].compareTo("-ratings")==0) {
-                ratingsFile = args[i+1];
+            if(args[i].compareTo("-data")==0) {
+                dataPath = args[i+1];
                 i++;
             }
         }
         
         try {
+            ratingsFile = dataPath + "user_ratedmovies.dat";
+            
+            //System.out.println("Building Data Model...");
             DataModel dataModel = new FileDataModel(new File(ratingsFile));
+            //System.out.println("Setting Similarity...");
             UserSimilarity userSimilarity = new CosineSimilarity(dataModel);
-            UserNeighborhood neighborhood = new KNNUserNeighborhood(dataModel.getNumUsers(), userSimilarity, dataModel);
-            List<Long> userNeighborhood = neighborhood.getUserNeighborhood(1);
-            for (Long id : userNeighborhood) {
-                System.out.print(id + ", ");
+            //System.out.println("Calculating neighbours...");
+            UserNeighborhood neighborhood = new KNNUserNeighborhood(5, userSimilarity, dataModel);
+            Recommender recommender = new GenericUserBasedRecommender(dataModel, neighborhood, userSimilarity);
+            //System.out.println("Calculating Recommendations...");
+            List<RecommendedItem> recommendations = recommender.recommend(127, 10);
+            
+            System.out.println("\n10 top recommended items for this user:");
+            int i = 1;
+            for (RecommendedItem item : recommendations) {
+                System.out.println(i++ + ". " + item.getItemID() + ", val = " + item.getValue());
             }
         } catch (IOException | GenericRecommendationException ex) {
             Logger.getLogger(KNNTest.class.getName()).log(Level.SEVERE, null, ex);
