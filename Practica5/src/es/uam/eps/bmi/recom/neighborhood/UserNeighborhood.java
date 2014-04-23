@@ -4,15 +4,16 @@
  * and open the template in the editor.
  */
 
-package es.uam.eps.bmi.recom.similarity;
+package es.uam.eps.bmi.recom.neighborhood;
 
 import es.uam.eps.bmi.recom.exceptions.GenericRecommendationException;
+import java.util.List;
 
 /**
  *
  * @author uam
  */
-public interface UserSimilarity {
+public interface UserNeighborhood {
     
-    double userSimilarity(long userID1, long userID2) throws GenericRecommendationException;
+    List<Long> getUserNeighborhood(long userID) throws GenericRecommendationException;
 }
