@@ -33,10 +33,15 @@ public class GraphTest {
         }
         
         try {
-            SocialGraph graph = new SocialGraph(new File(dataFile));
-            System.out.println(graph.getGraph().toString());
+            SocialGraph graph = new SocialGraph(new File(dataFile), dataFile.substring(dataFile.lastIndexOf("/")+1));
+            System.out.println(graph.toString());
             
+            /*for (String n : graph.getNodes()) {
+                System.out.println("CC("+n+") = "+graph.getLocalClusteringCoefficient(n));
+                System.out.println("PR("+n+") = "+graph.getPageRankNode(n, 0.8));
+            }*/
             
+            System.out.println("E(1,2) = " + graph.getEmbeddedness("1", "2"));
             
         } catch (SocialException | IOException ex) {
             Logger.getLogger(GraphTest.class.getName()).log(Level.SEVERE, null, ex);
