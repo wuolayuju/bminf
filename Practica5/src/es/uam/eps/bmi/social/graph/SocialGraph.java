@@ -9,6 +9,7 @@ package es.uam.eps.bmi.social.graph;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 import edu.uci.ics.jung.graph.util.EdgeType;
+import edu.uci.ics.jung.graph.util.Pair;
 import es.uam.eps.bmi.social.graph.exceptions.SocialException;
 import java.io.BufferedReader;
 import java.io.File;
@@ -128,6 +129,47 @@ public class SocialGraph {
         union.addAll(neighborsNode2);
         
         return ((double) intersection.size() / (double) (union.size() - 2));
+    }
+    
+    public double getGlobalClusteringCoefficient() throws SocialException {
+        
+        double sumCC = 0.0;
+        for (String n : graph.getVertices()) {
+            sumCC += this.getLocalClusteringCoefficient(n);
+        }
+        
+        return sumCC / graph.getVertexCount();
+    }
+    
+    public double getAssortativity() {
+        
+        double sumDegrees = 0.0;
+        double sumSqrDegrees = 0.0;
+        double sumCubDegrees = 0.0;
+        double sumProductDegrees = 0.0;
+        for (String u : graph.getVertices()) {
+            int degree = graph.degree(u);
+            sumDegrees += degree;
+            sumSqrDegrees += Math.pow(degree, 2);
+            sumCubDegrees += Math.pow(degree, 3);
+            /*for (String v : graph.getNeighbors(u)) {
+                sumProductDegrees += degree * graph.degree(v);
+            }*/
+        }
+        
+        sumSqrDegrees = Math.pow(sumSqrDegrees, 2);
+        
+        for (Long e : graph.getEdges()) {
+            Pair<String> endpoints = graph.getEndpoints(e);
+            sumProductDegrees += graph.degree(endpoints.getFirst()) * graph.degree(endpoints.getSecond());
+        }
+        
+        double assortativity = 
+                ((2 * sumDegrees * sumProductDegrees) - sumSqrDegrees)
+                /
+                ((sumDegrees * sumCubDegrees) - sumSqrDegrees);
+        
+        return assortativity;
     }
     
     @Override
