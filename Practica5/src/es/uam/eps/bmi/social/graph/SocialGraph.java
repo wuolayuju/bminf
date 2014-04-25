@@ -33,6 +33,12 @@ public class SocialGraph {
     private Graph<String, Long> graph;
     private String name;
 
+    public SocialGraph(Graph<String, Long> graph, String name) throws SocialException {
+        if (graph == null) throw new SocialException("graph is null.");
+        this.graph = graph;
+        this.name = name;
+    }
+    
     public SocialGraph(File dataFile, String name) throws SocialException, IOException{
         this(dataFile, name, ",");
     }
@@ -174,7 +180,7 @@ public class SocialGraph {
     
     @Override
     public String toString() {
-        return name + " " + graph.toString();
+        return name + "\n" + graph.toString();
     }
     
     public Collection<String> getNodes() {
