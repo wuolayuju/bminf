@@ -63,9 +63,9 @@ public class GraphTest {
                 g = new SocialGraph(new File(f), name);
                 graphs.add(g);
             }
-            g = RandomSocialGraphGenerator.generateBarabasiAlbert("barabasi", 100, 5, 50);
+            g = RandomSocialGraphGenerator.generateBarabasiAlbert("barabasi", 4000, 500, 50);
             graphs.add(g);
-            g = RandomSocialGraphGenerator.generateErdosRenyi("erdos", 100, 0.2);
+            g = RandomSocialGraphGenerator.generateErdosRenyi("erdos", 4000, 0.2);
             graphs.add(g);
             
             MetricsWriter metrics = new MetricsWriter(graphs);
@@ -74,6 +74,7 @@ public class GraphTest {
             metrics.writeAssortativity(new File("assortativity.txt"));
             metrics.writeGlobalClusteringCoefficient(new File("global_clustering.txt"));
             metrics.writePageRank(new File("pagerank.txt"));
+			metrics.writeDegreeDistribution();
             
         } catch (SocialException ex) {
             Logger.getLogger(GraphTest.class.getName()).log(Level.SEVERE, null, ex);

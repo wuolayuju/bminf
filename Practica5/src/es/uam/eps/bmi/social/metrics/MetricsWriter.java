@@ -18,8 +18,10 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.PriorityQueue;
 
@@ -193,6 +195,28 @@ public class MetricsWriter {
         }/* graph */
         br.close();
     }
+	
+	public void writeDegreeDistribution() throws FileNotFoundException, UnsupportedEncodingException, IOException {
+		for (SocialGraph g : networks) {
+			BufferedWriter br = 
+                new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(g.getName()+"_dist.txt")), "utf-8"));
+			HashMap<Integer,Integer> hm = new HashMap<>();
+			Collection<String> nodes = g.getNodes();
+			for (String n : nodes) {
+				int degree = g.getGraph().degree(n);
+				if (hm.get(degree) == null) {
+					hm.put(degree, 1);
+				} else {
+					int newv = hm.get(degree);
+					hm.put(degree, ++newv);
+				}
+			}
+			for (Integer i : hm.keySet()) {
+				br.write(i+" "+hm.get(i)+"\n");
+			}
+			br.close();
+		}
+	}
     
     private class ScoredNodeComparator implements Comparator<ScoredNode> {
 
