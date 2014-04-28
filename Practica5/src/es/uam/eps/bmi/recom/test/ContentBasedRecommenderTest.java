@@ -62,7 +62,7 @@ public class ContentBasedRecommenderTest {
             long userID = in.nextLong();
             
             System.out.println("\nProfile of the user " + userID + ":");
-            for (ItemFeature itf : UserProfiler.getProfileFromUser(userID, new File(userTagsFile))) {
+            for (ItemFeature itf : UserProfiler.getProfileTagsFromUser(userID, new File(userTagsFile))) {
                 System.out.println("Item " + itf.getItemID() + " Tag " + itf.getFeatID());
             }
             

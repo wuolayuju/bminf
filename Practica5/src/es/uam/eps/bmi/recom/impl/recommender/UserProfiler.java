@@ -7,6 +7,7 @@
 package es.uam.eps.bmi.recom.impl.recommender;
 
 import es.uam.eps.bmi.recom.impl.similarity.ItemFeature;
+import es.uam.eps.bmi.recom.model.Preference;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -21,7 +22,7 @@ import java.util.StringTokenizer;
  */
 public class UserProfiler {
 
-    public static List<ItemFeature> getProfileFromUser(long userID, File tagsFile) throws IOException {
+    public static List<ItemFeature> getProfileTagsFromUser(long userID, File tagsFile) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(tagsFile));
         
         String line = br.readLine(); // Headers
@@ -41,5 +42,4 @@ public class UserProfiler {
         
         return listItf;
     }
-    
 }

@@ -70,6 +70,11 @@ public class ContentBasedRecommender extends AbstractRecommender{
     public double estimatePreference(long userID, long itemID) throws GenericRecommendationException{
         return similarity.vectorSimilarity(userID, itemID);
     }
+
+    @Override
+    public double estimatePreference(long userID, long itemID, double train) throws GenericRecommendationException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
     private class RecommendedItemComparator implements Comparator<RecommendedItem> {
 

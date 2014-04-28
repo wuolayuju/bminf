@@ -15,4 +15,5 @@ import es.uam.eps.bmi.recom.exceptions.GenericRecommendationException;
 public interface UserSimilarity {
     
     double userSimilarity(long userID1, long userID2) throws GenericRecommendationException;
+    double userSimilarity(long userID1, long userID2, double train) throws GenericRecommendationException;
 }

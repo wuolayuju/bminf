@@ -55,4 +55,30 @@ public class CosineSimilarity implements UserSimilarity{
         return Math.sqrt(sum);
     }
     
+    @Override
+    public double userSimilarity(long userID1, long userID2, double train) throws GenericRecommendationException {
+        List<Preference> prefsU1 = dataModel.getPreferencesFromUser(userID1);
+        List<Preference> prefsU2 = dataModel.getPreferencesFromUser(userID2);
+        
+        int maxTrain = (int) (prefsU1.size() * train);
+        int countItems = 0;
+        
+        float numerator = 0.0F;
+        for (Preference pU1 : prefsU1) {
+            
+            if (countItems++ == maxTrain) break; // Train
+            
+            pU1 = new GenericPreference(userID2, pU1.getItemID(), pU1.getValue());
+            
+            if ( !prefsU2.contains(pU1) ) continue; 
+            numerator += pU1.getValue() * prefsU2.get(prefsU2.indexOf(pU1)).getValue();
+            
+            pU1 = new GenericPreference(userID1, pU1.getItemID(), pU1.getValue());
+        }
+        
+        double moduleU1 = computeModuleUser(prefsU1.subList(0, maxTrain));
+        double moduleU2 = computeModuleUser(prefsU2);
+        
+        return (numerator / (moduleU1 * moduleU2));
+    }
 }

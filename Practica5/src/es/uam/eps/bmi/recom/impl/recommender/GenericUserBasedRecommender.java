@@ -101,6 +101,32 @@ public class GenericUserBasedRecommender extends AbstractRecommender{
         
         return recommendedScore / normalizer;
     }
+    
+    @Override
+    public double estimatePreference(long userID, long itemID, double train) throws GenericRecommendationException {
+        List<Long> userNeighborhood = neighborhood.getUserNeighborhood(userID);
+        
+        float recommendedScore = 0.0F;
+        float normalizer = 0.0F;
+        for (Long v : userNeighborhood) {
+
+            float preferenceValue;
+            try {
+                preferenceValue = this.getDataModel().getPreferenceValue(v, itemID);
+
+            } catch (GenericRecommendationException ex) {
+                preferenceValue = 0.0F;
+            }
+
+            float simil = (float) similarity.userSimilarity(userID, v, train);
+            
+            normalizer += simil;
+            
+            recommendedScore += preferenceValue * simil;
+        }
+        
+        return recommendedScore / normalizer;
+    }
 
     public UserNeighborhood getNeighborhood() {
         return neighborhood;

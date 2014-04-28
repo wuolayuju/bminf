@@ -19,5 +19,7 @@ public interface Recommender {
     
     double estimatePreference(long userID, long itemID) throws GenericRecommendationException;
     
+    double estimatePreference(long userID, long itemID, double train) throws GenericRecommendationException;
+    
     DataModel getDataModel();
 }

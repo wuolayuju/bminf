@@ -7,7 +7,6 @@
 package es.uam.eps.bmi.recom.impl.recommender;
 
 import es.uam.eps.bmi.recom.recommender.RecommendedItem;
-import java.util.Comparator;
 
 /**
  *
