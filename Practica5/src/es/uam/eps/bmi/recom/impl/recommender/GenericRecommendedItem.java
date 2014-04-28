@@ -1,22 +1,21 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package es.uam.eps.bmi.recom.impl.recommender;
 
 import es.uam.eps.bmi.recom.recommender.RecommendedItem;
 
 /**
- *
- * @author chus
+ * Clase que representa un ítem recomendado general.
+ * @author Ari Handler - Adrián Lorenzo
  */
 public class GenericRecommendedItem implements RecommendedItem{
 
-    private long itemID;
-    private float value;
+    private final long itemID;
+    private final float value;
 
+	/**
+	 * Construye un ítem recomendado asignándole un valor de rating.
+	 * @param itemID identificador del ítem.
+	 * @param value valor de la recomendación.
+	 */
     public GenericRecommendedItem(long itemID, float value) {
         this.itemID = itemID;
         this.value = value;

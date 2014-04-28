@@ -6,7 +6,6 @@
 
 package es.uam.eps.bmi.social.metrics;
 
-import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.Pair;
 import es.uam.eps.bmi.social.graph.ScoredNode;
 import es.uam.eps.bmi.social.graph.SocialGraph;
@@ -15,7 +14,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
@@ -26,8 +24,8 @@ import java.util.List;
 import java.util.PriorityQueue;
 
 /**
- *
- * @author chus
+ * Clase que permite obtener estadísticas de una serie de redes sociales.
+ * @author Ari Handler - Adrián Lorenzo
  */
 public class MetricsWriter {
     
@@ -36,12 +34,25 @@ public class MetricsWriter {
     
     private final int TOP = 10;
     
+	/**
+	 * Construye el evaluador de redes sociales pasadas como argumento.
+	 * @param networks lista de redes sociales a medir.
+	 * @throws SocialException si la lista de redes no existe o está vacía.
+	 * @throws IOException si existe algún problema con el fichero de salida.
+	 */
     public MetricsWriter(List<SocialGraph> networks) throws SocialException, IOException {
         if (networks == null) throw new SocialException("networks is null.");
         if (networks.isEmpty()) throw new SocialException("networks is empty");
         this.networks = networks;
     }
     
+	/**
+	 * Escribe en fichero un el TOP10 de nodos con el mayor valor de coeficiente de
+	 * clustering local de cada red.
+	 * @param writeFile fichero de salida.
+	 * @throws SocialException si se produce algún error con las redes.
+	 * @throws IOException si se produce algún error con el fichero.
+	 */
     public void writeClusteringCoefficient(File writeFile) throws SocialException, IOException {
        
         BufferedWriter br = 
@@ -71,7 +82,14 @@ public class MetricsWriter {
         br.close();
     }
     
-    public void writeEdgeEmbeddedness(File writeFile) throws SocialException, FileNotFoundException, UnsupportedEncodingException, IOException {
+	/**
+	 * Escribe en un fichero el TOP10 de aristas con el mayor valor de arraigo 
+	 * de cada red.
+	 * @param writeFile fichero de salida.
+	 * @throws SocialException si se produce algún error con las redes.
+	 * @throws IOException si se produce algún error con el fichero.
+	 */
+    public void writeEdgeEmbeddedness(File writeFile) throws SocialException, IOException {
         BufferedWriter br = 
                 new BufferedWriter(new OutputStreamWriter(new FileOutputStream(writeFile), "utf-8"));
         
@@ -106,7 +124,12 @@ public class MetricsWriter {
         br.close();
     }
     
-    public void writeAssortativity(File writeFile) throws FileNotFoundException, UnsupportedEncodingException, IOException {
+	/**
+	 * Escribe en un fichero el valor de asortatividad de cada red social.
+	 * @param writeFile fichero de salida.
+	 * @throws IOException si se produce algún error con el fichero.
+	 */
+    public void writeAssortativity(File writeFile) throws IOException {
         BufferedWriter br = 
                 new BufferedWriter(new OutputStreamWriter(new FileOutputStream(writeFile), "utf-8"));
         
@@ -118,7 +141,14 @@ public class MetricsWriter {
         br.close();
     }
     
-    public void writeGlobalClusteringCoefficient(File writeFile) throws UnsupportedEncodingException, FileNotFoundException, SocialException, IOException {
+	/**
+	 * Escribe en un fichero el valor de coeficiente de clustering global
+	 * de cada red social.
+	 * @param writeFile fichero de salida.
+	 * @throws SocialException si se produce algún error con las redes.
+	 * @throws IOException si se produce algún error con el fichero.
+	 */
+    public void writeGlobalClusteringCoefficient(File writeFile) throws SocialException, IOException {
         BufferedWriter br = 
                 new BufferedWriter(new OutputStreamWriter(new FileOutputStream(writeFile), "utf-8"));
         
@@ -130,7 +160,13 @@ public class MetricsWriter {
         br.close();        
     }
     
-    public void writePageRank(File writeFile) throws UnsupportedEncodingException, FileNotFoundException, SocialException, IOException {
+	/**
+	 * Escribe en fichero un el TOP10 de nodos con el mayor valor de PageRank de cada red.
+	 * @param writeFile fichero de salida.
+	 * @throws SocialException si se produce algún error con las redes.
+	 * @throws IOException si se produce algún error con el fichero.
+	 */
+    public void writePageRank(File writeFile) throws SocialException, IOException {
         BufferedWriter br = 
                 new BufferedWriter(new OutputStreamWriter(new FileOutputStream(writeFile), "utf-8"));
         

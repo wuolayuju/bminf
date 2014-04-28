@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package es.uam.eps.bmi.recom.impl.similarity;
 
 import es.uam.eps.bmi.recom.exceptions.GenericRecommendationException;
@@ -14,13 +8,18 @@ import es.uam.eps.bmi.recom.similarity.UserSimilarity;
 import java.util.List;
 
 /**
- *
- * @author uam
+ * Clase que representa la función de similitud por coseno entre usuarios.
+ * @author Ari Handler - Adrián Lorenzo
  */
 public class CosineSimilarity implements UserSimilarity{
 
     private final DataModel dataModel;
 
+	/**
+	 * Construye la función de similitud dado un modelo de datos.
+	 * @param dataModel modelo de datos.
+	 * @throws GenericRecommendationException si no existe el modelo de datos.
+	 */
     public CosineSimilarity(DataModel dataModel) throws GenericRecommendationException{
         if (dataModel == null) throw new GenericRecommendationException("dataModel is null.");
         this.dataModel = dataModel;

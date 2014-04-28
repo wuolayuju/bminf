@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package es.uam.eps.bmi.recom.impl.recommender;
 
 import es.uam.eps.bmi.recom.exceptions.GenericRecommendationException;
@@ -17,13 +11,22 @@ import java.util.List;
 import java.util.PriorityQueue;
 
 /**
- *
- * @author chus
+ * Clase que representa un recomendador basado en contenido que hace uso de
+ * una función de similitud entre usuario e ítem y produce ítems recomendados
+ * para un usuario.
+ * @author Ari Handler - Adrián Lorenzo
  */
 public class ContentBasedRecommender extends AbstractRecommender{
 
     private VectorSimilarity similarity;
 
+	/**
+	 * Construye el recomendador basado en contenido dado un modelo de datos
+	 * y una función de similutd entre usuario e ítem.
+	 * @param dataModel modelo de datos.
+	 * @param similarity función de similitud entre usuario e ítem.
+	 * @throws GenericRecommendationException si la función de similitud no existe.
+	 */
     public ContentBasedRecommender(DataModel dataModel, VectorSimilarity similarity) throws GenericRecommendationException {
         super(dataModel);
         if (similarity == null) throw new GenericRecommendationException("vectorSimilarity is null.");

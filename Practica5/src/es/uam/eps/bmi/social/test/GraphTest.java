@@ -45,9 +45,15 @@ public class GraphTest {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws IOException {
-        List<String> files = new ArrayList<>();
+        String usage = "java es.uam.eps.bmi.social.test.GraphTest [networks_files]+";
+		
+		List<String> files = new ArrayList<>();
         
+		try {
         files.addAll(Arrays.asList(args));
+		} catch (NullPointerException ex) {
+			System.err.println("Usage: "+usage);
+		}
         
         try {
             List<SocialGraph> graphs = new ArrayList<>();

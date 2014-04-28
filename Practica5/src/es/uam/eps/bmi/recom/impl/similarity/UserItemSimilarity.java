@@ -7,7 +7,6 @@
 package es.uam.eps.bmi.recom.impl.similarity;
 
 import es.uam.eps.bmi.recom.exceptions.GenericRecommendationException;
-import es.uam.eps.bmi.recom.impl.model.GenericPreference;
 import es.uam.eps.bmi.recom.model.DataModel;
 import es.uam.eps.bmi.recom.model.Preference;
 import es.uam.eps.bmi.recom.similarity.VectorSimilarity;
@@ -23,8 +22,12 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 /**
- *
- * @author uam
+ * Clase que implementa la función de similitud entre un usuario y un ítem
+ * basándose en el algoritmo Rocchio de similitud por centroides de usuarios.<br>
+ * Ya que normalmente el cálculo de centroide de usuario es una operación recurrente,
+ * se ha implementado un centroide de usuario cacheado para acceso rápido
+ * a la función de similitud.
+ * @author Ari Handler - Adrián Lorenzo
  */
 public class UserItemSimilarity implements VectorSimilarity{
 
@@ -36,6 +39,14 @@ public class UserItemSimilarity implements VectorSimilarity{
     private Map<Long, Double> cachedUserCentroid;
     private long cachedUserID;
 
+	/**
+	 * Construye la función de similitud dado un fichero en el que se detallan
+	 * los ítems y sus características, así como el modelo de datos del sistema
+	 * de recomendación en cuestión.
+	 * @param itemFile fichero de ítems con sus características.
+	 * @param dataModel modelo de datos.
+	 * @throws IOException si ocurre algún problema con el fichero de ítems.
+	 */
     public UserItemSimilarity(File itemFile, DataModel dataModel) throws IOException {
         this.itemFile = itemFile;
         this.dataModel = dataModel;
@@ -69,6 +80,14 @@ public class UserItemSimilarity implements VectorSimilarity{
         }
     }
     
+	/**
+	 * Devuelve la similitud entre un usario y un ítem mediante el cálculo
+	 * de centroide de usuario y aplicación del algoritmo Rocchio.
+	 * @param userID identificador del usuario.
+	 * @param itemID idetificador del ítem.
+	 * @return similitud entre usuario e ítem.
+	 * @throws GenericRecommendationException si se produce algún error en el proceso.
+	 */
     @Override
     public double vectorSimilarity(long userID, long itemID) throws GenericRecommendationException{
         Map<Long, Double> userCentroid = processUserCentroid(userID);

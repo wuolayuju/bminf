@@ -9,15 +9,21 @@ package es.uam.eps.bmi.recom.impl.model;
 import es.uam.eps.bmi.recom.model.Preference;
 
 /**
- *
- * @author chus
+ * Modela una preferencia básica de un usuario hacia un ítem.
+ * @author Ari Handler - Adrián Lorenzo
  */
 public class GenericPreference implements Preference{
 
-    private long userID;
-    private long itemID;
+    private final long userID;
+    private final long itemID;
     private float value;
 
+	/**
+	 * Construye la preferencia de un usuario hacia un ítem en un determinado grado.
+	 * @param userID identificador del usuario.
+	 * @param itemID identificador del ítem.
+	 * @param value valor de preferencia.
+	 */
     public GenericPreference(long userID, long itemID, float value) {
         this.userID = userID;
         this.itemID = itemID;
@@ -44,6 +50,11 @@ public class GenericPreference implements Preference{
         this.value = value;
     }
 
+	/**
+	 * Determina si una preferencia es igual a otra si tanto el usuario como el ítem coinciden.
+	 * @param obj preferencia con la que comparar.
+	 * @return true si son iguales, false en caso contrario.
+	 */
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {

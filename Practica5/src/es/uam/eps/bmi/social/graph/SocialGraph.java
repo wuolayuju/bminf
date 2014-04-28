@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package es.uam.eps.bmi.social.graph;
 
 import edu.uci.ics.jung.algorithms.scoring.PageRank;
@@ -25,8 +19,10 @@ import java.util.Set;
 import java.util.StringTokenizer;
 
 /**
- *
- * @author chus
+ * Clase que representa un grafo de una determinada red social. <br>
+ * La clase provee una serie de métodos de cálculo de métricas tanto de los nodos 
+ * y arcos como de la red entera.
+ * @author Ari Handler - Adrián Lorenzo
  */
 public class SocialGraph {
     
@@ -34,16 +30,42 @@ public class SocialGraph {
     private Graph<String, Long> graph;
     private String name;
 
+	/**
+	 * Construye un grafo de red social dado un grafo creado con JUNG y un nombre
+	 * para dicho grafo.
+	 * @param graph grafo creado con JUNG.
+	 * @param name nombre del grafo.
+	 * @throws SocialException si el grafo es nulo.
+	 */
     public SocialGraph(Graph<String, Long> graph, String name) throws SocialException {
         if (graph == null) throw new SocialException("graph is null.");
         this.graph = graph;
         this.name = name;
     }
     
+	/**
+	 * Construye una grafo de red social dado un fichero que representa las conexiones
+	 * entre los nodos y un nombre para dicho grafo. El delimitador por defecto
+	 * es ','.
+	 * @param dataFile fichero del grafo.
+	 * @param name nombre de la red.
+	 * @throws SocialException {@link #this}
+	 * @throws IOException si ocurre algún error con el fichero.
+	 */
     public SocialGraph(File dataFile, String name) throws SocialException, IOException{
         this(dataFile, name, ",");
     }
     
+	/**
+	 * Construye una grafo de red social dado un fichero que representa las conexiones
+	 * entre los nodos y un nombre para dicho grafo. Se define además el delimitador
+	 * que se ha utlizado en el fichero.
+	 * @param dataFile fichero del grafo.
+	 * @param name nombre de la red.
+	 * @param delimiter delimitador entre nodos que se usa en el fichero.
+	 * @throws SocialException si el fichero de datos no existe.
+	 * @throws IOException si ocurre algún error con el fichero.
+	 */
     public SocialGraph(File dataFile, String name, String delimiter) throws SocialException, IOException {
         if (dataFile == null) throw new SocialException("dataFile is null.");
         this.dataFile = dataFile;
@@ -75,30 +97,63 @@ public class SocialGraph {
         br.close();
     }
 
+	/**
+	 * Obtiene el fichero de datos de nodos.
+	 * @return fichero de datos.
+	 */
     public File getDataFile() {
         return dataFile;
     }
 
+	/**
+	 * Obtiene el grafo de la red social.
+	 * @return grafo de la red.
+	 */
     public Graph getGraph() {
         return graph;
     }
     
+	/**
+	 * Obtiene el nombre de la red social.
+	 * @return nombre de la red.
+	 */
     public String getName() {
         return name;
     }
     
+	/**
+	 * Obtiene la colección de aristas del grafo.
+	 * @return colección de identificadores de aristas.
+	 */
     public Collection<Long> getEdges() {
         return graph.getEdges();
     }
     
+	/**
+	 * Obtiene el par de nodos de una determinada arista.
+	 * @param e identificador de la arista.
+	 * @return par de nodos de la arista.
+	 */
     public Pair<String> getVerticesFromEdge(Long e) {
         return graph.getEndpoints(e);
     }
     
+	/**
+	 * Obtiene la arista que conectados dos nodos.
+	 * @param node1 primer nodo.
+	 * @param node2 segundo nodo.
+	 * @return identificador de la arista que uno los nodos.
+	 */
     public Long getEdgeFromNodes(String node1, String node2) {
         return graph.findEdge(node1, node2);
     }
     
+	/**
+	 * Calcula el valor del coeficiente de clustering local de un determinado nodo.
+	 * @param node identificador del nodo.
+	 * @return coeficiente de clustering local del nodo.
+	 * @throws SocialException si el nodo no existe en la red.
+	 */
     public double getLocalClusteringCoefficient(String node) throws SocialException {
         if ( !graph.containsVertex(node) ) 
             throw new SocialException("node does not exist.");
@@ -119,6 +174,13 @@ public class SocialGraph {
         return (commonEdgesCnt / (degree * (degree - 1)));
     }
     
+	/**
+	 * Obtiene el valor de PageRank de un determinado nodo.
+	 * @param node identificador del nodo.
+	 * @param damping factor de amortiguamiento.
+	 * @return PageRank del nodo
+	 * @throws SocialException si el nodo no existe o el factor de amortiguamiento no es válido.
+	 */
     public double getPageRankNode(String node, double damping) throws SocialException {
         if ( !graph.containsVertex(node) ) 
             throw new SocialException("node does not exist.");
@@ -132,6 +194,13 @@ public class SocialGraph {
         return prScore;
     }
 
+	/**
+	 * Calcula el valor de arraigo de la arista que une dos nodos. 
+	 * @param node1 primer nodo.
+	 * @param node2 segundo nodo.
+	 * @return valor de arraigo de la arista.
+	 * @throws SocialException si los nodos no están conectados.
+	 */
     public double getEmbeddedness(String node1, String node2) throws SocialException {
         Long edge = graph.findEdge(node1, node2);
         if (edge == null) throw new SocialException("nodes " + node1 + " " + node2 + " are not connected.");
@@ -151,6 +220,11 @@ public class SocialGraph {
         return ((double) intersection.size() / (double) (union.size() - 2));
     }
     
+	/**
+	 * Calcula el coeficiente del clustering global de la red social.
+	 * @return coeficiente global de clustering.
+	 * @throws SocialException si existe algún error en el proceso.
+	 */
     public double getGlobalClusteringCoefficient() throws SocialException {
         
         double sumCC = 0.0;
@@ -161,6 +235,10 @@ public class SocialGraph {
         return sumCC / graph.getVertexCount();
     }
     
+	/**
+	 * Obtiene el grado de asortatividad de la red social
+	 * @return asortatividad del grafo.
+	 */
     public double getAssortativity() {
         
         double sumDegrees = 0.0;
@@ -197,6 +275,10 @@ public class SocialGraph {
         return name + "\n" + graph.toString();
     }
     
+	/**
+	 * Obtiene una colección de todos los nodos del grafo.
+	 * @return colección de nodos.
+	 */
     public Collection<String> getNodes() {
         return graph.getVertices();
     }

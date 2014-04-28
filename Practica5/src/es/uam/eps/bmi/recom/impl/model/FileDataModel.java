@@ -20,8 +20,10 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 /**
- *
- * @author chus
+ * Clase que representa una fuente de datos para el sistema de recomendación
+ * basada en un archivo de texto.<br>
+ * Este archivo debe tener la estructura de usuario \t item \t rating.
+ * @author Ari Handler - Adrián Lorenzo
  */
 public class FileDataModel implements DataModel{
 
@@ -35,10 +37,22 @@ public class FileDataModel implements DataModel{
     private float max_preference = Float.MIN_VALUE;
     private float min_preference = Float.MAX_VALUE;
 
+	/**
+	 * Construye el modelo mediante un archivo de ratings y el delimitador por defecto '\t'.
+	 * @param dataFile fichero de ratings.
+	 * @throws IOException si ocurre algún error con el fichero.
+	 */
     public FileDataModel(File dataFile) throws IOException {
         this(dataFile, '\t');
     }
     
+	/**
+	 * Construye el modelo mediante un archivo de ratings en el que los campos
+	 * están separador por un determinado delimitador.
+	 * @param dataFile fichero de ratings.
+	 * @param delimiter delimitador de campos.
+	 * @throws IOException si ocurre algún error con el fichero.
+	 */
     public FileDataModel(File dataFile, char delimiter) throws IOException {
         this.dataFile = dataFile;
         
@@ -53,6 +67,13 @@ public class FileDataModel implements DataModel{
         buildModel(dataFile, delimiter);
     }
     
+	/**
+	 * Construye internamente el modelo con el fichero.
+	 * @param dataFile fichero de ratings.
+	 * @param delimiter delimitador entre campos.
+	 * @throws FileNotFoundException si no se encuentra el archivo.
+	 * @throws IOException si ocurre algún error adicional con el archivo.
+	 */
     protected void buildModel(File dataFile, char delimiter) throws FileNotFoundException, IOException {
         
         BufferedReader br = new BufferedReader(new FileReader(dataFile));

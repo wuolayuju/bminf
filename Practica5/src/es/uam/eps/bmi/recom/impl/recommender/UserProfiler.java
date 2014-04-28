@@ -1,13 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package es.uam.eps.bmi.recom.impl.recommender;
 
 import es.uam.eps.bmi.recom.impl.similarity.ItemFeature;
-import es.uam.eps.bmi.recom.model.Preference;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -17,11 +10,21 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 /**
- *
- * @author chus
+ * Clase que monta un perfil de usuario basándose en diferentes aspectos sacados
+ * tanto de un fichero como de un modelo de datos.
+ * @author Ari Handler - Adrián Lorenzo
  */
 public class UserProfiler {
 
+	/**
+	 * Obtiene una lista de características de ítems que un determinado usuario
+	 * ha asignado a una lista de ítems, que servirá para crear un perfil de dicho
+	 * usuario.
+	 * @param userID identificador de usuario.
+	 * @param tagsFile fichero de usuarios asignando características a ítems.
+	 * @return lista de características asignadas a ítems por el usuario.
+	 * @throws IOException si se produce algún error con el fichero.
+	 */
     public static List<ItemFeature> getProfileTagsFromUser(long userID, File tagsFile) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(tagsFile));
         

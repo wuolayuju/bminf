@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package es.uam.eps.bmi.recom.impl.recommender;
 
 import es.uam.eps.bmi.recom.exceptions.GenericRecommendationException;
@@ -18,14 +12,24 @@ import java.util.List;
 import java.util.PriorityQueue;
 
 /**
- *
- * @author uam
+ * Clase que representa un recomendador basado en usuario mediante filtrado colaborativo, 
+ * haciendo uso de un modelo de datos, una función de similitud entre usuarios
+ * y una función de obtención de vecinos próximos.
+ * @author Ari Handler - Adrián Lorenzo
  */
 public class GenericUserBasedRecommender extends AbstractRecommender{
 
     private final UserNeighborhood neighborhood;
     private final UserSimilarity similarity;
     
+	/**
+	 * Construye el recomendador basado en usuario.
+	 * @param dataModel modelo de datos.
+	 * @param neighborhood proveedor de usuarios más próximos.
+	 * @param similarity función de similutud entre usuarios.
+	 * @throws GenericRecommendationException si el proveedor de usuarios próximos
+	 * o la función de similitud no existen.
+	 */
     public GenericUserBasedRecommender(DataModel dataModel, UserNeighborhood neighborhood, UserSimilarity similarity) throws GenericRecommendationException {
         super(dataModel);
         if (neighborhood == null) throw new GenericRecommendationException("neighborhood is null.");
@@ -37,7 +41,6 @@ public class GenericUserBasedRecommender extends AbstractRecommender{
     @Override
     public List<RecommendedItem> recommend(long userID, int top) throws GenericRecommendationException {
         //System.out.println("Calculating Neighborhood...");
-        List<Long> userNeighborhood = neighborhood.getUserNeighborhood(userID);
         
         PriorityQueue<RecommendedItem> heapRecommended = 
                 new PriorityQueue<>(top, new GenericUserBasedRecommender.RecommendedItemComparator());
@@ -128,10 +131,18 @@ public class GenericUserBasedRecommender extends AbstractRecommender{
         return recommendedScore / normalizer;
     }
 
+	/**
+	 * Obtiene el proveedor de usuarios próximos.
+	 * @return proveedor de usuarios próximos.
+	 */
     public UserNeighborhood getNeighborhood() {
         return neighborhood;
     }
 
+	/**
+	 * Obtiene la función de similitud.
+	 * @return función de similitud.
+	 */
     public UserSimilarity getSimilarity() {
         return similarity;
     }

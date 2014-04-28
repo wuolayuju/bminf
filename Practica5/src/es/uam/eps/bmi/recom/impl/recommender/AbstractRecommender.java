@@ -11,13 +11,19 @@ import es.uam.eps.bmi.recom.model.DataModel;
 import es.uam.eps.bmi.recom.recommender.Recommender;
 
 /**
- *
- * @author uam
+ * Clase abstracta que determina como se debe crear un recomendador dado un
+ * modelo de datos.
+ * @author Ari Handler - Adrián Lorenzo
  */
 public abstract class AbstractRecommender implements Recommender{
     
     private final DataModel dataModel;
     
+	/**
+	 * Asigna a este recomendador un modelo de datos.
+	 * @param dataModel el modelo de datos
+	 * @throws GenericRecommendationException si el modelo de datos no existe.
+	 */
     protected AbstractRecommender(DataModel dataModel) throws GenericRecommendationException{
         if (dataModel == null) throw new GenericRecommendationException("dataModel is null.");
         this.dataModel = dataModel;

@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package es.uam.eps.bmi.recom.test;
 
 import es.uam.eps.bmi.recom.exceptions.GenericRecommendationException;
@@ -24,19 +18,20 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
- * @author chus
+ * Clase con main que prueba el recomendador basado en contenido con un usuario.
+ * @author Ari Handler - Adrián Lorenzo
  */
 public class ContentBasedRecommenderTest {
 
     /**
-     * @param args the command line arguments
+	 * java es.uam.eps.bmi.recom.test.ContentBasedRecommenderTest [-data HETREC_PATH]
+     * @param args la carpeta en la que se encuetran los ficheros HETREC.
      */
     public static void main(String[] args) {
         
         String usage = "java es.uam.eps.bmi.recom.test.ContentBasedRecommenderTest"
-                 + " [-ratings RATINGS_PATH] [-tags MOVIE_TAGS_PATH] [-userTags USER_TAGS_PATH]\n\n"
-                 + "RATINGS_PATH fichero de ratings, MOVIE_TAGS_PATH fichero de tags para los items, USER_TAGS_PATH fichero de tags de usuarios a items.";
+                 + " [-data HETREC_PATH]\n\n"
+                 + "HETREC_PATH ruta a la carpeta HETREC";
         
         String dataPath = null;
         

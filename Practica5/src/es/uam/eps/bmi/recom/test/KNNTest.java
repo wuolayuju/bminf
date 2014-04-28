@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package es.uam.eps.bmi.recom.test;
 
 import es.uam.eps.bmi.recom.exceptions.GenericRecommendationException;
@@ -35,7 +29,7 @@ public class KNNTest {
      */
     public static void main(String[] args) {
         
-        String usage = "java es.uam.eps.bmi.recom.test.ContentBasedRecommenderTest"
+        String usage = "java es.uam.eps.bmi.recom.test.KNNTest"
                  + " [-data HETREC_PATH]\n\n"
                  + "HETREC_PATH ruta al repositorio HetRec.";
         

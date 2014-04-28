@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package es.uam.eps.bmi.recom.impl.neighborhood;
 
 import es.uam.eps.bmi.recom.exceptions.GenericRecommendationException;
@@ -18,17 +12,32 @@ import java.util.List;
 import java.util.PriorityQueue;
 
 /**
- *
- * @author uam
+ * Clase que representa un proveedor de vecinos próximos haciendo uso del
+ * algoritmo kNN (k Nearest Neighbours).
+ * @author Ari Handler - Adrián Lorenzo
  */
 public class KNNUserNeighborhood extends AbstractUserNeighborhood{
 
     private final int k;
     
+	/**
+	 * Construye un proveedor de vecinos próximos con un número de vecinos
+	 * por defecto de k = 3.
+	 * @param userSimilarity función de similitud entre usuarios.
+	 * @param dataModel modelo de datos.
+	 * @throws GenericRecommendationException {@link AbstractUserNeighborhood#this}
+	 */
     public KNNUserNeighborhood(UserSimilarity userSimilarity, DataModel dataModel) throws GenericRecommendationException {
         this(3, userSimilarity, dataModel);
     }
     
+	/**
+	 * Construye un proveedor de vecinos próximos con un número de vecinos dado.
+	 * @param k número de vecinos a calcular.
+	 * @param userSimilarity función de similitud.
+	 * @param dataModel modelo de datos.
+	 * @throws GenericRecommendationException si k es <= 1.
+	 */
     public KNNUserNeighborhood(int k, UserSimilarity userSimilarity, DataModel dataModel) throws GenericRecommendationException {
         super(userSimilarity, dataModel);
         if (k <= 1) throw new GenericRecommendationException("k must be > 1.");
