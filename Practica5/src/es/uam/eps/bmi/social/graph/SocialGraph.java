@@ -6,6 +6,7 @@
 
 package es.uam.eps.bmi.social.graph;
 
+import edu.uci.ics.jung.algorithms.scoring.PageRank;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 import edu.uci.ics.jung.graph.util.EdgeType;
@@ -82,6 +83,22 @@ public class SocialGraph {
         return graph;
     }
     
+    public String getName() {
+        return name;
+    }
+    
+    public Collection<Long> getEdges() {
+        return graph.getEdges();
+    }
+    
+    public Pair<String> getVerticesFromEdge(Long e) {
+        return graph.getEndpoints(e);
+    }
+    
+    public Long getEdgeFromNodes(String node1, String node2) {
+        return graph.findEdge(node1, node2);
+    }
+    
     public double getLocalClusteringCoefficient(String node) throws SocialException {
         if ( !graph.containsVertex(node) ) 
             throw new SocialException("node does not exist.");
@@ -109,15 +126,10 @@ public class SocialGraph {
         if (damping >= 1.0 || damping <= 0.0)
             throw new SocialException("damping factor must be in (0,1).");
         
-        int N = graph.getVertexCount();
-        double pr = 0.0;
-        for (String v : graph.getNeighbors(node)) {
-            int tempDegree = graph.degree(v);
-            tempDegree = tempDegree > 0 ? tempDegree : (N - 1);
-            pr += (1/N) / tempDegree;
-        }
+        PageRank<String,Long> pr = new PageRank(graph, damping);
+        double prScore = pr.getVertexScore(node);
         
-        return ((damping / N) + (1 - damping) * pr);
+        return prScore;
     }
 
     public double getEmbeddedness(String node1, String node2) throws SocialException {
@@ -130,9 +142,11 @@ public class SocialGraph {
         List<String> intersection = new ArrayList<>();
         intersection.addAll(neighborsNode1);
         intersection.retainAll(neighborsNode2);
+        if (intersection.isEmpty()) return 0.0;
         
         Set union = new HashSet(neighborsNode1);
         union.addAll(neighborsNode2);
+        if (union.isEmpty()) return 0.0;
         
         return ((double) intersection.size() / (double) (union.size() - 2));
     }

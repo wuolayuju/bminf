@@ -6,18 +6,31 @@
 
 package es.uam.eps.bmi.social.test;
 
+import edu.uci.ics.jung.algorithms.layout.BalloonLayout;
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;
+import edu.uci.ics.jung.algorithms.layout.DAGLayout;
+import edu.uci.ics.jung.algorithms.layout.FRLayout;
+import edu.uci.ics.jung.algorithms.layout.FRLayout2;
+import edu.uci.ics.jung.algorithms.layout.ISOMLayout;
+import edu.uci.ics.jung.algorithms.layout.KKLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.visualization.BasicVisualizationServer;
+import edu.uci.ics.jung.visualization.VisualizationViewer;
+import edu.uci.ics.jung.visualization.decorators.DefaultVertexIconTransformer;
+import edu.uci.ics.jung.visualization.layout.CachingLayout;
 import es.uam.eps.bmi.social.graph.RandomSocialGraphGenerator;
 import es.uam.eps.bmi.social.graph.SocialGraph;
 import es.uam.eps.bmi.social.graph.exceptions.SocialException;
+import es.uam.eps.bmi.social.metrics.MetricsWriter;
 import java.awt.Dimension;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
@@ -31,59 +44,48 @@ public class GraphTest {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
-        String dataFile = null;
+    public static void main(String[] args) throws IOException {
+        List<String> files = new ArrayList<>();
         
-        for(int i=0;i<args.length;i++) {
-            if(args[i].compareTo("-data")==0) {
-                dataFile = args[i+1];
-                i++;
-            }
-        }
+        files.addAll(Arrays.asList(args));
         
         try {
-            //String netName = dataFile.substring(dataFile.lastIndexOf("/")+1);
-            //SocialGraph graph = new SocialGraph(new File(dataFile), netName);
-            //System.out.println(graph.toString());
-            /*for (String n : graph.getNodes()) {
-            System.out.println("CC("+n+") = "+graph.getLocalClusteringCoefficient(n));
-            System.out.println("PR("+n+") = "+graph.getPageRankNode(n, 0.8));
-            }*/
-            //System.out.println("E(1,2) = " + graph.getEmbeddedness("1", "2"));
-            //System.out.println("GC = " + graph.getGlobalClusteringCoefficient());
-            //System.out.println("Ast = " + graph.getAssortativity());
-            /*BufferedWriter br = new BufferedWriter(
-                    new OutputStreamWriter(new FileOutputStream("nodeClustering.txt"), "utf-8"));
-            
-            for (String u : graph.getNodes()) {
-                br.write(netName + "\t" + u + "\t" + graph.getLocalClusteringCoefficient(u) + "\n");
+            List<SocialGraph> graphs = new ArrayList<>();
+            SocialGraph g;
+            for(String f : files) {
+                String name = f.substring(0, f.indexOf("."));
+                g = new SocialGraph(new File(f), name);
+                graphs.add(g);
             }
+            g = RandomSocialGraphGenerator.generateBarabasiAlbert("barabasi", 100, 5, 50);
+            graphs.add(g);
+            g = RandomSocialGraphGenerator.generateErdosRenyi("erdos", 100, 0.2);
+            graphs.add(g);
             
-            br.close();*/
-            
-            SocialGraph barGraph = RandomSocialGraphGenerator.generateBarabasiAlbert("barabasi", 10, 10, 50);
-            System.out.println(barGraph.toString());
-            
-            SocialGraph erdGraph = RandomSocialGraphGenerator.generateErdosRenyi("erdos", 50, 0.5);
-            System.out.println(erdGraph.toString());
-            
-            // The Layout<V, E> is parameterized by the vertex and edge types
-            Layout<Integer, String> layout = new CircleLayout(barGraph.getGraph());
-            layout.setSize(new Dimension(600,600)); // sets the initial size of the space
-            // The BasicVisualizationServer<V,E> is parameterized by the edge types
-            BasicVisualizationServer<Integer,String> vv =
-            new BasicVisualizationServer<Integer,String>(layout);
-            vv.setPreferredSize(new Dimension(600,600)); //Sets the viewing area size
-            JFrame frame = new JFrame("Simple Graph View");
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.getContentPane().add(vv);
-            frame.pack();
-            frame.setVisible(true); 
-            
+            MetricsWriter metrics = new MetricsWriter(graphs);
+            metrics.writeClusteringCoefficient(new File("clustering.txt"));
+            metrics.writeEdgeEmbeddedness(new File("embeddedness.txt"));
+            metrics.writeAssortativity(new File("assortativity.txt"));
+            metrics.writeGlobalClusteringCoefficient(new File("global_clustering.txt"));
+            metrics.writePageRank(new File("pagerank.txt"));
             
         } catch (SocialException ex) {
             Logger.getLogger(GraphTest.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    private static void printGraph(SocialGraph g) {
+        // The Layout<V, E> is parameterized by the vertex and edge types
+        Layout<Integer, String> layout = new ISOMLayout(g.getGraph());
+        layout.setSize(new Dimension(600,600)); // sets the initial size of the space
+        // The BasicVisualizationServer<V,E> is parameterized by the edge types
+        VisualizationViewer<Integer,String> vv = new VisualizationViewer<>(layout);
+        vv.setPreferredSize(new Dimension(600,600)); //Sets the viewing area size
+        JFrame frame = new JFrame(g.getName());
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.getContentPane().add(vv);
+        frame.pack();
+        frame.setVisible(true);
     }
     
 }
